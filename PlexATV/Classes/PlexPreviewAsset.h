@@ -23,7 +23,7 @@
   //  
 
 #import <Foundation/Foundation.h>
-#import "BRBaseMediaAsset.h"
+#import <BackRow/BackRow.h>
 
 @class PlexMediaObject;
 @interface PlexPreviewAsset : BRBaseMediaAsset<BRMediaAsset> {
