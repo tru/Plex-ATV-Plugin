@@ -210,7 +210,7 @@
       BRMetadataPreviewControl *preview =[[BRMetadataPreviewControl alloc] init];
       [preview setShowsMetadataImmediately:YES];
       [preview setAsset:album];	
-      
+        [album release];
       return [preview autorelease];      
     }
   }

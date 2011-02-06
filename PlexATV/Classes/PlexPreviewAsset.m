@@ -66,7 +66,9 @@
 	//format is 2001-11-06
 	NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
 	[dateFormat setDateFormat:@"yyyy-mm-dd"];
-	return [dateFormat dateFromString:dateString];
+    NSString *r = [dateFormat dateFromString:dateString];
+    [dateFormat release];
+    return r;
 }
 
 #pragma mark -
@@ -414,7 +416,7 @@
 	if ([allGenres count] > 0) {
 		result = [[BRGenre alloc] initWithString:[allGenres objectAtIndex:0]];
 	}
-	return result;
+	return [result autorelease];
 }
 
 - (id)producers {
