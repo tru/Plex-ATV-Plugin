@@ -7,16 +7,28 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		DD0CC95712FE238800743D2C /* script */ = {
+		DD02DEB212FCACCC0019FBEE /* All */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = DD0CC95912FE23B600743D2C /* Build configuration list for PBXAggregateTarget "script" */;
+			buildConfigurationList = DD02DEE412FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
-				DD0CC95612FE238800743D2C /* ShellScript */,
+			);
+			dependencies = (
+				DD02DEB512FCACD00019FBEE /* PBXTargetDependency */,
+				DD02DEBA12FCAD020019FBEE /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = Install;
+		};
+		DD02DEB712FCACEC0019FBEE /* Install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DD02DEE312FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "Install" */;
+			buildPhases = (
+				DD02DEB612FCACEC0019FBEE /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = script;
-			productName = script;
+			name = Install;
+			productName = Install;
 		};
 /* End PBXAggregateTarget section */
 
@@ -40,12 +52,10 @@
 		01A0F59D127228CC007A60B5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A0F59C127228CC007A60B5 /* libz.dylib */; };
 		727A3F4912F78FB100994193 /* HWAdvancedSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 727A3F4812F78FB100994193 /* HWAdvancedSettingsController.m */; };
 		7297238412EE81000064E776 /* HWUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 7297238312EE81000064E776 /* HWUserDefaults.m */; };
-		729723AF12EE84810064E776 /* HWRemoteServersController.m in Sources */ = {isa = PBXBuildFile; fileRef = 729723AE12EE84810064E776 /* HWRemoteServersController.m */; };
-		72B2C4FE12DBE12800E23F8E /* HWSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72B2C4FD12DBE12800E23F8E /* HWSettingsController.m */; };
-		72B2C71512DC1F0E00E23F8E /* HWPmsListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72B2C71412DC1F0E00E23F8E /* HWPmsListController.m */; };
 		72EA80F712DEB49B00138F7D /* PlexSettings.png in Resources */ = {isa = PBXBuildFile; fileRef = 72EA80F612DEB49B00138F7D /* PlexSettings.png */; };
 		875A824D126FFF1F00ECADC2 /* HWAppliance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 875A824A126FFF1F00ECADC2 /* HWAppliance.mm */; };
 		875A824E126FFF1F00ECADC2 /* HWBasicMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 875A824C126FFF1F00ECADC2 /* HWBasicMenu.m */; };
+		875A873412704ACC00ECADC2 /* theos in Resources */ = {isa = PBXBuildFile; fileRef = 875A86EB12704ACC00ECADC2 /* theos */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		C4ADAFAE12D46CA9002DA507 /* HWPlexDir.m in Sources */ = {isa = PBXBuildFile; fileRef = C4ADAFA812D46CA9002DA507 /* HWPlexDir.m */; };
 		C4ADAFAF12D46CA9002DA507 /* PlexMediaAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = C4ADAFAA12D46CA9002DA507 /* PlexMediaAsset.m */; };
@@ -55,6 +65,23 @@
 		C4D55A9312D7E22A00877755 /* PlexSongAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = C4D55A9212D7E22A00877755 /* PlexSongAsset.m */; };
 		C4EA913612DCD77700DCC798 /* PlexPreviewAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = C4EA913512DCD77700DCC798 /* PlexPreviewAsset.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DD02DEB412FCACD00019FBEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
+			remoteInfo = atvTwo;
+		};
+		DD02DEB912FCAD020019FBEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD02DEB712FCACEC0019FBEE;
+			remoteInfo = Install;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		013307451278688D0067A5FE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -82,55 +109,17 @@
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		32DBCF630370AF2F00C91783 /* atvTwo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atvTwo_Prefix.pch; sourceTree = "<group>"; };
+		32DBCF630370AF2F00C91783 /* plex_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plex_Prefix.pch; sourceTree = "<group>"; };
 		727A3F4712F78FB100994193 /* HWAdvancedSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWAdvancedSettingsController.h; path = Classes/HWAdvancedSettingsController.h; sourceTree = "<group>"; };
 		727A3F4812F78FB100994193 /* HWAdvancedSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWAdvancedSettingsController.m; path = Classes/HWAdvancedSettingsController.m; sourceTree = "<group>"; };
-		727A3FAE12F7C93D00994193 /* SMFGridController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFGridController.h; sourceTree = "<group>"; };
-		729722FC12EE79C20064E776 /* BRMenuItem_SMF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRMenuItem_SMF.h; sourceTree = "<group>"; };
-		729722FD12EE79C20064E776 /* NSArray_SMF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArray_SMF.h; sourceTree = "<group>"; };
-		729722FE12EE79C20064E776 /* NSTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTask.h; sourceTree = "<group>"; };
-		729722FF12EE79C20064E776 /* SMFBaseAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFBaseAsset.h; sourceTree = "<group>"; };
-		7297230012EE79C20064E776 /* SMFCenteredMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFCenteredMenuController.h; sourceTree = "<group>"; };
-		7297230112EE79C20064E776 /* SMFClockController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFClockController.h; sourceTree = "<group>"; };
-		7297230212EE79C20064E776 /* SMFColorSelectionMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFColorSelectionMenu.h; sourceTree = "<group>"; };
-		7297230312EE79C20064E776 /* SMFCommonTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFCommonTools.h; sourceTree = "<group>"; };
-		7297230412EE79C20064E776 /* SMFController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFController.h; sourceTree = "<group>"; };
-		7297230512EE79C20064E776 /* SMFDebAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFDebAsset.h; sourceTree = "<group>"; };
-		7297230612EE79C20064E776 /* SMFDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFDefines.h; sourceTree = "<group>"; };
-		7297230712EE79C20064E776 /* SMFEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFEvent.h; sourceTree = "<group>"; };
-		7297230812EE79C20064E776 /* SMFEventConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFEventConfiguration.h; sourceTree = "<group>"; };
-		7297230912EE79C20064E776 /* SMFEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFEventManager.h; sourceTree = "<group>"; };
-		7297230A12EE79C20064E776 /* SMFFolderBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFFolderBrowser.h; sourceTree = "<group>"; };
-		7297230B12EE79C20064E776 /* SMFFolderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFFolderDelegate.h; sourceTree = "<group>"; };
-		7297230C12EE79C20064E776 /* SMFImageAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFImageAsset.h; sourceTree = "<group>"; };
-		7297230D12EE79C20064E776 /* SMFInvocationCenteredMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFInvocationCenteredMenuController.h; sourceTree = "<group>"; };
-		7297230E12EE79C20064E776 /* SMFListDropShadowControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFListDropShadowControl.h; sourceTree = "<group>"; };
-		7297230F12EE79C20064E776 /* SMFMediaMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFMediaMenuController.h; sourceTree = "<group>"; };
-		7297231012EE79C20064E776 /* SMFMediaPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFMediaPreview.h; sourceTree = "<group>"; };
-		7297231112EE79C20064E776 /* SMFMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFMenuController.h; sourceTree = "<group>"; };
-		7297231212EE79C20064E776 /* SMFMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFMenuItem.h; sourceTree = "<group>"; };
-		7297231312EE79C20064E776 /* SMFMovieAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFMovieAsset.h; sourceTree = "<group>"; };
-		7297231412EE79C20064E776 /* SMFPasscodeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFPasscodeController.h; sourceTree = "<group>"; };
-		7297231512EE79C20064E776 /* SMFPhotoMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFPhotoMethods.h; sourceTree = "<group>"; };
-		7297231612EE79C20064E776 /* SMFPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFPopup.h; sourceTree = "<group>"; };
-		7297231712EE79C20064E776 /* SMFPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFPreferences.h; sourceTree = "<group>"; };
-		7297231812EE79C20064E776 /* SMFProgressBarControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFProgressBarControl.h; sourceTree = "<group>"; };
-		7297231912EE79C30064E776 /* SMFProgressBarMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFProgressBarMenuItem.h; sourceTree = "<group>"; };
-		7297231A12EE79C30064E776 /* SMFQueryMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFQueryMenu.h; sourceTree = "<group>"; };
-		7297231B12EE79C30064E776 /* SMFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFramework.h; sourceTree = "<group>"; };
-		7297231C12EE79C30064E776 /* SMFScreenCapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFScreenCapture.h; sourceTree = "<group>"; };
-		7297231D12EE79C30064E776 /* SMFSettingPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFSettingPreferences.h; sourceTree = "<group>"; };
-		7297231E12EE79C30064E776 /* SMFThemeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFThemeInfo.h; sourceTree = "<group>"; };
-		7297231F12EE79C30064E776 /* SMFViewMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFViewMenuController.h; sourceTree = "<group>"; };
-		7297232012EE79C30064E776 /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthesizeSingleton.h; sourceTree = "<group>"; };
 		7297238212EE81000064E776 /* HWUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWUserDefaults.h; path = Classes/HWUserDefaults.h; sourceTree = "<group>"; };
 		7297238312EE81000064E776 /* HWUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWUserDefaults.m; path = Classes/HWUserDefaults.m; sourceTree = "<group>"; };
-		729723AD12EE84810064E776 /* HWRemoteServersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWRemoteServersController.h; path = Classes/HWRemoteServersController.h; sourceTree = "<group>"; };
-		729723AE12EE84810064E776 /* HWRemoteServersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWRemoteServersController.m; path = Classes/HWRemoteServersController.m; sourceTree = "<group>"; };
-		72B2C4FC12DBE12800E23F8E /* HWSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWSettingsController.h; path = Classes/HWSettingsController.h; sourceTree = "<group>"; };
-		72B2C4FD12DBE12800E23F8E /* HWSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWSettingsController.m; path = Classes/HWSettingsController.m; sourceTree = "<group>"; };
-		72B2C71312DC1F0E00E23F8E /* HWPmsListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWPmsListController.h; path = Classes/HWPmsListController.h; sourceTree = "<group>"; };
-		72B2C71412DC1F0E00E23F8E /* HWPmsListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWPmsListController.m; path = Classes/HWPmsListController.m; sourceTree = "<group>"; };
+		729723AD12EE84810064E776 /* HWRemoteServersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWRemoteServersController.h; path = "/Users/sd/Dropbox/workspace/Xcode/ATV2/Plex-ATV-Plugin/PlexATV/Classes/HWRemoteServersController.h"; sourceTree = "<absolute>"; };
+		729723AE12EE84810064E776 /* HWRemoteServersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWRemoteServersController.m; path = "/Users/sd/Dropbox/workspace/Xcode/ATV2/Plex-ATV-Plugin/PlexATV/Classes/HWRemoteServersController.m"; sourceTree = "<absolute>"; };
+		72B2C4FC12DBE12800E23F8E /* HWSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWSettingsController.h; path = "/Users/sd/Dropbox/workspace/Xcode/ATV2/Plex-ATV-Plugin/PlexATV/Classes/HWSettingsController.h"; sourceTree = "<absolute>"; };
+		72B2C4FD12DBE12800E23F8E /* HWSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWSettingsController.m; path = "/Users/sd/Dropbox/workspace/Xcode/ATV2/Plex-ATV-Plugin/PlexATV/Classes/HWSettingsController.m"; sourceTree = "<absolute>"; };
+		72B2C71312DC1F0E00E23F8E /* HWPmsListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWPmsListController.h; path = "/Users/sd/Dropbox/workspace/Xcode/ATV2/Plex-ATV-Plugin/PlexATV/Classes/HWPmsListController.h"; sourceTree = "<absolute>"; };
+		72B2C71412DC1F0E00E23F8E /* HWPmsListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWPmsListController.m; path = "/Users/sd/Dropbox/workspace/Xcode/ATV2/Plex-ATV-Plugin/PlexATV/Classes/HWPmsListController.m"; sourceTree = "<absolute>"; };
 		72EA80F612DEB49B00138F7D /* PlexSettings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PlexSettings.png; path = Resources/PlexSettings.png; sourceTree = "<group>"; };
 		72EA810712DEB6B500138F7D /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = Classes/Constants.h; sourceTree = "<group>"; };
 		875A824A126FFF1F00ECADC2 /* HWAppliance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HWAppliance.mm; path = Classes/HWAppliance.mm; sourceTree = "<group>"; };
@@ -282,7 +271,7 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				32DBCF630370AF2F00C91783 /* atvTwo_Prefix.pch */,
+				32DBCF630370AF2F00C91783 /* plex_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -302,55 +291,9 @@
 			name = Settings;
 			sourceTree = "<group>";
 		};
-		729722FB12EE79C20064E776 /* SMFramework */ = {
-			isa = PBXGroup;
-			children = (
-				729722FC12EE79C20064E776 /* BRMenuItem_SMF.h */,
-				729722FD12EE79C20064E776 /* NSArray_SMF.h */,
-				729722FE12EE79C20064E776 /* NSTask.h */,
-				729722FF12EE79C20064E776 /* SMFBaseAsset.h */,
-				7297230012EE79C20064E776 /* SMFCenteredMenuController.h */,
-				7297230112EE79C20064E776 /* SMFClockController.h */,
-				7297230212EE79C20064E776 /* SMFColorSelectionMenu.h */,
-				7297230312EE79C20064E776 /* SMFCommonTools.h */,
-				7297230412EE79C20064E776 /* SMFController.h */,
-				7297230512EE79C20064E776 /* SMFDebAsset.h */,
-				7297230612EE79C20064E776 /* SMFDefines.h */,
-				7297230712EE79C20064E776 /* SMFEvent.h */,
-				7297230812EE79C20064E776 /* SMFEventConfiguration.h */,
-				7297230912EE79C20064E776 /* SMFEventManager.h */,
-				7297230A12EE79C20064E776 /* SMFFolderBrowser.h */,
-				7297230B12EE79C20064E776 /* SMFFolderDelegate.h */,
-				727A3FAE12F7C93D00994193 /* SMFGridController.h */,
-				7297230C12EE79C20064E776 /* SMFImageAsset.h */,
-				7297230D12EE79C20064E776 /* SMFInvocationCenteredMenuController.h */,
-				7297230E12EE79C20064E776 /* SMFListDropShadowControl.h */,
-				7297230F12EE79C20064E776 /* SMFMediaMenuController.h */,
-				7297231012EE79C20064E776 /* SMFMediaPreview.h */,
-				7297231112EE79C20064E776 /* SMFMenuController.h */,
-				7297231212EE79C20064E776 /* SMFMenuItem.h */,
-				7297231312EE79C20064E776 /* SMFMovieAsset.h */,
-				7297231412EE79C20064E776 /* SMFPasscodeController.h */,
-				7297231512EE79C20064E776 /* SMFPhotoMethods.h */,
-				7297231612EE79C20064E776 /* SMFPopup.h */,
-				7297231712EE79C20064E776 /* SMFPreferences.h */,
-				7297231812EE79C20064E776 /* SMFProgressBarControl.h */,
-				7297231912EE79C30064E776 /* SMFProgressBarMenuItem.h */,
-				7297231A12EE79C30064E776 /* SMFQueryMenu.h */,
-				7297231B12EE79C30064E776 /* SMFramework.h */,
-				7297231C12EE79C30064E776 /* SMFScreenCapture.h */,
-				7297231D12EE79C30064E776 /* SMFSettingPreferences.h */,
-				7297231E12EE79C30064E776 /* SMFThemeInfo.h */,
-				7297231F12EE79C30064E776 /* SMFViewMenuController.h */,
-				7297232012EE79C30064E776 /* SynthesizeSingleton.h */,
-			);
-			path = SMFramework;
-			sourceTree = "<group>";
-		};
 		72B2BEBE12DBD87E00E23F8E /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				729722FB12EE79C20064E776 /* SMFramework */,
 			);
 			name = lib;
 			sourceTree = "<group>";
@@ -412,7 +355,7 @@
 /* Begin PBXProject section */
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "atvTwo" */;
+			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "plex" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -427,7 +370,8 @@
 			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* plex */,
-				DD0CC95712FE238800743D2C /* script */,
+				DD02DEB212FCACCC0019FBEE /* All */,
+				DD02DEB712FCACEC0019FBEE /* Install */,
 			);
 		};
 /* End PBXProject section */
@@ -438,6 +382,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
+				875A873412704ACC00ECADC2 /* theos in Resources */,
 				013310FD127C09FD0067A5FE /* PlexIcon.png in Resources */,
 				0133123C127C26D70067A5FE /* PlexLogo.png in Resources */,
 				72EA80F712DEB49B00138F7D /* PlexSettings.png in Resources */,
@@ -447,7 +392,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		DD0CC95612FE238800743D2C /* ShellScript */ = {
+		DD02DEB612FCACEC0019FBEE /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -458,7 +403,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export APP_NAME=\"Lowtide.app\"\nexport TARGET_DIR=/Applications/${APP_NAME}/Appliances/PLEX.frappliance\n\n#copy local (in order to build the .deb\ncp \"${CODESIGNING_FOLDER_PATH}/plex\" \"${BUILD_DIR}/../_deb/PLEX.frapplication/Applications/${APP_NAME}/Appliances/PLEX.frappliance/\"\n\n\n#copy to the ATV\nscp \"${CODESIGNING_FOLDER_PATH}/plex\" root@apple-tv.local:${TARGET_DIR}\nscp \"${BUILD_DIR}/../_deb/PLEX.frapplication/Applications/${APP_NAME}/Appliances/PLEX.frappliance/Info.plist\" root@apple-tv.local:${TARGET_DIR}\n\n#restart UI\nssh root@apple-tv.local 'killall AppleTV'\n#ssh root@apple-tv.local 'killall Lowtide'\n";
+			shellScript = "export APP_NAME=\"Lowtide.app\"\nexport TARGET_DIR=/Applications/${APP_NAME}/Appliances/PLEX.frappliance\n\n#copy local (in order to build the .deb\ncp \"${BUILT_PRODUCTS_DIR}/plex.frappliance/plex\" \"${BUILD_DIR}/../_deb/PLEX.frapplication/Applications/${APP_NAME}/Appliances/PLEX.frappliance/\"\n\n\n#copy to the ATV\nscp \"${BUILT_PRODUCTS_DIR}/plex.frappliance/plex\" root@apple-tv.local:${TARGET_DIR}\nscp \"${PROJECT_DIR}/_deb/PLEX.frapplication/Applications/${APP_NAME}/Appliances/PLEX.frappliance/Info.plist\" root@apple-tv.local:${TARGET_DIR}\n\n#restart UI\nssh root@apple-tv.local 'killall AppleTV'\n#ssh root@apple-tv.local 'killall Lowtide'\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -475,18 +420,28 @@
 				C4D558A512D66BE900877755 /* NSArray-Shuffle.m in Sources */,
 				C4D558A612D66BE900877755 /* SongListController.m in Sources */,
 				C4D55A9312D7E22A00877755 /* PlexSongAsset.m in Sources */,
-				72B2C4FE12DBE12800E23F8E /* HWSettingsController.m in Sources */,
-				72B2C71512DC1F0E00E23F8E /* HWPmsListController.m in Sources */,
 				C4EA913612DCD77700DCC798 /* PlexPreviewAsset.m in Sources */,
 				015D313D12E10A52001A32C1 /* ProxyMachineDelegate.m in Sources */,
 				015D320A12E11C80001A32C1 /* PlexMediaAssetOld.m in Sources */,
 				7297238412EE81000064E776 /* HWUserDefaults.m in Sources */,
-				729723AF12EE84810064E776 /* HWRemoteServersController.m in Sources */,
 				727A3F4912F78FB100994193 /* HWAdvancedSettingsController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DD02DEB512FCACD00019FBEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D5B49AC048680CD000E48DA /* plex */;
+			targetProxy = DD02DEB412FCACD00019FBEE /* PBXContainerItemProxy */;
+		};
+		DD02DEBA12FCAD020019FBEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD02DEB712FCACEC0019FBEE /* Install */;
+			targetProxy = DD02DEB912FCAD020019FBEE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
@@ -504,25 +459,28 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../SMFramework/_/Library/Frameworks\"",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = atvTwo_Prefix.pch;
+				GCC_PREFIX_HEADER = plex_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"BUILD_ATV_LIB=1",
 					"HTTP_SERVER_PORT=32400",
 				);
 				HEADER_SEARCH_PATHS = (
 					../../ATV2Includes,
-					"\"$(SRCROOT)/theos/include\"\n\"$(SRCROOT)/../_Contrib/lib\"",
+					"\"$(SRCROOT)/theos/include\"",
 					"\"$(SRCROOT)/../_Contrib/include\"",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = (
+					../../ATV2Includes,
 					"\"$(SRCROOT)/theos/include\"",
 					"\"$(SRCROOT)/../_Contrib/lib\"",
 				);
@@ -543,24 +501,36 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../ATV2Includes;
 				PREBINDING = NO;
 				SDKROOT = iphoneos4.2;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};
-		DD0CC95812FE238800743D2C /* Release */ = {
+		DD02DEB312FCACCC0019FBEE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = "install xcode product";
+				PRODUCT_NAME = Install;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		DD02DEB812FCACEC0019FBEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = Install;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -576,7 +546,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "atvTwo" */ = {
+		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "plex" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB914008733D840010E9CD /* Release */,
@@ -584,10 +554,18 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD0CC95912FE23B600743D2C /* Build configuration list for PBXAggregateTarget "script" */ = {
+		DD02DEE312FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "Install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD0CC95812FE238800743D2C /* Release */,
+				DD02DEB812FCACEC0019FBEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD02DEE412FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD02DEB312FCACCC0019FBEE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
