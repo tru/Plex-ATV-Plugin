@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 export APP_NAME="Lowtide.app"                                                                                                                                                                
 export TARGET_DIR=/Applications/${APP_NAME}/Appliances/PLEX.frappliance                                                                                                                      
 export NEW_TARGET_DIR=/Applications/AppleTV.app/Appliances/                                                                                                                                  

@@ -166,7 +166,7 @@ void checkNil(NSObject *ctrl)
 	DLog(@"box");
 	BRBoxControl *shelfBox = [[BRBoxControl alloc] init];
 	[shelfBox setAcceptsFocus:YES];
-	[shelfBox setDividerSuggestedHeight:26.f];
+	[shelfBox setDividerSuggestedHeight:40.f];
 	[shelfBox setDividerMargin:0.05f];
 	[shelfBox setContent:_shelfControl];
 	[shelfBox setDivider:div1];
@@ -200,14 +200,14 @@ void checkNil(NSObject *ctrl)
 	[_gridControl setColumnCount:6];
 	[_gridControl setWrapsNavigation:YES];
 	[_gridControl setHorizontalGap:0];
-	[_gridControl setVerticalGap:15];
+	[_gridControl setVerticalGap:25.f];
 	[_gridControl setLeftMargin:0.05f];
 	[_gridControl setRightMargin:0.05f];
-	
+  [_gridControl setAllRowsAreSameHeight:YES];
 	
 	[_gridControl setAcceptsFocus:YES];
-	[_gridControl setWrapsNavigation:YES];
 	[_gridControl setProviderRequester:_gridControl];
+  
 	CGRect gridFrame;
 	gridFrame.origin.y = dividerFrame.origin.y-25;
 	gridFrame.size.height = [_gridControl _totalHeight] + 50.f;
@@ -220,7 +220,7 @@ void checkNil(NSObject *ctrl)
 	
 	BRBoxControl *gridBox = [[BRBoxControl alloc] init];
 	[gridBox setAcceptsFocus:YES];
-	[gridBox setDividerSuggestedHeight:66.f];
+	[gridBox setDividerSuggestedHeight:40.f];
 	[gridBox setDividerMargin:0.05f];
 	[gridBox setContent:_gridControl];
 	[gridBox setDivider:div2];

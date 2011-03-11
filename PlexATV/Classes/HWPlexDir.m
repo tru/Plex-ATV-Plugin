@@ -207,7 +207,6 @@
 	[preview setShowsMetadataImmediately:NO];
 	[preview setAsset:pma];
   [pma release];
-	[pmo release];
 	
 	return [preview autorelease];
 }
