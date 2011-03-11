@@ -142,6 +142,8 @@ PlexMediaProvider* __provider = nil;
 		streamQuality = [PlexStreamingQualityDescriptor quality720pLow];
 	}
 	pmo.request.machine.streamQuality = streamQuality;
+  
+  DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);
 	
 	/*
 	 //player get's confused if we're running a transcoder already (tried playing and failed on ATV, transcoder still running)
@@ -153,6 +155,7 @@ PlexMediaProvider* __provider = nil;
 	
 	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
+  DLog(@"%@", pmo.request.machine.capabilities.qualities);
 	NSURL* mediaURL = [pmo mediaURL];
 	
 	DLog(@"Starting Playback of %@", mediaURL);

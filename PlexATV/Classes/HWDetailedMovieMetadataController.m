@@ -251,7 +251,7 @@ typedef enum {
 
 -(NSString *)summary {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
+    //DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
 #endif
 	return [self.selectedMediaItemPreviewData mediaSummary];
 }
