@@ -129,11 +129,17 @@ typedef enum {
 
 #pragma mark -
 #pragma mark Delegate Methods
+//#define ArrowSwitchDelay 0.7f
+
 -(BOOL)controllerCanSwitchToPrevious:(SMFMoviePreviewController *)c {
 	return YES;
 }
 
 -(void)controllerSwitchToPrevious:(SMFMoviePreviewController *)ctrl {
+#warning requires an update of smframework
+	//[ctrl switchPreviousArrowOn];
+	//[ctrl performSelector:@selector(switchPreviousArrowOff) withObject:nil afterDelay:ArrowSwitchDelay];
+	
 	[[SMFThemeInfo sharedTheme] playNavigateSound];
 	int newIndex;
 	if (currentSelectedIndex - 1 < 0) {
@@ -156,6 +162,10 @@ typedef enum {
 }
 
 -(void)controllerSwitchToNext:(SMFMoviePreviewController *)ctrl {
+#warning requires an update of smframework
+	//[ctrl switchNextArrowOn];
+	//[ctrl performSelector:@selector(switchNextArrowOff) withObject:nil afterDelay:ArrowSwitchDelay];
+	
 	[[SMFThemeInfo sharedTheme] playNavigateSound];
 	int newIndex;
 	if (currentSelectedIndex + 1 < [self.assets count]) {
