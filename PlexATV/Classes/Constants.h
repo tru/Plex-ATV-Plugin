@@ -2,6 +2,7 @@
 #define PreferencesDomain @"com.plex.client-plugin"
 #define PreferencesMachinesExcludedFromServerList @"PreferencesMachinesExcludedFromServerList"
 #define PreferencesQualitySetting @"PreferencesQualitySetting"
+#define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
 #define PreferencesAdvancedEnableDebug @"PreferencesAdvancedEnableDebug"
 #define PreferencesAdvancedEnableSkipFilteringOptionsMenu @"PreferencesAdvancedEnableSkipFilteringOptionsMenu"
 

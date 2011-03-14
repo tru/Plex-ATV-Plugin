@@ -26,8 +26,9 @@
 
 #define ServersIndex 0
 #define QualitySettingIndex 1
-#define AdvancedSettingsIndex 2
-#define PluginVersionNumberIndex 3
+#define ViewTypeSettingIndex 2
+#define AdvancedSettingsIndex 3
+#define PluginVersionNumberIndex 4
 
 #pragma mark -
 #pragma mark init/dealoc
@@ -72,7 +73,22 @@
 	[qualitySettingTitle release];
 	[_items addObject:qualitySettingMenuItem];
 	
+
+  	// =========== view type setting ===========
+	SMFMenuItem *viewTypeSettingMenuItem = [SMFMenuItem menuItem];
 	
+	NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+	if (viewTypeSetting == nil) {
+		[[HWUserDefaults preferences] setObject:@"Multiplex" forKey:PreferencesViewTypeSetting];
+		viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+	}
+	
+	NSString *viewTypeSettingTitle = [[NSString alloc] initWithFormat:@"Video view:   %@", viewTypeSetting];
+	[viewTypeSettingMenuItem setTitle:viewTypeSettingTitle];
+	[viewTypeSettingTitle release];
+	[_items addObject:viewTypeSettingMenuItem];
+	
+  
 	// =========== advanced settings ===========
 	SMFMenuItem *advancedSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[advancedSettingsMenuItem setTitle:@"Advanced Settings"];
@@ -136,6 +152,21 @@
 			[self.list reload];
 			break;
 		}
+    case ViewTypeSettingIndex: {
+        // =========== view type setting ===========
+			NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+			
+			if ([viewTypeSetting isEqualToString:@"List"]) {
+				[[HWUserDefaults preferences] setObject:@"Multiplex" forKey:PreferencesViewTypeSetting];
+			} else {
+				[[HWUserDefaults preferences] setObject:@"List" forKey:PreferencesViewTypeSetting];
+			}
+			DLog(@"changin view type to: %@",viewTypeSetting);
+      
+			[self setupList];
+			[self.list reload];      
+      break;
+    }
 		case AdvancedSettingsIndex: {
 			// =========== advanced settings ===========
 			HWAdvancedSettingsController* menuController = [[HWAdvancedSettingsController alloc] init];
@@ -169,6 +200,12 @@
 			[asset setSummary:@"Sets the quality of the streamed video.                                        Good: 720p 1500 kbps, Better: 720p 2300 kbps, Best: 720p 4000 kbps"];
 			break;
 		}
+		case ViewTypeSettingIndex: {
+        // =========== view type setting ===========
+			[asset setTitle:@"Select the video listing view typ"];
+			[asset setSummary:@"Sets the type of view for videos, choose between list view or multiplex view ie. cover art view."];
+			break;
+		}      
 		case AdvancedSettingsIndex: {
 			// =========== advanced settings ===========
 			[asset setTitle:@"Modify advanced settings"];

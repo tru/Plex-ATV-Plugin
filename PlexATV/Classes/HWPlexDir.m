@@ -319,7 +319,7 @@
 		[optionDialogBox addOptionText:@"Go back"];
 		[optionDialogBox setActionSelector:@selector(optionSelected:) target:self];
 		[[self stack] pushController:optionDialogBox];
-		[optionDialogBox release];
+		[optionDialogBox autorelease];
 	}
 }
 
@@ -331,8 +331,8 @@
 			//mark item(s) as watched
 			[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as watched: %@", pmo.name);
-			[pmo markSeen];
-			[self.list reload];
+      [pmo markSeen];
+      [self.list reload];
 		} else if ([[sender selectedText] hasSuffix:@"Unwatched"]) {
 			//mark item(s) as unwatched
 			[[self stack] popController]; //need this so we don't go back to option dialog when going back

@@ -1,4 +1,4 @@
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 
 #import "HWAppliance.h"
 #import "BackRowExtras.h"
@@ -130,16 +130,25 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			return nil;
 		}
 		
-		//HAZAA! we found it! Push new view
-		PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
+		//HAZAA! we found it! 
+    PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
 		DLog(@"matchingCategory: %@", [matchingCategory type]);
-		if (matchingCategory.isMovie) {
-			menuController = [self newMoviesController:[matchingCategory contents]];
-		} else if (matchingCategory.isTVShow) {
-			menuController = [self newTVShowsController:[matchingCategory contents]];
-		} else {
-			menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-		}
+    
+    //determine the user selected view setting
+    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Multiplex"]) {
+      if (matchingCategory.isMovie) {
+        menuController = [self newMoviesController:[matchingCategory contents]];
+      } else if (matchingCategory.isTVShow) {
+        menuController = [self newTVShowsController:[matchingCategory contents]];
+      } else {
+        menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
+      }      
+    } else {
+      menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
+    }
+
+
 	}    
 	return [menuController autorelease];
 }
