@@ -136,7 +136,6 @@ typedef enum {
 }
 
 -(void)controllerSwitchToPrevious:(SMFMoviePreviewController *)ctrl {
-#warning requires an update of smframework
 	[ctrl switchPreviousArrowOn];
 	[ctrl performSelector:@selector(switchPreviousArrowOff) withObject:nil afterDelay:ArrowSwitchDelay];
 	
@@ -162,7 +161,6 @@ typedef enum {
 }
 
 -(void)controllerSwitchToNext:(SMFMoviePreviewController *)ctrl {
-#warning requires an update of smframework
 	[ctrl switchNextArrowOn];
 	[ctrl performSelector:@selector(switchNextArrowOff) withObject:nil afterDelay:ArrowSwitchDelay];
 	
