@@ -377,6 +377,7 @@
 	if (pmo.hasMedia || [@"Video" isEqualToString:mediaType]) {
 		BRComboMenuItemLayer *menuItem = [[BRComboMenuItemLayer alloc] init];
 		
+#warning should not show little blue ball when item is 90+% done
 		BRImage *image;
 		if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
 			image = [[BRThemeInfo sharedTheme] unplayedVideoImage];			
