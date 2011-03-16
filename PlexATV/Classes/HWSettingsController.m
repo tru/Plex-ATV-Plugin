@@ -44,11 +44,30 @@
 	return self;
 }
 
-- (void)wasPopped{
-	DLog(@"Did pop controller %@", self);
+#pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasPushed];
+}
+
+- (void)wasPopped {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
 	[topLevelController reloadCategories];
 	[super wasPopped];
 }
+
+- (void)wasExhumed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[self setupList];
+	[self.list reload];
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
+}
+
 
 - (void)setupList {
 	[_items removeAllObjects];
@@ -117,12 +136,6 @@
 
 - (void)dealloc {
 	[super dealloc];	
-}
-
-- (void)wasExhumed {
-	[self setupList];
-	[self.list reload];
-	[super wasExhumed];
 }
 
 #pragma mark -

@@ -37,6 +37,27 @@
 	[super dealloc];
 }
 
+
+#pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasPushed];
+}
+
+- (void)wasPopped {
+	[super wasPopped];
+}
+
+- (void)wasExhumed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
+}
+
 #pragma mark -
 #pragma mark SMFBookcaseController Datasource Methods
 - (NSString *)headerTitleForBookcaseController:(SMFBookcaseController *)bookcaseController {

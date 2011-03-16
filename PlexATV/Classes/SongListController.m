@@ -84,6 +84,28 @@
 	[super dealloc];
 }
 
+
+#pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasPushed];
+}
+
+- (void)wasPopped {
+	[super wasPopped];
+}
+
+- (void)wasExhumed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
+}
+
+
 - (void)convertDirToSongAssets:(NSArray*)plexDirectories {
 	DLog(@"convertDirToSongAssets %@", plexDirectories);
 	self.songs = [[NSMutableArray alloc] initWithCapacity:5];

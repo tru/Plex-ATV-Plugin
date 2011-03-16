@@ -40,28 +40,26 @@
 	[super dealloc];
 }
 
-- (void)wasBuried{
-	DLog(@"--- Did burrie controller %@", self);
-	[super wasBuried];
-}
-
-- (void)wasExhumed{
-	DLog(@"--- Did exhume controller %@", self);
-	[super wasExhumed];
-}
-
-- (void)wasPushed{
-	DLog(@"--- Did push controller %@ %@", self, _names);
+#pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
 	[[ProxyMachineDelegate shared] registerDelegate:self];
-	
 	[super wasPushed];
 }
 
-- (void)wasPopped{
-	DLog(@"--- Did pop controller %@", self);
+- (void)wasPopped {
 	[[ProxyMachineDelegate shared] removeDelegate:self];
-	
 	[super wasPopped];
+}
+
+- (void)wasExhumed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
 }
 
 

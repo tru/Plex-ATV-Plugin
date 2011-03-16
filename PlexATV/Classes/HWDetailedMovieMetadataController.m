@@ -128,6 +128,27 @@ typedef enum {
 
 
 #pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasPushed];
+}
+
+- (void)wasPopped {
+	[super wasPopped];
+}
+
+- (void)wasExhumed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
+}
+
+
+#pragma mark -
 #pragma mark Delegate Methods
 #define ArrowSwitchDelay 0.7f
 

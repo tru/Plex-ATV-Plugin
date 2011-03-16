@@ -40,34 +40,39 @@
 	return self;
 }
 
+#pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
+	[[ProxyMachineDelegate shared] registerDelegate:self];
+	[self.machines removeAllObjects];
+	[self.machines addObjectsFromArray:[[MachineManager sharedMachineManager] threadSafeMachines]];
+	[self.machines sortUsingDescriptors:_machineSortDescriptors];
+	[self.list reload];
+	[super wasPushed];
+}
+
+- (void)wasPopped {
+	[[ProxyMachineDelegate shared] removeDelegate:self];
+	[super wasPopped];
+}
+
+- (void)wasExhumed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
+}
+
+
 -(void)dealloc {	
 	self.machines = nil;
 	[_machineSortDescriptors release];
 	
 	[super dealloc];
 }
-
-- (void)wasPushed {
-#ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"--- Did push controller");
-#endif
-	[[ProxyMachineDelegate shared] registerDelegate:self];
-	[self.machines removeAllObjects];
-	[self.machines addObjectsFromArray:[[MachineManager sharedMachineManager] threadSafeMachines]];
-	[self.machines sortUsingDescriptors:_machineSortDescriptors];
-	
-	[self.list reload];
-}
-
-- (void)wasPopped {
-#ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"--- Did pop controller");
-#endif
-	[[ProxyMachineDelegate shared] removeDelegate:self];
-	
-	[super wasPopped];
-}
-
 
 #pragma mark -
 #pragma mark Edit Machine Manager's Machine List Methods

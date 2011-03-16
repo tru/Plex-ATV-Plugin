@@ -71,6 +71,33 @@
 	return self;
 }
 
+#pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	if (isCreatingNewMachine) {
+		[self startAddNewMachineWizard];
+	} else {
+		[self setListTitle:self.machine.serverName];
+		[self.list reload];
+	}
+	[super wasPushed];
+}
+
+- (void)wasPopped {
+	[super wasPopped];
+}
+
+- (void)wasExhumed {
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
+}
+
+
 -(void)dealloc {
 	//controller is retained by MM until testConnection calls have been returned
 	
@@ -84,26 +111,6 @@
 	self.selectedConnection = nil;
 	
 	[super dealloc];
-}
-
-- (void)wasPushed {
-#ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"--- Did push controller %@ %@", self, _machine);
-#endif
-	if (isCreatingNewMachine) {
-		[self startAddNewMachineWizard];
-	} else {
-		[self setListTitle:self.machine.serverName];
-		[self.list reload];
-	}
-	[super wasPushed];
-}
-
-- (void)wasPopped {
-#ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"--- Did pop controller %@ %@", self, _machine);
-#endif	
-	[super wasPopped];
 }
 
 - (BOOL)isExcludedFromServerList {
