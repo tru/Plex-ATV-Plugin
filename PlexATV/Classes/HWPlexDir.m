@@ -45,6 +45,9 @@
 @implementation HWPlexDir
 @synthesize rootContainer;
 
+
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (id) init
 {
 	if((self = [super init]) != nil) {

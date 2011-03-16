@@ -37,6 +37,8 @@
 @implementation PlexPreviewAsset
 @synthesize pmo;
 
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (id) initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider  mediaObject:(PlexMediaObject*)o
 {
     //self = [super initWithMediaProvider:mediaProvider];

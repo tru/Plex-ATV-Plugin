@@ -37,6 +37,8 @@ enum
 };
 
 @implementation PlexMediaProvider
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (id) init
 {
     if ( [super init] == nil )

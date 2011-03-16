@@ -44,6 +44,8 @@ PlexMediaProvider* __provider = nil;
 
 @implementation PlexPlaybackController
 
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (id) init
 {
 	self = [super init];

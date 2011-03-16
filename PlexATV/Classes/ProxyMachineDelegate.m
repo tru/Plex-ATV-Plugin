@@ -11,6 +11,8 @@
 
 @implementation ProxyMachineDelegate
 
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 +(ProxyMachineDelegate*)shared {
 	static ProxyMachineDelegate* _proxyMachineDelegate = nil;
 	if (_proxyMachineDelegate==nil){

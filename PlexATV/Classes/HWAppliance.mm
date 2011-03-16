@@ -65,8 +65,6 @@ NSString * const MachineNameKey = @"PlexMachineName";
 
 #pragma mark -
 #pragma mark PlexAppliance
-
-
 @implementation PlexAppliance
 @synthesize topShelfController = _topShelfController;
 @synthesize applianceCat = _applianceCategories;

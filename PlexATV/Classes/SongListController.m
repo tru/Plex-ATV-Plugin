@@ -56,7 +56,7 @@
 @synthesize rootContainer;
 
 #pragma mark -
-#pragma mark init/dealoc
+#pragma mark Object/Class Lifecycle
 - (id)init {
 	if((self = [super init]) != nil) {
 		[self setListTitle:@"Search Result"];

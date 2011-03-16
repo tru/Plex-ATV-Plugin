@@ -33,13 +33,13 @@ void checkNil(NSObject *ctrl)
 	}
 }
 
--(id)initWithPath:(NSString *)path
-{
+#pragma mark -
+#pragma mark Object/Class Lifecycle
+-(id)initWithPath:(NSString *)path {
 	return self;
 }
 
 - (id)initWithPlexAllMovies:(PlexMediaContainer *)allMovies andRecentMovies:(PlexMediaContainer *)recentMovies {
-	
 	self = [self init];
 	[allMovies retain];
 	[recentMovies retain];

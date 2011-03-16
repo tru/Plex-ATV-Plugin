@@ -23,8 +23,7 @@
 #define EnableDebug 1
 
 #pragma mark -
-#pragma mark init/dealoc
-
+#pragma mark Object/Class Lifecycle
 - (id) init {
 	if((self = [super init]) != nil) {
 		[self setLabel:@"Plex Advanced Settings"];
@@ -34,6 +33,11 @@
 	}	
 	return self;
 }
+
+- (void)dealloc {
+	[super dealloc];	
+}
+
 
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
@@ -78,10 +82,6 @@
 	[enableDebugMenuItem setTitle:enableDebugTitle];
 	[enableDebugTitle release];
 	[_items addObject:enableDebugMenuItem];
-}
-
-- (void)dealloc {
-	[super dealloc];	
 }
 
 

@@ -17,8 +17,9 @@
 
 @synthesize machines = _machines;
 
-- (id) init
-{
+#pragma mark -
+#pragma mark Object/Class Lifecycle
+- (id) init {
 	if((self = [super init]) != nil) {		
 		[self setListTitle:@"All Servers"];
 		BRImage *sp = [[BRThemeInfo sharedTheme] gearImage];
@@ -39,6 +40,14 @@
 	}
 	return self;
 }
+
+-(void)dealloc {	
+	self.machines = nil;
+	[_machineSortDescriptors release];
+	
+	[super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
@@ -66,13 +75,6 @@
 	[super wasBuried];
 }
 
-
--(void)dealloc {	
-	self.machines = nil;
-	[_machineSortDescriptors release];
-	
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark Edit Machine Manager's Machine List Methods

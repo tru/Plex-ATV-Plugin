@@ -38,6 +38,9 @@
 @synthesize portNumber = _portNumber;
 @synthesize selectedConnection = _selectedConnection;
 
+
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (id) init {
 	if((self = [super init]) != nil) {
 		BRImage *sp = [[BRThemeInfo sharedTheme] gearImage];
@@ -71,6 +74,22 @@
 	return self;
 }
 
+-(void)dealloc {
+	//controller is retained by MM until testConnection calls have been returned
+	
+	[waitPromptControl release];
+	[listDropShadowControl release];
+	self.machine = nil;
+	self.serverName = nil;
+	self.userName = nil;
+	self.password = nil;
+	self.hostName = nil;
+	self.selectedConnection = nil;
+	
+	[super dealloc];
+}
+
+
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
@@ -95,22 +114,6 @@
 
 - (void)wasBuried {
 	[super wasBuried];
-}
-
-
--(void)dealloc {
-	//controller is retained by MM until testConnection calls have been returned
-	
-	[waitPromptControl release];
-	[listDropShadowControl release];
-	self.machine = nil;
-	self.serverName = nil;
-	self.userName = nil;
-	self.password = nil;
-	self.hostName = nil;
-	self.selectedConnection = nil;
-	
-	[super dealloc];
 }
 
 - (BOOL)isExcludedFromServerList {

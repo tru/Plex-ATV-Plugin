@@ -65,6 +65,8 @@ typedef enum {
 	return newAssets;
 }
 
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (id)initWithPreviewAssets:(NSArray*)previewAssets withSelectedIndex:(int)selIndex {
 	if (self = [super init]) {
 		self.assets = previewAssets;

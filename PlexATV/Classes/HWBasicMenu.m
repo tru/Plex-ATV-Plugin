@@ -8,8 +8,10 @@
 
 @implementation HWBasicMenu
 
-- (id) init
-{
+
+#pragma mark -
+#pragma mark Object/Class Lifecycle
+- (id) init {
 	if((self = [super init]) != nil) {
 		
 		DLog(@"--- %@ %s", self, _cmd);
@@ -31,7 +33,6 @@
 	return ( self );
 }	
 
-
 -(void)dealloc
 {
 	DLog(@"--- %@ %s", self, _cmd);
@@ -39,6 +40,7 @@
 	
 	[super dealloc];
 }
+
 
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour

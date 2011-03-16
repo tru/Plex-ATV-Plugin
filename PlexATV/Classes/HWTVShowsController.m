@@ -16,6 +16,8 @@
 @end
 
 @implementation HWTVShowsController
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows {
 	if (self = [super init]) {
 		tvShows = [allTVShows retain];

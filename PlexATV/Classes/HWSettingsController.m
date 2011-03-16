@@ -31,8 +31,7 @@
 #define PluginVersionNumberIndex 4
 
 #pragma mark -
-#pragma mark init/dealoc
-
+#pragma mark Object/Class Lifecycle
 - (id) init {
 	if((self = [super init]) != nil) {
 		topLevelController = nil;
@@ -42,6 +41,10 @@
 		[self setupList];
 	}	
 	return self;
+}
+
+- (void)dealloc {
+	[super dealloc];	
 }
 
 #pragma mark -
@@ -132,10 +135,6 @@
 //		[tempSettingTitle release];
 //		[_items addObject:tempSettingMenuItem];
 //	}
-}
-
-- (void)dealloc {
-	[super dealloc];	
 }
 
 #pragma mark -
