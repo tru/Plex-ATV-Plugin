@@ -7,8 +7,16 @@
 
 #import <Foundation/Foundation.h>
 
-@interface HWUserDefaults : NSObject {}
+@interface HWUserDefaults : PlexPrefs {}
 
-+(SMFPreferences *)preferences;
++ (SMFPreferences *)preferences;
+
+//plex prefs methods
+-(void)setObject:(id)obj forKey:(NSString*)key;
+-(id)objectForKey:(NSString*)key;
+-(void)setInteger:(NSInteger)v forKey:(NSString*)key;
+-(NSInteger)integerForKey:(NSString*)key;
+-(void)syncSettings;
+-(void)_setDefaults;
 
 @end

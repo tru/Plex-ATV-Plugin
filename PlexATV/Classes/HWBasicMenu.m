@@ -18,58 +18,50 @@
 		
 		BRImage *sp = [[BRThemeInfo sharedTheme] gearImage];
 		
-    [self setListIcon:sp horizontalOffset:0.0 kerningFactor:0.15];
+		[self setListIcon:sp horizontalOffset:0.0 kerningFactor:0.15];
 		
 		_names = [[NSMutableArray alloc] init];
 		
-    //make sure we are the delegate
-    [[ProxyMachineDelegate shared] registerDelegate:self];
-    
-    //start the auto detection
-		[[MachineManager sharedMachineManager] startAutoDetection];
+		//make sure we are the delegate
+		[[ProxyMachineDelegate shared] registerDelegate:self];
 		
-		[[self list] setDatasource:self];
-		
-		return ( self );
-		
+		//start the auto detection		
+		[[self list] setDatasource:self];		
 	}
-	
 	return ( self );
 }	
 
 
 -(void)dealloc
 {
-  DLog(@"--- %@ %s", self, _cmd);
-  
-	[[MachineManager sharedMachineManager] stopAutoDetection];
+	DLog(@"--- %@ %s", self, _cmd);
 	[_names release];
-
+	
 	[super dealloc];
 }
 
 - (void)wasBuried{
-  DLog(@"--- Did burrie controller %@", self);
-  [super wasBuried];
+	DLog(@"--- Did burrie controller %@", self);
+	[super wasBuried];
 }
 
 - (void)wasExhumed{
-  DLog(@"--- Did exhume controller %@", self);
-  [super wasExhumed];
+	DLog(@"--- Did exhume controller %@", self);
+	[super wasExhumed];
 }
 
 - (void)wasPushed{
-  DLog(@"--- Did push controller %@ %@", self, _names);
-  [[ProxyMachineDelegate shared] registerDelegate:self];
-  
-  [super wasPushed];
+	DLog(@"--- Did push controller %@ %@", self, _names);
+	[[ProxyMachineDelegate shared] registerDelegate:self];
+	
+	[super wasPushed];
 }
 
 - (void)wasPopped{
-  DLog(@"--- Did pop controller %@", self);
-  [[ProxyMachineDelegate shared] removeDelegate:self];
-  
-  [super wasPopped];
+	DLog(@"--- Did pop controller %@", self);
+	[[ProxyMachineDelegate shared] removeDelegate:self];
+	
+	[super wasPopped];
 }
 
 
@@ -88,18 +80,18 @@
 }
 
 - (BOOL)shouldRefreshForUpdateToObject:(id)object{
-  return YES;
+	return YES;
 }
 
 - (void)itemSelected:(long)selected {
-  if (selected<0 || selected>=_names.count) return;
+	if (selected<0 || selected>=_names.count) return;
 	Machine* m = [_names objectAtIndex:selected];
 	DLog(@"machine selected: %@", m);
 	
 	HWPlexDir* menuController = [[HWPlexDir alloc] init];
-  menuController.rootContainer = [m.request rootLevel];
-  [[[BRApplicationStackManager singleton] stack] pushController:menuController];
-  [menuController autorelease];
+	menuController.rootContainer = [m.request rootLevel];
+	[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+	[menuController autorelease];
 }
 
 - (float)heightForRow:(long)row {
@@ -113,10 +105,10 @@
 - (id)itemForRow:(long)row {
 	if (row >= [_names count] || row<0)
 		return nil;
-
+	
 	BRMenuItem * result = [[BRMenuItem alloc] init];
 	Machine *m = [_names objectAtIndex:row];
-  NSString* name = [NSString stringWithFormat:@"%@", m.serverName, m];
+	NSString* name = [NSString stringWithFormat:@"%@", m.serverName, m];
 	[result setText:name withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
 	[result addAccessoryOfType: m.hostName!=nil && ![m.hostName empty]]; //folder
 	
@@ -136,23 +128,23 @@
 }
 
 -(void)setNeedsUpdate{
-  DLog(@"Updating UI");
-//  [self updatePreviewController];
-//	[self refreshControllerForModelUpdate];
-  [self.list reload];
+	DLog(@"Updating UI");
+	//  [self updatePreviewController];
+	//	[self refreshControllerForModelUpdate];
+	[self.list reload];
 }
 
 #pragma mark
 #pragma mark Machine Manager Delegate
 -(void)machineWasRemoved:(Machine*)m{
-  DLog(@"Removed %@", m);
-  [_names removeObject:m];
+	DLog(@"Removed %@", m);
+	[_names removeObject:m];
 }
 
 -(void)machineWasAdded:(Machine*)m{
-  if (!runsServer(m.role)) return;
-  if ([_names containsObject:m]) return;
-  
+	if (!runsServer(m.role)) return;
+	if ([_names containsObject:m]) return;
+	
 	[_names addObject:m];
 	DLog(@"Added %@", m);
 	
@@ -161,17 +153,17 @@
 }
 
 -(void)machineWasChanged:(Machine*)m{
-  if (m==nil) return;
-  
-  if (runsServer(m.role) && ![_names containsObject:m]){
-    [self machineWasAdded:m];
-    return;
-  } else if (!runsServer(m.role) && [_names containsObject:m]){
-    [_names removeObject:m];
-    DLog(@"Removed %@", m);
-  } else {
-    DLog(@"Changed %@", m);
-  }
+	if (m==nil) return;
+	
+	if (runsServer(m.role) && ![_names containsObject:m]){
+		[self machineWasAdded:m];
+		return;
+	} else if (!runsServer(m.role) && [_names containsObject:m]){
+		[_names removeObject:m];
+		DLog(@"Removed %@", m);
+	} else {
+		DLog(@"Changed %@", m);
+	}
 	
 	[self setNeedsUpdate];
 }

@@ -253,7 +253,7 @@ PlexMediaProvider* __provider = nil;
 			DLog(@"stopping transcoder");
       
 			break;
-		case kBRMediaPlayerStatePlaying:
+		case kBRMediaPlayerStatePlaying: {
 			//report time back to PMS so we can continue in the right spot
 			//logic below is taken from the official plex client
 			// Ignore two minutes at start and either 2 minutes, or up to 5% at end (end credits)
@@ -263,6 +263,7 @@ PlexMediaProvider* __provider = nil;
 				[pmo postMediaProgress:playa.elapsedTime];
 			}
 			break;
+		}
 		case kBRMediaPlayerStatePaused:
 			DLog(@"paused playback, pinging transcoder");
 			[pmo.request pingTranscoder];

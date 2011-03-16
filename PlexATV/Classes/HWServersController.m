@@ -36,19 +36,11 @@
 		
 		//make sure we are the delegate
 		[[ProxyMachineDelegate shared] registerDelegate:self];
-		
-		//start the auto detection
-		[[MachineManager sharedMachineManager] startAutoDetection];
-		[[MachineManager sharedMachineManager] startMonitoringMachineState];
 	}
 	return self;
 }
 
--(void)dealloc
-{
-	[[MachineManager sharedMachineManager] stopAutoDetection];
-	[[MachineManager sharedMachineManager] stopMonitoringMachineState];
-	
+-(void)dealloc {	
 	self.machines = nil;
 	[_machineSortDescriptors release];
 	

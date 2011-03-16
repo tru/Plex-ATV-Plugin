@@ -491,6 +491,8 @@
 			if (isDeletingMachine) {
 				//delete machine
 				[[MachineManager sharedMachineManager] removeMachine:self.machine];
+				[[MachineManager sharedMachineManager] writeMachinePreferences];
+				[[HWUserDefaults preferences] synchronize]; 
 				[[[BRApplicationStackManager singleton] stack] popController];
 			} else {
 				//delete connection
@@ -539,6 +541,8 @@
 		//remove the connection
 		MachineConnectionBase *connection = [option.userInfo objectForKey:@"connection"];
 		[self.machine removeConnection:connection];
+		[[MachineManager sharedMachineManager] writeMachinePreferences];
+		[[HWUserDefaults preferences] synchronize];
 		
 		[self setNeedsUpdate];
 		[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
@@ -565,9 +569,8 @@
 		// add machine to MM (because so far you did not have a machine 
 		// for the PMS you were just connecting to)
 		[[MachineManager sharedMachineManager] addMachine:m];
-#warning the lines below are needed to write prefs, but libPlex needs some changes to enable pref writing to custom domain
-		//[[MachineManager sharedMachineManager] writeMachinePreferences];
-		//[[HWUserDefaults preferences] synchronize];
+		[[MachineManager sharedMachineManager] writeMachinePreferences];
+		[[HWUserDefaults preferences] synchronize];
 		promptText = @"Success\n New server added";
 	} else {
 		isCreatingNewConnection = NO;
