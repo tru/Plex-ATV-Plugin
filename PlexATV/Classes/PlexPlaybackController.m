@@ -67,8 +67,8 @@ PlexMediaProvider* __provider = nil;
 
 - (void) dealloc {
 	DLog(@"deallocing player controller for %@", pmo.name);
-  
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	if (playProgressTimer){
 		[playProgressTimer invalidate];
@@ -129,6 +129,11 @@ PlexMediaProvider* __provider = nil;
 }
 
 -(void)playbackVideoWithOffset:(int)offset {
+	DLog(@"playback of video initiated, tell MM to chill");
+	//playback started, tell MM to chill
+	[[MachineManager sharedMachineManager] stopAutoDetection];
+	[[MachineManager sharedMachineManager] stopMonitoringMachineState];
+	
 	[pmo.attributes setObject:[NSNumber numberWithInt:offset] forKey:@"viewOffset"]; //set where in the video we want to start...
 	
     //determine the user selected quality setting
@@ -142,8 +147,8 @@ PlexMediaProvider* __provider = nil;
 		streamQuality = [PlexStreamingQualityDescriptor quality720pLow];
 	}
 	pmo.request.machine.streamQuality = streamQuality;
-  
-  DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);
+	
+	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);
 	
 	/*
 	 //player get's confused if we're running a transcoder already (tried playing and failed on ATV, transcoder still running)
@@ -155,7 +160,7 @@ PlexMediaProvider* __provider = nil;
 	
 	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
-  DLog(@"%@", pmo.request.machine.capabilities.qualities);
+	DLog(@"%@", pmo.request.machine.capabilities.qualities);
 	NSURL* mediaURL = [pmo mediaURL];
 	
 	DLog(@"Starting Playback of %@", mediaURL);
@@ -176,7 +181,7 @@ PlexMediaProvider* __provider = nil;
 		[playProgressTimer release];
 		playProgressTimer = nil;
 	}
-		
+	
 	BRBaseMediaAsset* pma = nil;
 	if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.1"]){
 		pma = [[PlexMediaAssetOld alloc] initWithURL:mediaURL mediaProvider:__provider mediaObject:pmo];
@@ -211,7 +216,10 @@ PlexMediaProvider* __provider = nil;
 }
 
 -(void)playbackAudio {
-	DLog(@"playbackAudioWithMediaObject");
+	DLog(@"playback of audio initiated, tell MM to chill");
+	//playback started, tell MM to chill
+	[[MachineManager sharedMachineManager] stopAutoDetection];
+	[[MachineManager sharedMachineManager] stopMonitoringMachineState];
 	
 	NSError *error;
 	
@@ -219,13 +227,13 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"key: %@", [pmo.attributes objectForKey:@"key"]);
 	
 	PlexSongAsset *psa = [[PlexSongAsset alloc] initWithURL:[pmo.attributes objectForKey:@"key"] mediaProvider:nil mediaObject:pmo];
-  
-  BRMediaPlayer *player = [[BRMediaPlayerManager singleton] playerForMediaAsset:psa error:&error];
-  [psa release];
-  
+	
+	BRMediaPlayer *player = [[BRMediaPlayerManager singleton] playerForMediaAsset:psa error:&error];
+	[psa release];
+	
 	[[BRMediaPlayerManager singleton] presentPlayer:player options:nil];
-  
-  DLog(@"presented audio player");
+	
+	DLog(@"presented audio player");
 }
 
 -(void)reportProgress:(NSTimer*)tm {
@@ -234,7 +242,11 @@ PlexMediaProvider* __provider = nil;
 	
 	switch (playa.playerState) {
 		case kBRMediaPlayerStateStopped:
-			DLog(@"Finished Playback");
+			DLog(@"Finished Playback, fire up MM");
+			
+			//playback stopped, tell MM to fire up again
+			[[MachineManager sharedMachineManager] startAutoDetection];
+			[[MachineManager sharedMachineManager] startMonitoringMachineState];
 			
 			if (playProgressTimer){
 				[playProgressTimer invalidate];
@@ -251,7 +263,7 @@ PlexMediaProvider* __provider = nil;
 			//stop the transcoding on PMS
 			[pmo.request stopTranscoder];
 			DLog(@"stopping transcoder");
-      
+			
 			break;
 		case kBRMediaPlayerStatePlaying: {
 			//report time back to PMS so we can continue in the right spot
