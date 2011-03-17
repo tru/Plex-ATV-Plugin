@@ -275,9 +275,13 @@ typedef enum {
 
 -(NSString *)subtitle {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"subtitle: %@", [self.selectedMediaItemPreviewData broadcaster]);
+	DLog(@"subtitle_end: %@", [self.selectedMediaItemPreviewData broadcaster]);
 #endif
+
+  if ([self.selectedMediaItemPreviewData broadcaster])
 	return [self.selectedMediaItemPreviewData broadcaster];
+  else
+    return @"";
 }
 
 -(NSString *)summary {
