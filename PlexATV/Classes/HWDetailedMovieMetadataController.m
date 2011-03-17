@@ -1,27 +1,27 @@
-  //
-  //  HWDetailedMovieMetadataController.m
-  //  atvTwo
-  //
-  //  Created by ccjensen on 2/7/11.
-  //
-  //  Permission is hereby granted, free of charge, to any person obtaining a copy
-  //  of this software and associated documentation files (the "Software"), to deal
-  //  in the Software without restriction, including without limitation the rights
-  //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  //  copies of the Software, and to permit persons to whom the Software is
-  //  furnished to do so, subject to the following conditions:
-  //  
-  //  The above copyright notice and this permission notice shall be included in
-  //  all copies or substantial portions of the Software.
-  //  
-  //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  //  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-  //  THE SOFTWARE.
-  //  
+//
+//  HWDetailedMovieMetadataController.m
+//  atvTwo
+//
+//  Created by ccjensen on 2/7/11.
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//  
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//  
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//  
 
 #define LOCAL_DEBUG_ENABLED 1
 
@@ -29,8 +29,8 @@
 #import "PlexMediaProvider.h"
 #import "PlexPlaybackController.h"
 
-  //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
-  //naming conflicts with Backrow.framework. below is a hack!
+//these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
+//naming conflicts with Backrow.framework. below is a hack!
 @interface BRThemeInfo (PlexExtentions)
 - (id)ccBadge;
 - (id)hdPosterBadge;
@@ -80,13 +80,13 @@ typedef enum {
 			currentSelectedIndex = 0;
 			self.selectedMediaItemPreviewData = [self.assets objectAtIndex:currentSelectedIndex];
 		} else {
-        //fail, container has no items
+      //fail, container has no items
 		}
 		
 		self.datasource = self;
 		self.delegate = self;
     
-      //create the popup
+    //create the popup
 		listDropShadowControl = [[SMFListDropShadowControl alloc] init];
 		[listDropShadowControl setCDelegate:self];
 		[listDropShadowControl setCDatasource:self];
@@ -115,15 +115,15 @@ typedef enum {
 }
 
 - (void)changeMetadataViewToShowDataForIndex:(int)newIndex {
-    //check that it is a new one, otherwise don't refresh
+  //check that it is a new one, otherwise don't refresh
 	if (currentSelectedIndex != newIndex) {
-      //set both focused and selected to the new index
+    //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
 		self._shelfControl.focusedIndex = newIndex;
 		self.selectedMediaItemPreviewData = [self.assets objectAtIndex:currentSelectedIndex];
-      //move the shelf if needed to show the new item
-      //[self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
-      //refresh metadata, but don't touch the shelf
+    //move the shelf if needed to show the new item
+    //[self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
+    //refresh metadata, but don't touch the shelf
 		[self reload];
 	}
 }
@@ -165,10 +165,10 @@ typedef enum {
 	[[SMFThemeInfo sharedTheme] playNavigateSound];
 	int newIndex;
 	if (currentSelectedIndex - 1 < 0) {
-      //we have reached the beginning, loop around
+    //we have reached the beginning, loop around
 		newIndex = [self.assets count] - 1;
 	} else {
-      //go to previous one
+    //go to previous one
 		newIndex = currentSelectedIndex - 1;
 	}
 #if LOCAL_DEBUG_ENABLED
@@ -190,10 +190,10 @@ typedef enum {
 	[[SMFThemeInfo sharedTheme] playNavigateSound];
 	int newIndex;
 	if (currentSelectedIndex + 1 < [self.assets count]) {
-      //go to next one
+    //go to next one
 		newIndex = currentSelectedIndex + 1;
 	} else {
-      //we have reached the end, loop around
+    //we have reached the end, loop around
 		newIndex = 0;
 	}
 #if LOCAL_DEBUG_ENABLED
@@ -210,7 +210,7 @@ typedef enum {
 	DLog(@"controller selected %@", ctrl);
 #endif
 	if ([ctrl isKindOfClass:[BRButtonControl class]]) {
-      //one of the buttons have been pushed
+    //one of the buttons have been pushed
 		BRButtonControl *buttonControl = (BRButtonControl *)ctrl;
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"button chosen: %@", buttonControl.identifier);
@@ -232,11 +232,11 @@ typedef enum {
 				break;
 		}
 		
-      //none of the buttons do anything, make error sound for now
+    //none of the buttons do anything, make error sound for now
 		[[SMFThemeInfo sharedTheme] playErrorSound];
 		
 	} else if (ctrl == self._shelfControl) {
-      //user has selected a media item
+    //user has selected a media item
 		[[SMFThemeInfo sharedTheme] playSelectSound];
 		[self changeMetadataViewToShowDataForIndex:self._shelfControl.focusedIndex];
 	}
@@ -244,21 +244,21 @@ typedef enum {
 
 -(void)controller:(SMFMoviePreviewController *)c switchedFocusTo:(BRControl *)newControl {
 	if ([newControl isKindOfClass:[BRButtonControl class]]) {		
-      //one of the buttons is now focused
+    //one of the buttons is now focused
 		DLog(@"switchedFocusTo button focused");
 		if (shelfIsSelected)
 			shelfIsSelected = NO; //shelf was focused, and now one of the buttons are.
 	} else if (newControl == self._shelfControl) {
-      //the shelf is now re-focused, load previous focused element
+    //the shelf is now re-focused, load previous focused element
 		shelfIsSelected = YES;
 		self._shelfControl.focusedIndex = lastFocusedIndex;
 	}
 }
 
 -(void)controller:(SMFMoviePreviewController *)c shelfLastIndex:(long)index {
-    //check if the shelf is currently selected
-    //we perform this check because this delegate method is called every time
-    //the user focuses a new control in the view
+  //check if the shelf is currently selected
+  //we perform this check because this delegate method is called every time
+  //the user focuses a new control in the view
 	if (shelfIsSelected)
 		lastFocusedIndex = index;
 }
@@ -282,7 +282,7 @@ typedef enum {
 
 -(NSString *)summary {
 #if LOCAL_DEBUG_ENABLED
-    //DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
+  //DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
 #endif
 	return [self.selectedMediaItemPreviewData mediaSummary];
 }
@@ -292,10 +292,10 @@ typedef enum {
 }
 
 -(NSArray *)columns {
-    //the table will hold all the columns
+  //the table will hold all the columns
 	NSMutableArray *table = [NSMutableArray array];
 	
-    // ======= details column ======
+  // ======= details column ======
 	NSMutableArray *details = [NSMutableArray array];
 	
 	BRGenre *genre = [self.selectedMediaItemPreviewData primaryGenre];
@@ -316,19 +316,25 @@ typedef enum {
 		[badges addObject:[[BRThemeInfo sharedTheme] ccBadge]];
 	[details addObject:badges];
 	
-	BRImage *starRating = [self.selectedMediaItemPreviewData starRatingImage];
-	[details addObject:starRating];
-	
+  if ([self.selectedMediaItemPreviewData starRatingImage]) {
+    BRImage *starRating = [self.selectedMediaItemPreviewData starRatingImage];
+    [details addObject:starRating];
+	}
+  
 	[table addObject:details];
 	
 	
-    // ======= actors column ======
-	NSArray *actors = [self.selectedMediaItemPreviewData cast];
-	[table addObject:actors];
+  // ======= actors column ======
+  if ([self.selectedMediaItemPreviewData cast]) {
+    NSArray *actors = [self.selectedMediaItemPreviewData cast];
+    [table addObject:actors];
+	}
 	
-	
-    // ======= director column ======
+  // ======= director column ======
 	NSMutableArray *directorAndWriters = [NSMutableArray arrayWithArray:[self.selectedMediaItemPreviewData directors]];
+  if (directorAndWriters == nil)
+    [directorAndWriters initWithCapacity:2];
+  
 	[directorAndWriters addObject:@" "];
 	NSAttributedString *subHeadingWriters = [[NSAttributedString alloc]initWithString:@"Writers" attributes:[SMFMoviePreviewController columnHeaderAttributes]];
 	[directorAndWriters addObject:subHeadingWriters];
@@ -338,12 +344,13 @@ typedef enum {
 	[table addObject:directorAndWriters];
 	
 	
-    // ======= producers column ======
-	NSArray *producers = [self.selectedMediaItemPreviewData producers];
-	[table addObject:producers];
+  // ======= producers column ======
+  if ([self.selectedMediaItemPreviewData producers]) {
+    NSArray *producers = [self.selectedMediaItemPreviewData producers];
+    [table addObject:producers];
+	}
 	
-	
-    // ======= done building table ======
+  // ======= done building table ======
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"table: %@", table);
 #endif
@@ -369,9 +376,9 @@ typedef enum {
 }
 
 -(NSArray *)buttons {
-    // built-in images:
-    // deleteActionImage, menuActionUnfocusedImage, playActionImage,
-    // previewActionImage, queueActionImage, rateActionImage
+  // built-in images:
+  // deleteActionImage, menuActionUnfocusedImage, playActionImage,
+  // previewActionImage, queueActionImage, rateActionImage
 	NSMutableArray *buttons = [NSMutableArray array];
 	
 	BRButtonControl* b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]playActionImage] 
