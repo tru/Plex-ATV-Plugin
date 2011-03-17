@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		724467101331AC250097831A /* All */ = {
+		72B85E541331BD8B00FCD4AE /* All */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 724467121331AC250097831A /* Build configuration list for PBXAggregateTarget "All" */;
+			buildConfigurationList = 72B85E561331BD8B00FCD4AE /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
-				724467111331AC250097831A /* ShellScript */,
+				72B85E551331BD8B00FCD4AE /* ShellScript */,
 			);
 			dependencies = (
-				724467151331AC2D0097831A /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = Install;
@@ -73,16 +72,6 @@
 		C4D55A9312D7E22A00877755 /* PlexSongAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = C4D55A9212D7E22A00877755 /* PlexSongAsset.m */; };
 		C4EA913612DCD77700DCC798 /* PlexPreviewAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = C4EA913512DCD77700DCC798 /* PlexPreviewAsset.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		724467141331AC2D0097831A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = plex;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		013307451278688D0067A5FE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -382,7 +371,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				724467101331AC250097831A /* All */,
+				72B85E541331BD8B00FCD4AE /* All */,
 				8D5B49AC048680CD000E48DA /* plex */,
 				DD02DEB712FCACEC0019FBEE /* Install */,
 			);
@@ -406,7 +395,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		724467111331AC250097831A /* ShellScript */ = {
+		72B85E551331BD8B00FCD4AE /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -463,14 +452,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		724467151331AC2D0097831A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8D5B49AC048680CD000E48DA /* plex */;
-			targetProxy = 724467141331AC2D0097831A /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
@@ -544,7 +525,7 @@
 			};
 			name = Release;
 		};
-		724467131331AC250097831A /* Release */ = {
+		72B85E571331BD8B00FCD4AE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -585,10 +566,10 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		724467121331AC250097831A /* Build configuration list for PBXAggregateTarget "All" */ = {
+		72B85E561331BD8B00FCD4AE /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				724467131331AC250097831A /* Release */,
+				72B85E571331BD8B00FCD4AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
