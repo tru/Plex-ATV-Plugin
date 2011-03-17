@@ -111,13 +111,7 @@
 #pragma mark -
 #pragma mark SMFBookcaseController Delegate Methods
 -(BOOL)bookcaseController:(SMFBookcaseController *)bookcaseController allowSelectionForShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
-	DLog(@"allow selection for: %d", index);
-	if (index == 1) {
-		return NO;
-	} else {
 		return YES;
-	}
-
 }
 
 -(void)bookcaseController:(SMFBookcaseController *)bookcaseController selectionWillOccurInShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
