@@ -118,7 +118,7 @@
 		case EnableSkipFilteringOptionsMenu: {
 			// =========== enable "skip filtering options" menu ===========
 			[asset setTitle:@"Toggles whether to skip the menu"];
-			[asset setSummary:@"Enables/Disables the skipping of the menu's with 'all', 'unwatched', 'newest', etc. (currently experimental)"];
+			[asset setSummary:@"Enables/Disables the skipping of the menus with 'all', 'unwatched', 'newest', etc. (currently experimental)"];
 			break;
 		}
 		case EnableDebug: {	
