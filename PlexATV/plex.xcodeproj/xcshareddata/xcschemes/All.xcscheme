@@ -13,7 +13,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DD02DEB212FCACCC0019FBEE"
+               BlueprintIdentifier = "72B85E541331BD8B00FCD4AE"
                BuildableName = "All"
                BlueprintName = "All"
                ReferencedContainer = "container:plex.xcodeproj">

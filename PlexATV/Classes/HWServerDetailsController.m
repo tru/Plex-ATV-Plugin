@@ -406,18 +406,20 @@
 	[textCon setInitialTextEntryText:initialText];
 	[[[BRApplicationStackManager singleton] stack] pushController:textCon];
 	
-	DLog(@"newMachine: %@", isCreatingNewMachine ? @"YES" : @"NO");
-	DLog(@"newConnection: %@", isCreatingNewConnection ? @"YES" : @"NO");
-	DLog(@"isEditingPW: %@", isEditingPassword ? @"YES" : @"NO");
-	DLog(@"isEditingUsername: %@", isEditingUserName ? @"YES" : @"NO");
-	DLog(@"isEditingServername: %@", isEditingServerName ? @"YES" : @"NO");
+#ifdef LOCAL_DEBUG_ENABLED
+	//DLog(@"newMachine: %@", isCreatingNewMachine ? @"YES" : @"NO");
+	//DLog(@"newConnection: %@", isCreatingNewConnection ? @"YES" : @"NO");
+	//DLog(@"isEditingPW: %@", isEditingPassword ? @"YES" : @"NO");
+	//DLog(@"isEditingUsername: %@", isEditingUserName ? @"YES" : @"NO");
+	//DLog(@"isEditingServername: %@", isEditingServerName ? @"YES" : @"NO");
+#endif
 }
 
 - (void)textDidEndEditing:(id)text
 {
 	NSString *textEntered = [text stringValue];
 #ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"text string: %@", textEntered);
+	DLog(@"text entered into dialog box: %@", textEntered);
 #endif
 	if (isCreatingNewConnection) {
 		[self addNewConnectionWizardWithInput:textEntered];
