@@ -214,7 +214,7 @@
 		}
 		case ViewTypeSettingIndex: {
         // =========== view type setting ===========
-			[asset setTitle:@"Select the video listing view typ"];
+			[asset setTitle:@"Select the video listing view type"];
 			[asset setSummary:@"Sets the type of view for videos, choose between list view or multiplex view ie. cover art view."];
 			break;
 		}      
