@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		DD02DEB212FCACCC0019FBEE /* All */ = {
+		724467101331AC250097831A /* All */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = DD02DEE412FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "All" */;
+			buildConfigurationList = 724467121331AC250097831A /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
+				724467111331AC250097831A /* ShellScript */,
 			);
 			dependencies = (
-				DD02DEB512FCACD00019FBEE /* PBXTargetDependency */,
-				DD02DEBA12FCAD020019FBEE /* PBXTargetDependency */,
+				724467151331AC2D0097831A /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = Install;
@@ -75,19 +75,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		DD02DEB412FCACD00019FBEE /* PBXContainerItemProxy */ = {
+		724467141331AC2D0097831A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = atvTwo;
-		};
-		DD02DEB912FCAD020019FBEE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DD02DEB712FCACEC0019FBEE;
-			remoteInfo = Install;
+			remoteInfo = plex;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -389,8 +382,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				724467101331AC250097831A /* All */,
 				8D5B49AC048680CD000E48DA /* plex */,
-				DD02DEB212FCACCC0019FBEE /* All */,
 				DD02DEB712FCACEC0019FBEE /* Install */,
 			);
 		};
@@ -413,6 +406,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		724467111331AC250097831A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export APP_NAME=\"Lowtide.app\"\nexport TARGET_DIR=/Applications/${APP_NAME}/Appliances/PLEX.frappliance\n\n#copy local (in order to build the .deb\ncp \"${BUILT_PRODUCTS_DIR}/plex.frappliance/plex\" \"${BUILD_DIR}/../_deb/PLEX.frapplication/Applications/${APP_NAME}/Appliances/PLEX.frappliance/\"\n\n\n#copy to the ATV\nscp \"${BUILT_PRODUCTS_DIR}/plex.frappliance/plex\" root@apple-tv.local:${TARGET_DIR}\nscp \"${PROJECT_DIR}/_deb/PLEX.frapplication/Applications/${APP_NAME}/Appliances/PLEX.frappliance/Info.plist\" root@apple-tv.local:${TARGET_DIR}\n\n#restart UI\nssh root@apple-tv.local 'killall AppleTV'\n#ssh root@apple-tv.local 'killall Lowtide'\n";
+		};
 		DD02DEB612FCACEC0019FBEE /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -459,15 +465,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		DD02DEB512FCACD00019FBEE /* PBXTargetDependency */ = {
+		724467151331AC2D0097831A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8D5B49AC048680CD000E48DA /* plex */;
-			targetProxy = DD02DEB412FCACD00019FBEE /* PBXContainerItemProxy */;
-		};
-		DD02DEBA12FCAD020019FBEE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DD02DEB712FCACEC0019FBEE /* Install */;
-			targetProxy = DD02DEB912FCAD020019FBEE /* PBXContainerItemProxy */;
+			targetProxy = 724467141331AC2D0097831A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -506,6 +507,7 @@
 					"\"$(SRCROOT)/../_Contrib/include\"",
 				);
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_OUTPUT_FORMAT = binary;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/theos/include\"",
@@ -534,20 +536,21 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../ATV2Includes;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.1;
+				INFOPLIST_OUTPUT_FORMAT = binary;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};
-		DD02DEB312FCACCC0019FBEE /* Release */ = {
+		724467131331AC250097831A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = Install;
+				PRODUCT_NAME = "Install copy";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -582,18 +585,18 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD02DEE312FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "Install" */ = {
+		724467121331AC250097831A /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD02DEB812FCACEC0019FBEE /* Release */,
+				724467131331AC250097831A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD02DEE412FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "All" */ = {
+		DD02DEE312FCAD170019FBEE /* Build configuration list for PBXAggregateTarget "Install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD02DEB312FCACCC0019FBEE /* Release */,
+				DD02DEB812FCACEC0019FBEE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
