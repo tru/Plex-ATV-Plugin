@@ -106,7 +106,7 @@
 
 - (void)itemSelected:(long)selected {
 #ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"itemSelected: %d",selected);
+	DLog(@"itemSelected: %ld",selected);
 #endif
 	if (selected == 0) {
 		[self showAddNewMachineWizard];
@@ -137,9 +137,9 @@
 		Machine *m = [self.machines objectAtIndex:row-1];
 		NSString *serverName;
 		
-		if (m.usersServerName) {
+		if (m.usersServerName && [m.usersServerName length] > 0) {
 			serverName = m.usersServerName;
-		} else if (m.serverName) {
+		} else if (m.serverName && [m.serverName length] > 0) {
 			serverName = m.serverName;
 		} else {
 			serverName = @"<Unknown>"; //if machine has no connections
