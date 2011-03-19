@@ -288,7 +288,10 @@ PlexMediaProvider* __provider = nil;
 }
 
 -(void)movieFinished:(NSNotification*)event {
-	[pmo markSeen];
+    [pmo postMediaProgress:pmo.duration];
+    [pmo.attributes setObject:[NSNumber numberWithInt:[pmo.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
+    [pmo markSeen];
+    
 	[[[BRApplicationStackManager singleton] stack] popController];
 }
 

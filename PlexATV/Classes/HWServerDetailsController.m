@@ -322,11 +322,17 @@
 - (id)titleForRow:(long)row {
 	NSString *title;
 	if (row == ServerPropertyServerNameIndex) {
-		title = [NSString stringWithFormat:@"Servername     %@", self.machine.usersServerName ? self.machine.usersServerName : self.machine.serverName];
-		
+        //use the user set name; if not available, use the server set name; if not available: UNKNOWN
+        if (self.machine.usersServerName && [self.machine.usersServerName length] > 0) {
+			title = [NSString stringWithFormat:@"Servername     %@", self.machine.usersServerName];
+		} else if (self.machine.serverName && [self.machine.serverName length] > 0) {
+			title = [NSString stringWithFormat:@"Servername     %@", self.machine.serverName];
+		} else {
+			title = [NSString stringWithFormat:@"Servername     %@", @"<Unknown>"]; //if machine has no connections
+		}
+        
 	} else if (row == ServerPropertyUserNameIndex) {
 		title = [NSString stringWithFormat:@"Username        %@", [self.machine.userName length] > 0 ? self.machine.userName : @"None"];
-		
 	} else if (row == ServerPropertyPasswordIndex) {
 		title = [NSString stringWithFormat:@"Password         %@", [self.machine.password length] > 0 ? self.machine.password : @"None"];
 
@@ -430,16 +436,20 @@
 		if (isEditingServerName) {
 			isEditingServerName = NO;
 			self.machine.serverName = textEntered;
-#warning does this change required MM writePrefs ^^
-			
+            
 		} else if (isEditingUserName) {
 			isEditingUserName = NO;
 			[self.machine setUsername:textEntered andPassword:self.machine.password];
+            #warning does this change should perhaps re-test the connection? ^^
 			
 		} else if (isEditingPassword) {
 			isEditingPassword = NO;
 			[self.machine setUsername:self.machine.userName andPassword:textEntered];
 		}
+        //no matter what we have changed, it needs saving
+        [[MachineManager sharedMachineManager] writeMachinePreferences];
+		[[HWUserDefaults preferences] synchronize];
+        
 		[[[BRApplicationStackManager singleton] stack] popController];
 	}
 	[self.list reload];
