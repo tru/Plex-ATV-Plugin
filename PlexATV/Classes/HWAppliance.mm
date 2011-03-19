@@ -9,6 +9,7 @@
 #import <plex-oss/PlexRequest + Security.h>
 #import <plex-oss/MachineManager.h>
 #import <plex-oss/PlexMediaContainer.h>
+#import <plex-oss/PlexClientCapabilities.h>
 #import "HWUserDefaults.h"
 #import "Constants.h"
 #import "HWMediaGridController.h"
@@ -82,6 +83,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		[PlexRequest setStreamingKey:@"k3U6GLkZOoNIoSgjDshPErvqMIFdE0xMTx8kgsrhnC0=" forPublicKey:@"KQMIY6GATPC63AIMC4R2"];
 		//instrumentObjcMessageSends(YES);
 		
+    //tell PMS what kind of codecs and media we can play
+    [self setupPlexClientCapabilities];
 		
 		DLog(@"==================== plex client starting up ====================");
 		
@@ -319,6 +322,22 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	[super reloadCategories];
 }
 
+-(void)setupPlexClientCapabilities {
+  //tell PMS we don't like AC3
+  DLog(@"setting up client caps");
+  //  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:1000000 channels:PlexClientAudioChannels_Stereo];
+  
+  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_DTS bitrate:3800000 channels:PlexClientAudioChannels_5_1Surround];
+  
+  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_LIVE_STREAMING];
+    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
+    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
+    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
+  
+#warning removing ac3 cap since it's crashing the player, we'll need to look into this someday
+  [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];  
+  
+}
 
 #pragma mark -
 #pragma mark Machine Delegate Methods
