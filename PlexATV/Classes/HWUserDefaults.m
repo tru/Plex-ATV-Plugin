@@ -46,7 +46,7 @@
 		[_preferences registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
 										[NSArray array], PreferencesMachinesExcludedFromServerList,
 										@"Low", PreferencesQualitySetting,
-										@"Multiplex", PreferencesViewTypeSetting,
+										@"Grid", PreferencesViewTypeSetting,
 										NO, PreferencesAdvancedEnableSkipFilteringOptionsMenu,
 										NO, PreferencesAdvancedEnableDebug,
 										nil]];

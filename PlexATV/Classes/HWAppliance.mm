@@ -137,7 +137,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
     
     //determine the user selected view setting
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Multiplex"]) {
+    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
       if (matchingCategory.isMovie) {
         menuController = [self newMoviesController:[matchingCategory contents]];
       } else if (matchingCategory.isTVShow) {
