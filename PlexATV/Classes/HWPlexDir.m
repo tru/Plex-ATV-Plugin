@@ -425,7 +425,7 @@
 			[menuItem setDetailedText:detailedText withAttributes:nil];
             [menuItem setRightJustifiedText:[previewData datePublishedString] withAttributes:nil];
 		} else {
-            NSString *detailedText = previewData.year ? previewData.year : @"";
+            NSString *detailedText = previewData.year ? previewData.year : @" ";
 			[menuItem setDetailedText:detailedText withAttributes:nil];
             if ([previewData isHD]) {
                 [menuItem addAccessoryOfType:11];
