@@ -101,7 +101,7 @@
 	
 	NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	if (viewTypeSetting == nil) {
-		[[HWUserDefaults preferences] setObject:@"Multiplex" forKey:PreferencesViewTypeSetting];
+		[[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
 		viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	}
 	
@@ -169,11 +169,13 @@
 			NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 			
 			if ([viewTypeSetting isEqualToString:@"List"]) {
-				[[HWUserDefaults preferences] setObject:@"Multiplex" forKey:PreferencesViewTypeSetting];
+				[[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
+        DLog(@"changin view type to grid view");
 			} else {
 				[[HWUserDefaults preferences] setObject:@"List" forKey:PreferencesViewTypeSetting];
+        DLog(@"changin view type to list view");
 			}
-			DLog(@"changin view type to: %@",viewTypeSetting);
+
       
 			[self setupList];
 			[self.list reload];      
@@ -215,7 +217,7 @@
 		case ViewTypeSettingIndex: {
         // =========== view type setting ===========
 			[asset setTitle:@"Select the video listing view type"];
-			[asset setSummary:@"Sets the type of view for videos, choose between list view or multiplex view ie. cover art view."];
+			[asset setSummary:@"Sets the type of view for videos, choose between list view or grid view ie. cover art view."];
 			break;
 		}      
 		case AdvancedSettingsIndex: {

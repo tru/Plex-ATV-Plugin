@@ -244,6 +244,8 @@
 	NSString* type = [pmo.attributes objectForKey:@"type"];
 	if ([type empty]) type = pmo.containerType;
 	type = [type lowercaseString];
+  
+  NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	
 	DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
 	
@@ -263,7 +265,7 @@
 		[player startPlaying];
 		[player autorelease];
 	}
-  else if ([@"movie" isEqualToString:type]) {
+  else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
 		[self showGridListControl:[pmo contents]];
 	}
 	else 
