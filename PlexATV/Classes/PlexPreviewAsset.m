@@ -186,7 +186,8 @@
 }
 
 - (BOOL)dolbyDigital {
-	return NO;
+  DLog();
+	return YES;
 }
 
 -(long int)duration {
@@ -375,6 +376,7 @@
 			self.mediaDescription, @"mediaDescription",
 			self.rating, @"rating",
 			self.starRating, @"starRating",
+      self.dolbyDigital, @"dolbyDigital",
 			nil];
 }
 

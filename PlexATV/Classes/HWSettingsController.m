@@ -22,7 +22,7 @@
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.7.1b2"
+#define PlexPluginVersion @"0.7.1b3"
 
 #define ServersIndex 0
 #define QualitySettingIndex 1
