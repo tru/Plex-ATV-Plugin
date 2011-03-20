@@ -157,19 +157,23 @@
 }
 
 - (id)dateAcquired {
-	return [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];// [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];
+	return [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];
 }
 
 - (id)dateAcquiredString {
-	return [[self dateAcquired] description];
+    NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormat setDateStyle:NSDateFormatterShortStyle];
+    return [dateFormat stringFromDate:[self dateAcquired]];
 }
 
 - (id)dateCreated {
-	return [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];// [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];
+	return [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];
 }
 
 - (id)dateCreatedString {
-	return [[self dateCreated] description];
+    NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormat setDateStyle:NSDateFormatterShortStyle];
+    return [dateFormat stringFromDate:[self dateCreated]];
 }
 
 - (id)datePublished {
@@ -177,7 +181,9 @@
 }
 
 - (id)datePublishedString {
-	return [[self datePublished] description];
+    NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormat setDateStyle:NSDateFormatterShortStyle];
+    return [dateFormat stringFromDate:[self datePublished]];
 }
 
 - (id)directors {

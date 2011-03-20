@@ -400,38 +400,37 @@
 	
 	PlexMediaObject *pmo = [rootContainer.directories objectAtIndex:row];
 	NSString *mediaType = [pmo.attributes valueForKey:@"type"];
-	
+    
 	if (pmo.hasMedia || [@"Video" isEqualToString:mediaType]) {
-		BRComboMenuItemLayer *menuItem = [[BRComboMenuItemLayer alloc] init];
-		
-#warning should not show little blue ball when item is 90+% done
-		BRImage *image;
+		BRMenuItem *menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
+        
 		if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
-			image = [[BRThemeInfo sharedTheme] unplayedVideoImage];			
+            [menuItem setImage:[[BRThemeInfo sharedTheme] unplayedVideoImage]];
 		} else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
-			image = [[BRThemeInfo sharedTheme] partiallyplayedVideoImage];
+            [menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
 		} else {
-			image = nil;
+            //image will be invisible, but we need it to get the text to line up with ones who have a
+            //visible image
+			[menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
+            BRImageControl *imageControl = [menuItem valueForKey:@"_imageControl"];
+            [imageControl setHidden:YES];
 		}
-		//BRImageControl *thumbnailLayer = (BRImageControl *)[menuItem valueForKey:@"_thumbnailLayer"];
-		[menuItem setThumbnailImage:image];
-		[menuItem setThumbnailLayerAspectRatio:0.5]; //halves the size of the image (ie makes it the "right" size)
+        [menuItem setImageAspectRatio:0.5];
 		
-		[menuItem setTitle:[pmo name]];
-		
-		
+        [menuItem setText:[pmo name] withAttributes:nil];
 		//used to get details about the show, instead of gettings attrs here manually
 		PlexPreviewAsset *previewData = [[PlexPreviewAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:pmo];
-		NSString *subtitle = nil;
-		if ([mediaType isEqualToString:PlexMediaObjectTypeEpisode]) {			
-			//set subtitle to show details
-			subtitle = [NSString stringWithFormat:@"%@, Season %d, Episode %d",[previewData seriesName] ,[previewData season],[previewData episode]];
+		if ([mediaType isEqualToString:PlexMediaObjectTypeEpisode]) {
+            NSString *detailedText = [NSString stringWithFormat:@"%@, Season %d, Episode %d",[previewData seriesName] ,[previewData season],[previewData episode]];
+			[menuItem setDetailedText:detailedText withAttributes:nil];
+            [menuItem setRightJustifiedText:[previewData datePublishedString] withAttributes:nil];
 		} else {
-			//set subtitle to year
-			subtitle = previewData.year;
+			[menuItem setDetailedText:previewData.year withAttributes:nil];
+            if ([previewData isHD]) {
+                [menuItem addAccessoryOfType:11];
+            }
 		}
 		[previewData release];
-		[menuItem setSubtitle:subtitle];
 		
 		result = [menuItem autorelease];
 	} else {
