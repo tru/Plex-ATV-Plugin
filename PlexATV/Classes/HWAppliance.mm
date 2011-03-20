@@ -325,9 +325,11 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 -(void)setupPlexClientCapabilities {
   //tell PMS we don't like AC3
   DLog(@"setting up client caps");
-  //  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:1000000 channels:PlexClientAudioChannels_Stereo];
+  //[[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:128000 channels:PlexClientAudioChannels_5_1Surround];
   
   [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_DTS bitrate:3800000 channels:PlexClientAudioChannels_5_1Surround];
+  
+  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AAC bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
   
   [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_LIVE_STREAMING];
     [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
