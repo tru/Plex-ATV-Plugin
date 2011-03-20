@@ -504,14 +504,14 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../_Contrib/ATV2Includes\"",
 					"\"$(SRCROOT)/theos/include\"",
-					"\"$(SRCROOT)/../_Contrib/include\"",
+					"\"$(SRCROOT)/../_Contrib/libPLEX-iOS/include\"",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_OUTPUT_FORMAT = binary;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/theos/include\"",
-					"\"$(SRCROOT)/../_Contrib/lib\"",
+					"\"$(SRCROOT)/../_Contrib/libPLEX-iOS/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
