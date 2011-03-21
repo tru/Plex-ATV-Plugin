@@ -240,10 +240,10 @@ PlexMediaProvider* __provider = nil;
 
 -(void)reportProgress:(NSTimer*)tm {
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
-	DLog(@"Elapsed: %f, %i", playa.elapsedTime, playa.playerState);
-	
+	NSString *playerState = @"unknown";
 	switch (playa.playerState) {
 		case kBRMediaPlayerStateStopped:
+            playerState = @"stopped";
 			DLog(@"Finished Playback, fire up MM");
 			
 			//playback stopped, tell MM to fire up again
@@ -268,17 +268,37 @@ PlexMediaProvider* __provider = nil;
 			
 			break;
 		case kBRMediaPlayerStatePlaying: {
+            playerState = @"playing";
 			//report time back to PMS so we can continue in the right spot
-			//logic below is taken from the official plex client
-			// Ignore two minutes at start and either 2 minutes, or up to 5% at end (end credits)
 			float current = playa.elapsedTime;
 			float total = pmo.duration;
-			if (current > 120 && total - current > 120 && total - current > 0.05 * total) {
+            
+            //logic below is taken from the official plex client
+			// Ignore two minutes at start and either 2 minutes, or up to 5% at end (end credits)
+            if (current > 120 && total - current > 120 && total - current > 0.05 * total) {
 				[pmo postMediaProgress:playa.elapsedTime];
 			}
+            
+            //if not already marked as seen, and less than 10% left of playback
+            if ( ([pmo seenState] != PlexMediaObjectSeenStateSeen) && (total - current < 0.10 * total) ) {
+                DLog(@"not much left, mark as watched");
+                [self markMediaObjectAsWatched:pmo andIncrementViewCount:YES];
+            }
+            
+            NSString *seenState;
+            if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
+                seenState = @"unwatched";
+            } else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
+                seenState = @"partial";
+            } else {
+                seenState = @"watched";
+            }
+            DLog(@"current [%f] out of a total [%f] (%f2 percentage). watched status [%@]", current, total, (current/total)*100.f, seenState);
+            
 			break;
 		}
 		case kBRMediaPlayerStatePaused:
+            playerState = @"paused";
 			DLog(@"paused playback, pinging transcoder");
 			[pmo.request pingTranscoder];
 			break;
@@ -289,10 +309,25 @@ PlexMediaProvider* __provider = nil;
 
 -(void)movieFinished:(NSNotification*)event {
     [pmo postMediaProgress:pmo.duration];
-    [pmo.attributes setObject:[NSNumber numberWithInt:[pmo.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
-    [pmo markSeen];
     
 	[[[BRApplicationStackManager singleton] stack] popController];
+}
+
+- (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement {
+    [pmo markSeen];
+    if (shouldIncrement) {
+        [pmo.attributes setObject:[NSNumber numberWithInt:[pmo.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
+    }
+}
+
+- (void)markMediaObjectAsUnwatched:(PlexMediaObject *)mediaObject andDecrementViewCount:(BOOL)shouldDecrement {
+    [pmo markUnseen];
+    if (shouldDecrement) {
+        int currentViewCount = [pmo.attributes integerForKey:@"viewCount"];
+        if (currentViewCount >= 1) {
+            [pmo.attributes setObject:[NSNumber numberWithInt:currentViewCount - 1] forKey:@"viewCount"];
+        }
+    }
 }
 
 - (void)optionSelected:(id)sender {
