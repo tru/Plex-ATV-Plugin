@@ -93,7 +93,8 @@
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
-	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+    [[ProxyMachineDelegate shared] registerDelegate:self];
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
 	if (isCreatingNewMachine) {
 		[self startAddNewMachineWizard];
 	} else {
@@ -108,7 +109,8 @@
 }
 
 - (void)wasExhumed {
-	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+    [[ProxyMachineDelegate shared] removeDelegate:self];
+	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
 	[super wasExhumed];
 }
 
@@ -248,10 +250,8 @@
 		[self.list reload];
 		
 	} else if (selected == ServerRefreshSections) {
-		//tell pms to refresh all sections
+		//tell pms to refresh all sections, callback will start/stop spinner
 		[self.machine.request refreshAllSections:NO];
-		isRefreshingAllSections = YES;
-		[self.list reload];
 	
 	} else if (selected == ServerDelete) {
 		//show confirmation window
@@ -292,7 +292,7 @@
 	NSString *title = [self titleForRow:row];
 	if (row == ServerRefreshSections) {
 		menuItem = [[[BRMenuItem alloc] init] autorelease];
-		if (isRefreshingAllSections) {
+		if (self.machine.sectionsAreRefreshing) {
 			accessoryType = 6; //spinner icon
 		} else {
 			accessoryType = 3; //refresh icon
@@ -577,6 +577,20 @@
 		[[[BRApplicationStackManager singleton] stack] popController];
 	}
 }
+
+
+#pragma mark -
+#pragma mark Machine Delegate Methods
+-(void)machineWasAdded:(Machine*)m {}
+-(void)machineWasRemoved:(Machine*)m {}
+
+-(void)machine:(Machine*)m receivedInfoForConnection:(MachineConnectionBase*)con updated:(ConnectionInfoType)updateMask {
+    BOOL machinesSectionsAreBeingRefreshedStateChanged = (updateMask & ConnectionInfoTypeSectionsRefreshing) != 0;
+	if (machinesSectionsAreBeingRefreshedStateChanged) {
+        [self.list reload];
+	}
+}
+
 
 #pragma mark -
 #pragma mark TestAndConditionallyAddConnectionProtocol Methods

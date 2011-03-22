@@ -34,9 +34,6 @@
 		
 		[[self list] setDatasource:self];
  		[[self list] addDividerAtIndex:1 withLabel:@"List of Servers"];
-		
-		//make sure we are the delegate
-		[[ProxyMachineDelegate shared] registerDelegate:self];
 	}
 	return self;
 }
