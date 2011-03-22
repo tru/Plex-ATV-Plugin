@@ -7,9 +7,10 @@
 
 #import <Foundation/Foundation.h>
 #import <plex-oss/Machine.h>
+#import <plex-oss/MachineManager.h>
 #import <plex-oss/MachineConnectionBase.h>
 
-@interface HWServerDetailsController : SMFMediaMenuController <TestAndConditionallyAddConnectionProtocol, SMFListDropShadowDatasource,SMFListDropShadowDelegate> {
+@interface HWServerDetailsController : SMFMediaMenuController <TestAndConditionallyAddConnectionProtocol, MachineManagerDelegate, SMFListDropShadowDatasource,SMFListDropShadowDelegate> {
 	Machine *_machine;
 	BRWaitPromptControl *waitPromptControl;
 	SMFListDropShadowControl *listDropShadowControl; //popup
@@ -32,9 +33,6 @@
 	//editing connection specific variables
 	BOOL isDeletingConnection;
 	MachineConnectionBase *_selectedConnection;
-	
-	//action flags
-	BOOL isRefreshingAllSections;
 	
 	NSString *_serverName;
 	NSString *_userName;
