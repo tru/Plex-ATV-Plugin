@@ -24,9 +24,6 @@
 		
 		_names = [[NSMutableArray alloc] init];
 		
-		//make sure we are the delegate
-		[[ProxyMachineDelegate shared] registerDelegate:self];
-		
 		//start the auto detection		
 		[[self list] setDatasource:self];		
 	}
