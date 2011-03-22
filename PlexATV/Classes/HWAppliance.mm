@@ -325,7 +325,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 -(void)setupPlexClientCapabilities {
   //tell PMS we don't like AC3
   DLog(@"setting up client caps");
-  //[[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:128000 channels:PlexClientAudioChannels_5_1Surround];
+  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:3840000 channels:PlexClientAudioChannels_5_1Surround];
   
   [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_DTS bitrate:3800000 channels:PlexClientAudioChannels_5_1Surround];
   
@@ -337,7 +337,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
     [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
   
 #warning removing ac3 cap since it's crashing the player, we'll need to look into this someday
-  [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];  
+  //[[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];  
   
 }
 
