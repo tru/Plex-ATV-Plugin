@@ -19,7 +19,7 @@
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		tvShows = [allTVShows retain];
 		allTvShowsSeasonsPlexMediaContainer = [[NSMutableArray alloc] init];		
 		
@@ -111,7 +111,7 @@
 #pragma mark -
 #pragma mark SMFBookcaseController Delegate Methods
 -(BOOL)bookcaseController:(SMFBookcaseController *)bookcaseController allowSelectionForShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
-		return YES;
+    return YES;
 }
 
 -(void)bookcaseController:(SMFBookcaseController *)bookcaseController selectionWillOccurInShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
@@ -119,15 +119,15 @@
 }
 
 -(void)bookcaseController:(SMFBookcaseController *)bookcaseController selectionDidOccurInShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
-	DLog(@"select did occur at index: %d and shelfindex: %d",index, [shelfControl focusedIndex]);	
-  
-   PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];  
-   PlexMediaObject *season = [[tvshow contents].directories objectAtIndex:[shelfControl focusedIndex]];
-   if ([season contents].hasOnlyEpisodes) {
-   HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[season contents]];
-   [[[BRApplicationStackManager singleton] stack] pushController:menuController];
-   [menuController autorelease];    
-   }
+	DLog(@"select did occur at index: %d and shelfindex: %ld",index, [shelfControl focusedIndex]);	
+    
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];  
+    PlexMediaObject *season = [[tvshow contents].directories objectAtIndex:[shelfControl focusedIndex]];
+    if ([season contents].hasOnlyEpisodes) {
+        HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[season contents]];
+        [[[BRApplicationStackManager singleton] stack] pushController:menuController];
+        [menuController autorelease];    
+    }
 }
 
 @end
