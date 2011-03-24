@@ -16,19 +16,22 @@
 #import "HWSettingsController.h"
 #import "HWServersController.h"
 #import "HWAdvancedSettingsController.h"
+#import "PlexAudioSettingsController.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.7.1b3"
+#define PlexPluginVersion @"0.7.1b4"
 
 #define ServersIndex 0
 #define QualitySettingIndex 1
 #define ViewTypeSettingIndex 2
-#define AdvancedSettingsIndex 3
-#define PluginVersionNumberIndex 4
+#define AudioSettingsIndex 3
+#define AdvancedSettingsIndex 4
+#define PluginVersionNumberIndex 5
+
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -110,10 +113,14 @@
 	[viewTypeSettingTitle release];
 	[_items addObject:viewTypeSettingMenuItem];
 	
+  // =========== audio settings ===========
+	SMFMenuItem *audioSettingsMenuItem = [SMFMenuItem folderMenuItem];
+	[audioSettingsMenuItem setTitle:@"Audio settings"];
+	[_items addObject:audioSettingsMenuItem];
   
 	// =========== advanced settings ===========
 	SMFMenuItem *advancedSettingsMenuItem = [SMFMenuItem folderMenuItem];
-	[advancedSettingsMenuItem setTitle:@"Advanced Settings"];
+	[advancedSettingsMenuItem setTitle:@"Advanced settings"];
 	[_items addObject:advancedSettingsMenuItem];
 	
 	// =========== version number ===========
@@ -181,6 +188,14 @@
 			[self.list reload];      
       break;
     }
+    case AudioSettingsIndex: {
+			// =========== audio settings ===========
+			PlexAudioSettingsController* menuController = [[PlexAudioSettingsController alloc] init];
+			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+			[menuController autorelease];
+			break;
+      
+    }
 		case AdvancedSettingsIndex: {
 			// =========== advanced settings ===========
 			HWAdvancedSettingsController* menuController = [[HWAdvancedSettingsController alloc] init];
@@ -219,7 +234,13 @@
 			[asset setTitle:@"Select the video listing view type"];
 			[asset setSummary:@"Sets the type of view for videos, choose between list view or grid view ie. cover art view."];
 			break;
-		}      
+		}
+		case AudioSettingsIndex: {
+			// =========== audio settings ===========
+			[asset setTitle:@"Modify audio output settings"];
+			[asset setSummary:@"Setup the kind of multi-channel audio you want to output"];
+			break;
+		}
 		case AdvancedSettingsIndex: {
 			// =========== advanced settings ===========
 			[asset setTitle:@"Modify advanced settings"];
