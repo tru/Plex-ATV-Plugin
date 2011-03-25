@@ -53,8 +53,14 @@ PlexMediaProvider* __provider = nil;
 		//register for notifications when a movie has finished playing properly to the end.
 		//used to mark movie as seen
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieFinished:) name:@"AVPlayerItemDidPlayToEndTimeNotification" object:nil];
+    
+ [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];   
 	}
 	return self;
+}
+
+- (void)myMethod:(NSNotification *)notification {
+  DLog(@"notification received: %@", notification);
 }
 
 -(id)initWithPlexMediaObject:(PlexMediaObject*)mediaObject {
@@ -71,14 +77,8 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"deallocing player controller for %@", pmo.name);
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-	if (playProgressTimer){
-		[playProgressTimer invalidate];
-		[playProgressTimer release];
-		playProgressTimer = nil;
-	}
-	
-	[pmo release];
+		
+	[pmo autorelease];
 	[super dealloc];
 }
 
@@ -242,27 +242,6 @@ PlexMediaProvider* __provider = nil;
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
 	NSString *playerState = @"unknown";
 	switch (playa.playerState) {
-		case kBRMediaPlayerStateStopped:
-      playerState = @"stopped";
-			DLog(@"Finished Playback, fire up MM");
-			
-			//playback stopped, tell MM to fire up again
-			[[MachineManager sharedMachineManager] startAutoDetection];
-			[[MachineManager sharedMachineManager] startMonitoringMachineState];
-			
-			if (playProgressTimer && [playProgressTimer isValid]){
-        DLog(@"stopping progress timer");
-				[playProgressTimer invalidate];
-				[playProgressTimer release];
-				playProgressTimer = nil;
-			}
-			
-      DLog(@"stopping the transcoder");
-      
-      //stop the transcoding on PMS
-      [pmo.request stopTranscoder];
-      DLog(@"transcoder stopped");
-			break;
 		case kBRMediaPlayerStatePlaying: {
       playerState = @"playing";
 			//report time back to PMS so we can continue in the right spot
@@ -305,8 +284,36 @@ PlexMediaProvider* __provider = nil;
 
 -(void)movieFinished:(NSNotification*)event {
   [pmo postMediaProgress:pmo.duration];
-  
-	[[[BRApplicationStackManager singleton] stack] popController];
+}
+
+-(void)playerStateChanged:(NSNotification*)event {
+  DLog(@"%@", event)
+  BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
+  switch (playa.playerState) {
+    case kBRMediaPlayerStateStopped:
+      DLog(@"stopping the transcoder");
+      
+      //stop the transcoding on PMS
+      [pmo.request stopTranscoder];
+      DLog(@"transcoder stopped");
+      
+      if (playProgressTimer && [playProgressTimer isValid]){
+        [playProgressTimer invalidate];
+        [playProgressTimer release];
+        playProgressTimer = nil;
+        DLog(@"stopped progress timer");
+      }
+      
+      DLog(@"Finished Playback, fire up MM");
+      //playback stopped, tell MM to fire up again
+      [[MachineManager sharedMachineManager] startAutoDetection];
+      [[MachineManager sharedMachineManager] startMonitoringMachineState];
+      break;
+
+    default:
+      break;
+  }
+
 }
 
 - (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement {
