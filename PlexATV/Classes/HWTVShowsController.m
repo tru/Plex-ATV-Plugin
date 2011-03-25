@@ -104,6 +104,7 @@
 
 - (NSInteger)numberOfShelfsInBookcaseController:(SMFBookcaseController *)bookcaseController {
 	[allTvShowsSeasonsPlexMediaContainer removeAllObjects];
+  DLog(@"tvShows.directories: %d",[tvShows.directories count]);
 	return [tvShows.directories count];
 }
 
@@ -122,6 +123,7 @@
 	PlexMediaContainer *seasonsContainer = [tvshow contents];
 	[allTvShowsSeasonsPlexMediaContainer addObject:seasonsContainer];
 	NSArray *seasons = [seasonsContainer directories];
+  DLog(@"index: %d, seasons: %d", index, [seasons count]);
 	for (PlexMediaObject *season in seasons) {		
 		NSURL* mediaURL = [season mediaStreamURL];
 		PlexPreviewAsset* ppa = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:season];
@@ -132,7 +134,7 @@
 	SMFControlFactory *controlFactory = [SMFControlFactory posterControlFactory];
 	controlFactory.favorProxy = YES;
 	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
-	
+	DLog(@"store size: %d",[store count]);
 	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
 	[store release];
 	return provider; 

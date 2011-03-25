@@ -10,6 +10,7 @@
 @interface HWUserDefaults : PlexPrefs {}
 
 + (SMFPreferences *)preferences;
++ (void)setupPlexClientCapabilities;
 
 //plex prefs methods
 -(void)setObject:(id)obj forKey:(NSString*)key;

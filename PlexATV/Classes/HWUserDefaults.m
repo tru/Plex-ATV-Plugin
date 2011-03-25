@@ -6,6 +6,7 @@
 //
 
 #import "HWUserDefaults.h"
+#import <plex-oss/PlexClientCapabilities.h>
 #import "Constants.h"
 
 
@@ -34,6 +35,35 @@
 
 - (void)_setDefaults {}
 
++ (void)setupPlexClientCapabilities {
+  DLog(@"setting up client caps");
+  BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableAC3];
+  BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableDTS];  
+  
+  if (wantsAC3) {
+    DLog(@"wants AC3");
+    [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
+  } else {
+    DLog(@"don't want AC3");
+    [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];
+  }
+  
+  if (wantsDTS) {
+    DLog(@"wants DTS");
+    [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_DTS bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_7_1Surround];
+  } else {
+    DLog(@"don't want DTS");
+    [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_DTS];
+  }
+  
+  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AAC bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
+  
+  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_LIVE_STREAMING];
+  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
+  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
+  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
+    
+}
 
 #pragma mark -
 #pragma mark User Defaults Methods

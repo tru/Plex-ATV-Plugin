@@ -5,6 +5,8 @@
 #define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
 #define PreferencesAdvancedEnableDebug @"PreferencesAdvancedEnableDebug"
 #define PreferencesAdvancedEnableSkipFilteringOptionsMenu @"PreferencesAdvancedEnableSkipFilteringOptionsMenu"
+#define PreferencesAudioEnableAC3 @"PreferencesAudioEnableAC3"
+#define PreferencesAudioEnableDTS @"PreferencesAudioEnableDTS"
 
 
 typedef enum {

@@ -9,7 +9,6 @@
 #import <plex-oss/PlexRequest + Security.h>
 #import <plex-oss/MachineManager.h>
 #import <plex-oss/PlexMediaContainer.h>
-#import <plex-oss/PlexClientCapabilities.h>
 #import "HWUserDefaults.h"
 #import "Constants.h"
 #import "HWMediaGridController.h"
@@ -84,7 +83,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		//instrumentObjcMessageSends(YES);
 		
     //tell PMS what kind of codecs and media we can play
-    [self setupPlexClientCapabilities];
+    [HWUserDefaults setupPlexClientCapabilities];
 		
 		DLog(@"==================== plex client starting up ====================");
 		
@@ -148,8 +147,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
     } else {
       menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
     }
-
-
+    
+    
 	}    
 	return [menuController autorelease];
 }
@@ -180,7 +179,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	BRController *menuController = nil;
 	PlexMediaObject *recent=nil;
 	PlexMediaObject *allMovies=nil;
-    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
+  //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
 	if (movieCategory.directories > 0) {
 		NSUInteger i, count = [movieCategory.directories count];
 		for (i = 0; i < count; i++) {
@@ -322,24 +321,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	[super reloadCategories];
 }
 
--(void)setupPlexClientCapabilities {
-  //tell PMS we don't like AC3
-  DLog(@"setting up client caps");
-  //[[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:128000 channels:PlexClientAudioChannels_5_1Surround];
-  
-  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_DTS bitrate:3800000 channels:PlexClientAudioChannels_5_1Surround];
-  
-  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AAC bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
-  
-  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_LIVE_STREAMING];
-    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
-    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
-    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
-  
-#warning removing ac3 cap since it's crashing the player, we'll need to look into this someday
-  [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];  
-  
-}
 
 #pragma mark -
 #pragma mark Machine Delegate Methods
