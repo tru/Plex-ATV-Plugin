@@ -20,7 +20,7 @@
 @implementation PlexViewSettingsController
 
 #define EnableSkipFilteringOptionsMenu 0
-#define DisablePosterZoomingInListView 1
+#define EnablePosterZoomingInListView 1
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -74,14 +74,14 @@
 	[_items addObject:skipFilteringOptionsMenuItem];
 	
 	
-	// =========== disable poster zooming in list view ===========
-	SMFMenuItem *enableDebugMenuItem = [SMFMenuItem menuItem];
+	// =========== eanble poster zooming in list view ===========
+	SMFMenuItem *enablePosterZoomMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *enableDebug = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView] ? @"Enabled" : @"Disabled";
-	NSString *enableDebugTitle = [[NSString alloc] initWithFormat:@"Poster zoom: %@", enableDebug];
-	[enableDebugMenuItem setTitle:enableDebugTitle];
-	[enableDebugTitle release];
-	[_items addObject:enableDebugMenuItem];
+	NSString *enablePosterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnablePosterZoomingInListView] ? @"Enabled" : @"Disabled";
+	NSString *enablePosterZoomTitle = [[NSString alloc] initWithFormat:@"Poster zoom:       %@", enablePosterZoom];
+	[enablePosterZoomMenuItem setTitle:enablePosterZoomTitle];
+	[enablePosterZoomTitle release];
+	[_items addObject:enablePosterZoomMenuItem];
 }
 
 
@@ -97,10 +97,10 @@
 			[self.list reload];
 			break;
 		}
-		case DisablePosterZoomingInListView: {
+		case EnablePosterZoomingInListView: {
 			// =========== enable poster zooming in list view ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewDisablePosterZoomingInListView];			
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnablePosterZoomingInListView];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewEnablePosterZoomingInListView];			
 			[self setupList];
 			[self.list reload];
 			break;
@@ -121,7 +121,7 @@
 			[asset setSummary:@"Enables/Disables the skipping of the menus with 'all', 'unwatched', 'newest', etc. (currently experimental)"];
 			break;
 		}
-		case DisablePosterZoomingInListView: {	
+		case EnablePosterZoomingInListView: {	
 			// =========== enable poster zooming in list view ===========
 			[asset setTitle:@"Toggles whether to zoom the poster"];
 			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];

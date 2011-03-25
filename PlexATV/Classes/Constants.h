@@ -5,7 +5,7 @@
 #define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
 
 #define PreferencesViewEnableSkipFilteringOptionsMenu @"PreferencesViewEnableSkipFilteringOptionsMenu"
-#define PreferencesViewDisablePosterZoomingInListView @"PreferencesViewDisablePosterZoomingInListView"
+#define PreferencesViewEnablePosterZoomingInListView @"PreferencesViewEnablePosterZoomingInListView"
 
 #define PreferencesAudioEnableAC3 @"PreferencesAudioEnableAC3"
 #define PreferencesAudioEnableDTS @"PreferencesAudioEnableDTS"
