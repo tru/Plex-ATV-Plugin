@@ -12,8 +12,9 @@
 @interface HWTVShowsController : SMFBookcaseController <SMFBookcaseControllerDatasource, SMFBookcaseControllerDelegate> {
 	PlexMediaContainer *tvShows;
 	NSMutableArray *allTvShowsSeasonsPlexMediaContainer;
+    
+    BOOL allShelvesLoaded;
 }
-
 - (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows;
 
 @end

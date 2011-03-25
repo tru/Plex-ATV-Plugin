@@ -16,13 +16,44 @@
 @end
 
 @implementation HWTVShowsController
+
+#warning this is a hack to make sure all the shelfs are loaded correctly
+-(BOOL)brEventAction:(BREvent *)action {
+    if (!allShelvesLoaded) {
+        NSArray *shelves = [self valueForKey:@"_shelfControls"];
+        int shelfCount = [shelves count];
+        int firstShelfToReload = [shelves count];
+        
+        //we only need to reload ~ the last half of the shelves
+        if (shelfCount > 4) {
+            firstShelfToReload = shelfCount/2;
+        }
+        
+        //if 4 or less, then this won't loop at all
+        for (int i = firstShelfToReload; i<shelfCount; i++) {
+            BRMediaShelfControl *shelf = [shelves objectAtIndex:i];
+            if ([shelf isFocused]) {
+                if (i+2 == shelfCount) {
+                    //last item, all prior ones will have been re-layout too. 
+                    //Will not need to redo this hack again until view is reloaded
+                    allShelvesLoaded = YES;
+                    DLog(@"Reloaded last shelf. Our work here is done");
+                } else {
+                    [[shelves objectAtIndex:i+2] setNeedsLayout];
+                }
+                break; //only need to refresh one
+            }
+        }
+    }
+    return [super brEventAction:action];
+}
+
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		tvShows = [allTVShows retain];
-		allTvShowsSeasonsPlexMediaContainer = [[NSMutableArray alloc] init];		
-		
+		allTvShowsSeasonsPlexMediaContainer = [[NSMutableArray alloc] init];
 		self.datasource = self;
 		self.delegate = self;
 	}
@@ -113,7 +144,7 @@
 #pragma mark -
 #pragma mark SMFBookcaseController Delegate Methods
 -(BOOL)bookcaseController:(SMFBookcaseController *)bookcaseController allowSelectionForShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
-		return YES;
+    return YES;
 }
 
 -(void)bookcaseController:(SMFBookcaseController *)bookcaseController selectionWillOccurInShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
@@ -121,15 +152,15 @@
 }
 
 -(void)bookcaseController:(SMFBookcaseController *)bookcaseController selectionDidOccurInShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
-	DLog(@"select did occur at index: %d and shelfindex: %d",index, [shelfControl focusedIndex]);	
-  
-   PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];  
-   PlexMediaObject *season = [[tvshow contents].directories objectAtIndex:[shelfControl focusedIndex]];
-   if ([season contents].hasOnlyEpisodes) {
-   HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[season contents]];
-   [[[BRApplicationStackManager singleton] stack] pushController:menuController];
-   [menuController autorelease];    
-   }
+	DLog(@"select did occur at index: %d and shelfindex: %ld",index, [shelfControl focusedIndex]);	
+    
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];  
+    PlexMediaObject *season = [[tvshow contents].directories objectAtIndex:[shelfControl focusedIndex]];
+    if ([season contents].hasOnlyEpisodes) {
+        HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[season contents]];
+        [[[BRApplicationStackManager singleton] stack] pushController:menuController];
+        [menuController autorelease];    
+    }
 }
 
 @end

@@ -219,7 +219,7 @@
 
 - (void)itemSelected:(long)selected {
 #ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"itemSelected: %d",selected);
+	DLog(@"itemSelected: %ld",selected);
 #endif
 	if (selected == ServerPropertyServerNameIndex) {
 		isEditingServerName = YES;
@@ -332,9 +332,9 @@
 		}
         
 	} else if (row == ServerPropertyUserNameIndex) {
-		title = [NSString stringWithFormat:@"Username        %@", [self.machine.userName length] > 0 ? self.machine.userName : @"None"];
+		title = [NSString stringWithFormat:@"Username        %@", [self.machine.userName length] > 0 ? self.machine.userName : @""];
 	} else if (row == ServerPropertyPasswordIndex) {
-		title = [NSString stringWithFormat:@"Password         %@", [self.machine.password length] > 0 ? self.machine.password : @"None"];
+		title = [NSString stringWithFormat:@"Password         %@", [self.machine.password length] > 0 ? self.machine.password : @""];
 
 	} else if (row == ServerExcludedFromList) {
 		title = [NSString stringWithFormat:@"List Status        %@", [self isExcludedFromServerList] ? @"Excluded" : @"Included"];
