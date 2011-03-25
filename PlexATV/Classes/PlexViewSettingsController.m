@@ -19,8 +19,9 @@
 
 @implementation PlexViewSettingsController
 
-#define EnableSkipFilteringOptionsMenu 0
-#define EnablePosterZoomingInListView 1
+#define ViewTypeSettingIndex 0
+#define EnableSkipFilteringOptionsMenuIndex 1
+#define EnablePosterZoomingInListViewIndex 2
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -63,7 +64,23 @@
 
 - (void)setupList {
 	[_items removeAllObjects];
+    
+  	// =========== view type setting ===========
+	SMFMenuItem *viewTypeSettingMenuItem = [SMFMenuItem menuItem];
 	
+	NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+	if (viewTypeSetting == nil) {
+		[[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
+		viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+	}
+
+	NSString *viewTypeSettingTitle = [[NSString alloc] initWithFormat:@"Video view     :   %@", viewTypeSetting];
+	[viewTypeSettingMenuItem setTitle:viewTypeSettingTitle];
+	[viewTypeSettingTitle release];
+	[_items addObject:viewTypeSettingMenuItem];
+    
+    
+    
 	// =========== enable "skip filtering options" menu ===========
 	SMFMenuItem *skipFilteringOptionsMenuItem = [SMFMenuItem menuItem];
 	
@@ -89,7 +106,24 @@
 #pragma mark List Delegate Methods
 - (void)itemSelected:(long)selected {
 	switch (selected) {
-		case EnableSkipFilteringOptionsMenu: {
+        case ViewTypeSettingIndex: {
+            // =========== view type setting ===========
+            NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+            
+            if ([viewTypeSetting isEqualToString:@"List"]) {
+                [[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
+                DLog(@"changin view type to grid view");
+            } else {
+                [[HWUserDefaults preferences] setObject:@"List" forKey:PreferencesViewTypeSetting];
+                DLog(@"changin view type to list view");
+            }
+            
+            
+            [self setupList];
+            [self.list reload];      
+            break;
+        }
+		case EnableSkipFilteringOptionsMenuIndex: {
 			// =========== enable "skip filtering options" menu ===========
 			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
 			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewEnableSkipFilteringOptionsMenu];			
@@ -97,7 +131,7 @@
 			[self.list reload];
 			break;
 		}
-		case EnablePosterZoomingInListView: {
+		case EnablePosterZoomingInListViewIndex: {
 			// =========== enable poster zooming in list view ===========
 			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnablePosterZoomingInListView];
 			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewEnablePosterZoomingInListView];			
@@ -115,13 +149,19 @@
 {
 	SMFBaseAsset *asset = [[SMFBaseAsset alloc] init];
 	switch (item) {
-		case EnableSkipFilteringOptionsMenu: {
+        case ViewTypeSettingIndex: {
+            // =========== view type setting ===========
+            [asset setTitle:@"Select the video listing view type"];
+            [asset setSummary:@"Sets the type of view for videos, choose between list view or grid view ie. cover art view."];
+            break;
+        }
+		case EnableSkipFilteringOptionsMenuIndex: {
 			// =========== enable "skip filtering options" menu ===========
 			[asset setTitle:@"Toggles whether to skip the menu"];
 			[asset setSummary:@"Enables/Disables the skipping of the menus with 'all', 'unwatched', 'newest', etc. (currently experimental)"];
 			break;
 		}
-		case EnablePosterZoomingInListView: {	
+		case EnablePosterZoomingInListViewIndex: {
 			// =========== enable poster zooming in list view ===========
 			[asset setTitle:@"Toggles whether to zoom the poster"];
 			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];

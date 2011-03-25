@@ -2,8 +2,8 @@
 #define PreferencesDomain @"com.plex.client-plugin"
 #define PreferencesMachinesExcludedFromServerList @"PreferencesMachinesExcludedFromServerList"
 #define PreferencesQualitySetting @"PreferencesQualitySetting"
-#define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
 
+#define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
 #define PreferencesViewEnableSkipFilteringOptionsMenu @"PreferencesViewEnableSkipFilteringOptionsMenu"
 #define PreferencesViewEnablePosterZoomingInListView @"PreferencesViewEnablePosterZoomingInListView"
 

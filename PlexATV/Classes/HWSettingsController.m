@@ -27,10 +27,9 @@
 
 #define ServersIndex 0
 #define QualitySettingIndex 1
-#define ViewTypeSettingIndex 2
-#define ViewSettingsIndex 3
-#define AudioSettingsIndex 4
-#define PluginVersionNumberIndex 5
+#define ViewSettingsIndex 2
+#define AudioSettingsIndex 3
+#define PluginVersionNumberIndex 4
 
 
 #pragma mark -
@@ -97,32 +96,20 @@
 	[qualitySettingMenuItem setTitle:qualitySettingTitle];
 	[qualitySettingTitle release];
 	[_items addObject:qualitySettingMenuItem];
-	
     
-  	// =========== view type setting ===========
-	SMFMenuItem *viewTypeSettingMenuItem = [SMFMenuItem menuItem];
-	
-	NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-	if (viewTypeSetting == nil) {
-		[[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
-		viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-	}
-	
-	NSString *viewTypeSettingTitle = [[NSString alloc] initWithFormat:@"Video view:   %@", viewTypeSetting];
-	[viewTypeSettingMenuItem setTitle:viewTypeSettingTitle];
-	[viewTypeSettingTitle release];
-	[_items addObject:viewTypeSettingMenuItem];
 	
     // =========== view settings ===========
 	SMFMenuItem *viewSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[viewSettingsMenuItem setTitle:@"View settings"];
 	[_items addObject:viewSettingsMenuItem];
     
+    
     // =========== audio settings ===========
 	SMFMenuItem *audioSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[audioSettingsMenuItem setTitle:@"Audio settings"];
 	[_items addObject:audioSettingsMenuItem];
 	
+    
 	// =========== version number ===========
 	SMFMenuItem *pluginVersionNumberMenuItem = [SMFMenuItem menuItem];
 	
@@ -132,6 +119,7 @@
 	[pluginVersionNumberTitle release];
 	[_items addObject:pluginVersionNumberMenuItem];
 	
+    
 	//this code can be used to find all the accessory types
     //	for (int i = 0; i<32; i++) {
     //		BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
@@ -171,23 +159,6 @@
 			[self.list reload];
 			break;
 		}
-        case ViewTypeSettingIndex: {
-            // =========== view type setting ===========
-			NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-			
-			if ([viewTypeSetting isEqualToString:@"List"]) {
-				[[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
-                DLog(@"changin view type to grid view");
-			} else {
-				[[HWUserDefaults preferences] setObject:@"List" forKey:PreferencesViewTypeSetting];
-                DLog(@"changin view type to list view");
-			}
-            
-            
-			[self setupList];
-			[self.list reload];      
-            break;
-        }
 		case ViewSettingsIndex: {
 			// =========== advanced settings ===========
 			PlexViewSettingsController* menuController = [[PlexViewSettingsController alloc] init];
@@ -227,12 +198,6 @@
 			// =========== quality setting ===========
 			[asset setTitle:@"Select the video quality"];
 			[asset setSummary:@"Sets the quality of the streamed video.                                        Good: 720p 1500 kbps, Better: 720p 2300 kbps, Best: 720p 4000 kbps"];
-			break;
-		}
-		case ViewTypeSettingIndex: {
-            // =========== view type setting ===========
-			[asset setTitle:@"Select the video listing view type"];
-			[asset setSummary:@"Sets the type of view for videos, choose between list view or grid view ie. cover art view."];
 			break;
 		}
 		case ViewSettingsIndex: {
