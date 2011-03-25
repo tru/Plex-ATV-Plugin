@@ -77,8 +77,8 @@
 										[NSArray array], PreferencesMachinesExcludedFromServerList,
 										@"Low", PreferencesQualitySetting,
 										@"Grid", PreferencesViewTypeSetting,
-										NO, PreferencesAdvancedEnableSkipFilteringOptionsMenu,
-										NO, PreferencesAdvancedEnableDebug,
+										NO, PreferencesViewEnableSkipFilteringOptionsMenu,
+										YES, PreferencesViewDisablePosterZoomingInListView,
 										nil]];
     }
     return _preferences;

@@ -14,7 +14,7 @@
 //
 
 
-@interface HWAdvancedSettingsController : SMFMediaMenuController {}
+@interface PlexViewSettingsController : SMFMediaMenuController {}
 - (void)setupList;
 
 @end

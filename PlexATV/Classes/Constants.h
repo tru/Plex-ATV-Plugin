@@ -3,8 +3,10 @@
 #define PreferencesMachinesExcludedFromServerList @"PreferencesMachinesExcludedFromServerList"
 #define PreferencesQualitySetting @"PreferencesQualitySetting"
 #define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
-#define PreferencesAdvancedEnableDebug @"PreferencesAdvancedEnableDebug"
-#define PreferencesAdvancedEnableSkipFilteringOptionsMenu @"PreferencesAdvancedEnableSkipFilteringOptionsMenu"
+
+#define PreferencesViewEnableSkipFilteringOptionsMenu @"PreferencesViewEnableSkipFilteringOptionsMenu"
+#define PreferencesViewDisablePosterZoomingInListView @"PreferencesViewDisablePosterZoomingInListView"
+
 #define PreferencesAudioEnableAC3 @"PreferencesAudioEnableAC3"
 #define PreferencesAudioEnableDTS @"PreferencesAudioEnableDTS"
 

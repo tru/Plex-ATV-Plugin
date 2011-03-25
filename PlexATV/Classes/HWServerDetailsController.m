@@ -136,7 +136,8 @@
 	isCreatingNewConnection = NO;
 	hasCompletedAddNewMachineWithConnectionWizardStep1 = NO;
 	hasCompletedAddNewMachineWithConnectionWizardStep2 = NO;
-	self.userName, self.password = nil;
+	self.userName = nil;
+    self.password = nil;
 	
 	[self showEnterServerNameDialogBoxWithInitialText:@""];
 }

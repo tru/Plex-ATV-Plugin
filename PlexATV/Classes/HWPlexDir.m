@@ -77,7 +77,7 @@
 - (PlexMediaContainer*) applySkipFilteringOnContainer:(PlexMediaContainer*)container {
 	PlexMediaContainer *pmc = container;
 	
-	BOOL skipFilteringOptionsMenu = [[HWUserDefaults preferences] boolForKey:PreferencesAdvancedEnableSkipFilteringOptionsMenu];
+	BOOL skipFilteringOptionsMenu = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
 	DLog(@"skipFilteringOption: %@", skipFilteringOptionsMenu ? @"YES" : @"NO");
 	
 	if (pmc.sectionRoot && !pmc.requestsMessage && skipFilteringOptionsMenu) { 

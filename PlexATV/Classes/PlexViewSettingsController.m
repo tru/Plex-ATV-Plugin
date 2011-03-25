@@ -13,21 +13,21 @@
 //		Copyright 2010 tomcool.org. All rights reserved.
 //
 
-#import "HWAdvancedSettingsController.h"
+#import "PlexViewSettingsController.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
-@implementation HWAdvancedSettingsController
+@implementation PlexViewSettingsController
 
 #define EnableSkipFilteringOptionsMenu 0
-#define EnableDebug 1
+#define DisablePosterZoomingInListView 1
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id) init {
 	if((self = [super init]) != nil) {
-		[self setLabel:@"Plex Advanced Settings"];
-		[self setListTitle:@"Plex Advanced Settings"];
+		[self setLabel:@"Plex View Settings"];
+		[self setListTitle:@"Plex View Settings"];
 		
 		[self setupList];
 	}	
@@ -67,18 +67,18 @@
 	// =========== enable "skip filtering options" menu ===========
 	SMFMenuItem *skipFilteringOptionsMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *skipFilteringOptions = [[HWUserDefaults preferences] boolForKey:PreferencesAdvancedEnableSkipFilteringOptionsMenu] ? @"Enabled" : @"Disabled";
+	NSString *skipFilteringOptions = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu] ? @"Enabled" : @"Disabled";
 	NSString *skipFilteringOptionsTitle = [[NSString alloc] initWithFormat:@"Filtering menu:    %@", skipFilteringOptions];
 	[skipFilteringOptionsMenuItem setTitle:skipFilteringOptionsTitle];
 	[skipFilteringOptionsTitle release];
 	[_items addObject:skipFilteringOptionsMenuItem];
 	
 	
-	// =========== enable debug ===========
+	// =========== disable poster zooming in list view ===========
 	SMFMenuItem *enableDebugMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *enableDebug = [[HWUserDefaults preferences] boolForKey:PreferencesAdvancedEnableDebug] ? @"Enabled" : @"Disabled";
-	NSString *enableDebugTitle = [[NSString alloc] initWithFormat:@"Debug:    %@", enableDebug];
+	NSString *enableDebug = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView] ? @"Enabled" : @"Disabled";
+	NSString *enableDebugTitle = [[NSString alloc] initWithFormat:@"Poster zoom: %@", enableDebug];
 	[enableDebugMenuItem setTitle:enableDebugTitle];
 	[enableDebugTitle release];
 	[_items addObject:enableDebugMenuItem];
@@ -91,16 +91,16 @@
 	switch (selected) {
 		case EnableSkipFilteringOptionsMenu: {
 			// =========== enable "skip filtering options" menu ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesAdvancedEnableSkipFilteringOptionsMenu];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesAdvancedEnableSkipFilteringOptionsMenu];			
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewEnableSkipFilteringOptionsMenu];			
 			[self setupList];
 			[self.list reload];
 			break;
 		}
-		case EnableDebug: {
-			// =========== enable debug ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesAdvancedEnableDebug];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesAdvancedEnableDebug];			
+		case DisablePosterZoomingInListView: {
+			// =========== enable poster zooming in list view ===========
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewDisablePosterZoomingInListView];			
 			[self setupList];
 			[self.list reload];
 			break;
@@ -121,10 +121,10 @@
 			[asset setSummary:@"Enables/Disables the skipping of the menus with 'all', 'unwatched', 'newest', etc. (currently experimental)"];
 			break;
 		}
-		case EnableDebug: {	
-			// =========== enable debug ===========
-			[asset setTitle:@"Turn debug mode on or off"];
-			[asset setSummary:@"Enables/Disables writing to the log file (currently not used)"];
+		case DisablePosterZoomingInListView: {	
+			// =========== enable poster zooming in list view ===========
+			[asset setTitle:@"Toggles whether to zoom the poster"];
+			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
 			break;
 		}
 		default:

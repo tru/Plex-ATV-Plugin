@@ -15,7 +15,7 @@
 
 #import "HWSettingsController.h"
 #import "HWServersController.h"
-#import "HWAdvancedSettingsController.h"
+#import "PlexViewSettingsController.h"
 #import "PlexAudioSettingsController.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
@@ -28,8 +28,8 @@
 #define ServersIndex 0
 #define QualitySettingIndex 1
 #define ViewTypeSettingIndex 2
-#define AudioSettingsIndex 3
-#define AdvancedSettingsIndex 4
+#define ViewSettingsIndex 3
+#define AudioSettingsIndex 4
 #define PluginVersionNumberIndex 5
 
 
@@ -98,7 +98,7 @@
 	[qualitySettingTitle release];
 	[_items addObject:qualitySettingMenuItem];
 	
-
+    
   	// =========== view type setting ===========
 	SMFMenuItem *viewTypeSettingMenuItem = [SMFMenuItem menuItem];
 	
@@ -113,15 +113,15 @@
 	[viewTypeSettingTitle release];
 	[_items addObject:viewTypeSettingMenuItem];
 	
-  // =========== audio settings ===========
+    // =========== view settings ===========
+	SMFMenuItem *viewSettingsMenuItem = [SMFMenuItem folderMenuItem];
+	[viewSettingsMenuItem setTitle:@"View settings"];
+	[_items addObject:viewSettingsMenuItem];
+    
+    // =========== audio settings ===========
 	SMFMenuItem *audioSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[audioSettingsMenuItem setTitle:@"Audio settings"];
 	[_items addObject:audioSettingsMenuItem];
-  
-	// =========== advanced settings ===========
-	SMFMenuItem *advancedSettingsMenuItem = [SMFMenuItem folderMenuItem];
-	[advancedSettingsMenuItem setTitle:@"Advanced settings"];
-	[_items addObject:advancedSettingsMenuItem];
 	
 	// =========== version number ===========
 	SMFMenuItem *pluginVersionNumberMenuItem = [SMFMenuItem menuItem];
@@ -133,15 +133,15 @@
 	[_items addObject:pluginVersionNumberMenuItem];
 	
 	//this code can be used to find all the accessory types
-//	for (int i = 0; i<32; i++) {
-//		BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
-//		[tempSettingMenuItem addAccessoryOfType:i];
-//		
-//		NSString *tempSettingTitle = [[NSString alloc] initWithFormat:@"temp %d", i];
-//		[tempSettingMenuItem setText:tempSettingTitle withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-//		[tempSettingTitle release];
-//		[_items addObject:tempSettingMenuItem];
-//	}
+    //	for (int i = 0; i<32; i++) {
+    //		BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
+    //		[tempSettingMenuItem addAccessoryOfType:i];
+    //		
+    //		NSString *tempSettingTitle = [[NSString alloc] initWithFormat:@"temp %d", i];
+    //		[tempSettingMenuItem setText:tempSettingTitle withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
+    //		[tempSettingTitle release];
+    //		[_items addObject:tempSettingMenuItem];
+    //	}
 }
 
 #pragma mark -
@@ -171,38 +171,38 @@
 			[self.list reload];
 			break;
 		}
-    case ViewTypeSettingIndex: {
-        // =========== view type setting ===========
+        case ViewTypeSettingIndex: {
+            // =========== view type setting ===========
 			NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 			
 			if ([viewTypeSetting isEqualToString:@"List"]) {
 				[[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
-        DLog(@"changin view type to grid view");
+                DLog(@"changin view type to grid view");
 			} else {
 				[[HWUserDefaults preferences] setObject:@"List" forKey:PreferencesViewTypeSetting];
-        DLog(@"changin view type to list view");
+                DLog(@"changin view type to list view");
 			}
-
-      
+            
+            
 			[self setupList];
 			[self.list reload];      
-      break;
-    }
-    case AudioSettingsIndex: {
+            break;
+        }
+		case ViewSettingsIndex: {
+			// =========== advanced settings ===========
+			PlexViewSettingsController* menuController = [[PlexViewSettingsController alloc] init];
+			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+			[menuController autorelease];
+			break;
+		}
+        case AudioSettingsIndex: {
 			// =========== audio settings ===========
 			PlexAudioSettingsController* menuController = [[PlexAudioSettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 			[menuController autorelease];
 			break;
-      
-    }
-		case AdvancedSettingsIndex: {
-			// =========== advanced settings ===========
-			HWAdvancedSettingsController* menuController = [[HWAdvancedSettingsController alloc] init];
-			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController autorelease];
-			break;
-		}
+            
+        }
 		case PluginVersionNumberIndex: {
 			//do nothing
 			break;
@@ -230,21 +230,21 @@
 			break;
 		}
 		case ViewTypeSettingIndex: {
-        // =========== view type setting ===========
+            // =========== view type setting ===========
 			[asset setTitle:@"Select the video listing view type"];
 			[asset setSummary:@"Sets the type of view for videos, choose between list view or grid view ie. cover art view."];
+			break;
+		}
+		case ViewSettingsIndex: {
+			// =========== view settings ===========
+			[asset setTitle:@"Modify view settings"];
+			[asset setSummary:@"Alter UI behavior, views to use, etc."];
 			break;
 		}
 		case AudioSettingsIndex: {
 			// =========== audio settings ===========
 			[asset setTitle:@"Modify audio output settings"];
 			[asset setSummary:@"Setup the kind of multi-channel audio you want to output"];
-			break;
-		}
-		case AdvancedSettingsIndex: {
-			// =========== advanced settings ===========
-			[asset setTitle:@"Modify advanced settings"];
-			[asset setSummary:@"Alter UI behavior, enable debug mode, etc."];
 			break;
 		}
 		case PluginVersionNumberIndex: {
