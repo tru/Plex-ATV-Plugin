@@ -78,7 +78,7 @@
 	SMFMenuItem *dtsMenuItem = [SMFMenuItem menuItem];
 	
 	NSString *dtsOptions = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableDTS] ? @"Yes" : @"No";
-	NSString *dtsOptionsTitle = [[NSString alloc] initWithFormat:@"DTS™ capable receiver:      %@", dtsOptions];
+	NSString *dtsOptionsTitle = [[NSString alloc] initWithFormat:@"DTS™ capable receiver:            %@", dtsOptions];
 	[dtsMenuItem setTitle:dtsOptionsTitle];
 	[dtsOptionsTitle release];
 	[_items addObject:dtsMenuItem];

@@ -78,7 +78,7 @@
 										@"Low", PreferencesQualitySetting,
 										@"Grid", PreferencesViewTypeSetting,
 										NO, PreferencesViewEnableSkipFilteringOptionsMenu,
-										NO, PreferencesViewEnablePosterZoomingInListView,
+										NO, PreferencesViewDisablePosterZoomingInListView,
 										nil]];
     }
     return _preferences;

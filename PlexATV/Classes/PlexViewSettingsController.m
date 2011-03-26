@@ -21,7 +21,7 @@
 
 #define ViewTypeSettingIndex 0
 #define EnableSkipFilteringOptionsMenuIndex 1
-#define EnablePosterZoomingInListViewIndex 2
+#define DisablePosterZoomingInListViewIndex 2
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -74,28 +74,28 @@
 		viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	}
 
-	NSString *viewTypeSettingTitle = [[NSString alloc] initWithFormat:@"Video view     :   %@", viewTypeSetting];
+	NSString *viewTypeSettingTitle = [[NSString alloc] initWithFormat:@"Video view:                  %@", viewTypeSetting];
 	[viewTypeSettingMenuItem setTitle:viewTypeSettingTitle];
 	[viewTypeSettingTitle release];
 	[_items addObject:viewTypeSettingMenuItem];
     
     
     
-	// =========== enable "skip filtering options" menu ===========
+	// =========== "skip filtering options" menu ===========
 	SMFMenuItem *skipFilteringOptionsMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *skipFilteringOptions = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu] ? @"Enabled" : @"Disabled";
-	NSString *skipFilteringOptionsTitle = [[NSString alloc] initWithFormat:@"Filtering menu:    %@", skipFilteringOptions];
+	NSString *skipFilteringOptions = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu] ? @"Yes" : @"No";
+	NSString *skipFilteringOptionsTitle = [[NSString alloc] initWithFormat:@"Skip filtering menu:     %@", skipFilteringOptions];
 	[skipFilteringOptionsMenuItem setTitle:skipFilteringOptionsTitle];
 	[skipFilteringOptionsTitle release];
 	[_items addObject:skipFilteringOptionsMenuItem];
 	
 	
-	// =========== eanble poster zooming in list view ===========
+	// =========== disable poster zooming in list view ===========
 	SMFMenuItem *enablePosterZoomMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *enablePosterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnablePosterZoomingInListView] ? @"Enabled" : @"Disabled";
-	NSString *enablePosterZoomTitle = [[NSString alloc] initWithFormat:@"Poster zoom:       %@", enablePosterZoom];
+	NSString *enablePosterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView] ? @"Yes" : @"No";
+	NSString *enablePosterZoomTitle = [[NSString alloc] initWithFormat:@"Disable poster zoom:  %@", enablePosterZoom];
 	[enablePosterZoomMenuItem setTitle:enablePosterZoomTitle];
 	[enablePosterZoomTitle release];
 	[_items addObject:enablePosterZoomMenuItem];
@@ -112,10 +112,8 @@
             
             if ([viewTypeSetting isEqualToString:@"List"]) {
                 [[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
-                DLog(@"changin view type to grid view");
             } else {
                 [[HWUserDefaults preferences] setObject:@"List" forKey:PreferencesViewTypeSetting];
-                DLog(@"changin view type to list view");
             }
             
             
@@ -124,17 +122,17 @@
             break;
         }
 		case EnableSkipFilteringOptionsMenuIndex: {
-			// =========== enable "skip filtering options" menu ===========
+            // =========== "skip filtering options" menu ===========
 			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
 			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewEnableSkipFilteringOptionsMenu];			
 			[self setupList];
 			[self.list reload];
 			break;
 		}
-		case EnablePosterZoomingInListViewIndex: {
-			// =========== enable poster zooming in list view ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnablePosterZoomingInListView];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewEnablePosterZoomingInListView];			
+		case DisablePosterZoomingInListViewIndex: {
+            // =========== disable poster zooming in list view ===========
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewDisablePosterZoomingInListView];			
 			[self setupList];
 			[self.list reload];
 			break;
@@ -156,13 +154,13 @@
             break;
         }
 		case EnableSkipFilteringOptionsMenuIndex: {
-			// =========== enable "skip filtering options" menu ===========
+            // =========== "skip filtering options" menu ===========
 			[asset setTitle:@"Toggles whether to skip the menu"];
 			[asset setSummary:@"Enables/Disables the skipping of the menus with 'all', 'unwatched', 'newest', etc. (currently experimental)"];
 			break;
 		}
-		case EnablePosterZoomingInListViewIndex: {
-			// =========== enable poster zooming in list view ===========
+		case DisablePosterZoomingInListViewIndex: {
+            // =========== disable poster zooming in list view ===========
 			[asset setTitle:@"Toggles whether to zoom the poster"];
 			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
 			break;

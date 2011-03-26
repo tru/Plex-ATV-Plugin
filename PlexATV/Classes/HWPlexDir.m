@@ -55,7 +55,6 @@
 		
 		NSString *settingsPng = [[NSBundle bundleForClass:[HWPlexDir class]] pathForResource:@"PlexIcon" ofType:@"png"];
 		BRImage *sp = [BRImage imageWithPath:settingsPng];
-		//BRImage *sp = [[BRThemeInfo sharedTheme] gearImage];
 		
 		[self setListIcon:sp horizontalOffset:0.0 kerningFactor:0.15];
 		
@@ -219,19 +218,19 @@
 
 - (id)previewControlForItem:(long)item
 {
-
+    
 	PlexMediaObject* pmo = [rootContainer.directories objectAtIndex:item];
-
+    
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"media object: %@", pmo);
 #endif	
-
+    
 	NSURL* mediaURL = [pmo mediaStreamURL];
 	PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
 	BRMetadataPreviewControl *preview =[[BRMetadataPreviewControl alloc] init];
-	[preview setShowsMetadataImmediately:NO];
+	[preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
 	[preview setAsset:pma];
-  [pma release];
+    [pma release];
 	
 	return [preview autorelease];
 }
@@ -244,8 +243,8 @@
 	NSString* type = [pmo.attributes objectForKey:@"type"];
 	if ([type empty]) type = pmo.containerType;
 	type = [type lowercaseString];
-  
-  NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+    
+    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	
 	DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
 	
@@ -265,11 +264,11 @@
 		[player startPlaying];
 		[player autorelease];
 	}
-  else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
+    else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
 		[self showGridListControl:[pmo contents]];
 	}
 	else 
-  {
+    {
 		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
 		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 		
@@ -358,8 +357,8 @@
 			//mark item(s) as watched
 			[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as watched: %@", pmo.name);
-      [pmo markSeen];
-      [self.list reload];
+            [pmo markSeen];
+            [self.list reload];
 		} else if ([[sender selectedText] hasSuffix:@"Unwatched"]) {
 			//mark item(s) as unwatched
 			[[self stack] popController]; //need this so we don't go back to option dialog when going back
