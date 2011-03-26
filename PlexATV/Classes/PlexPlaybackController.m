@@ -54,7 +54,6 @@ PlexMediaProvider* __provider = nil;
 		//used to mark movie as seen
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieFinished:) name:@"AVPlayerItemDidPlayToEndTimeNotification" object:nil];
     
- [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];   
 	}
 	return self;
 }
@@ -77,7 +76,7 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"deallocing player controller for %@", pmo.name);
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-		
+  
 	[pmo autorelease];
 	[super dealloc];
 }
@@ -162,7 +161,7 @@ PlexMediaProvider* __provider = nil;
 	
 	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
-	DLog(@"%@", pmo.request.machine.capabilities.qualities);
+	//DLog(@"%@", pmo.request.machine.capabilities.qualities);
 	NSURL* mediaURL = [pmo mediaURL];
 	
 	DLog(@"Starting Playback of %@", mediaURL);
@@ -215,6 +214,9 @@ PlexMediaProvider* __provider = nil;
                                                       userInfo:nil 
                                                        repeats:YES] retain];
 	[pma release];
+  
+  //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
 }
 
 -(void)playbackAudio {
@@ -309,11 +311,11 @@ PlexMediaProvider* __provider = nil;
       [[MachineManager sharedMachineManager] startAutoDetection];
       [[MachineManager sharedMachineManager] startMonitoringMachineState];
       break;
-
+      
     default:
       break;
   }
-
+  
 }
 
 - (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement {
