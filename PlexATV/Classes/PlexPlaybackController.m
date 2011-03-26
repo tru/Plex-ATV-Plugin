@@ -317,18 +317,18 @@ PlexMediaProvider* __provider = nil;
 }
 
 - (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement {
-  [pmo markSeen];
+  [mediaObject markSeen];
   if (shouldIncrement) {
-    [pmo.attributes setObject:[NSNumber numberWithInt:[pmo.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
+    [mediaObject.attributes setObject:[NSNumber numberWithInt:[mediaObject.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
   }
 }
 
 - (void)markMediaObjectAsUnwatched:(PlexMediaObject *)mediaObject andDecrementViewCount:(BOOL)shouldDecrement {
-  [pmo markUnseen];
+  [mediaObject markUnseen];
   if (shouldDecrement) {
-    int currentViewCount = [pmo.attributes integerForKey:@"viewCount"];
+    int currentViewCount = [mediaObject.attributes integerForKey:@"viewCount"];
     if (currentViewCount >= 1) {
-      [pmo.attributes setObject:[NSNumber numberWithInt:currentViewCount - 1] forKey:@"viewCount"];
+      [mediaObject.attributes setObject:[NSNumber numberWithInt:currentViewCount - 1] forKey:@"viewCount"];
     }
   }
 }
