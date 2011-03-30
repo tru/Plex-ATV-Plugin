@@ -26,11 +26,17 @@
         
         //we only need to reload ~ the last half of the shelves
         if (shelfCount > 4) {
-            firstShelfToReload = shelfCount/2;
+            firstShelfToReload = ceil(shelfCount/2);
+            //examples:
+            // ceil(5/2)   =   firstShelfToReload=3
+            // ceil(6/2)   =   firstShelfToReload=3
+        } else {
+            //allShelvesLoaded = YES;
+            DLog(@"Shelf count is %d. No reloading needed", shelfCount);
         }
-        
         //if 4 or less, then this won't loop at all
-        for (int i = firstShelfToReload; i<shelfCount; i++) {
+        int startIndex = firstShelfToReload - 2; // -2 since we are wish to reload i+2
+        for (int i = startIndex; i<shelfCount; i++) {
             BRMediaShelfControl *shelf = [shelves objectAtIndex:i];
             if ([shelf isFocused]) {
                 if (i+2 == shelfCount) {
@@ -39,6 +45,7 @@
                     allShelvesLoaded = YES;
                     DLog(@"Reloaded last shelf. Our work here is done");
                 } else {
+                    DLog(@"Reloading shelf at index %d/%d", i+2, shelfCount-1);
                     [[shelves objectAtIndex:i+2] setNeedsLayout];
                 }
                 break; //only need to refresh one
@@ -134,7 +141,7 @@
 	SMFControlFactory *controlFactory = [SMFControlFactory posterControlFactory];
 	controlFactory.favorProxy = YES;
 	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
-	DLog(@"store size: %d",[store count]);
+	DLog(@"store size: %ld",[store count]);
 	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
 	[store release];
 	return provider; 
