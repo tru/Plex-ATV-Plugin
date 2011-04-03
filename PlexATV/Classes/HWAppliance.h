@@ -3,15 +3,15 @@
  *  atvTwo
  *
  *  Created by Frank Bauer on 15.01.11.
- *
+ *  Modified by ccjensen
  */
 
 
 #import "BackRowExtras.h"
-@class TopShelfController, PlexMediaContainer;
+@class PlexTopShelfController, PlexMediaContainer;
 
 @interface PlexAppliance: BRBaseAppliance <MachineManagerDelegate> {
-	TopShelfController *_topShelfController;
+	PlexTopShelfController *_topShelfController;
 	NSMutableArray *_applianceCategories;
 	
 	BRApplianceCategory *otherServersApplianceCategory;
@@ -22,6 +22,6 @@
 
 - (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory;
 - (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;
-
+- (NSArray *)mediaAssetsForPlexMediaObjects:(NSArray *)mediaObjects;
 -(void)setupPlexClientCapabilities;
 @end

@@ -1,7 +1,6 @@
 #define LOCAL_DEBUG_ENABLED 0
 
 #import "HWAppliance.h"
-#import "BackRowExtras.h"
 #import "HWPlexDir.h"
 #import "HWBasicMenu.h"
 #import "HWSettingsController.h"
@@ -13,6 +12,8 @@
 #import "Constants.h"
 #import "HWMediaGridController.h"
 #import "HWTVShowsController.h"
+#import "PlexTopShelfController.h"
+#import "PlexPreviewAsset.h"
 
 #define SERVER_LIST_ID @"hwServerList"
 #define SETTINGS_ID @"hwSettings"
@@ -28,46 +29,11 @@ NSString * const MachineNameKey = @"PlexMachineName";
 +(void)preloadCurrentForMacros;
 @end
 
-@interface BRTopShelfView (specialAdditions)
-- (BRImageControl *)productImage;
-@end
 
-
-@implementation BRTopShelfView (specialAdditions)
-- (BRImageControl *)productImage {
-	return MSHookIvar<BRImageControl *>(self, "_productImage");
-}
-@end
-
-
-@interface TopShelfController : NSObject {}
-- (void)selectCategoryWithIdentifier:(id)identifier;
-- (id)topShelfView;
-- (void)refresh;
-@end
-
-@implementation TopShelfController
-- (void)initWithApplianceController:(id)applianceController {}
-- (void)selectCategoryWithIdentifier:(id)identifier {}
-- (void)refresh{}
-
-
-- (BRTopShelfView *)topShelfView {
-	BRTopShelfView *topShelf = [[BRTopShelfView alloc] init];
-	BRImageControl *imageControl = [topShelf productImage];
-	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWPlexDir class]] pathForResource:@"PlexLogo" ofType:@"png"]];
-	[imageControl setImage:theImage];
-	
-	return [topShelf autorelease];
-}
-@end
-
-
-#pragma mark -
-#pragma mark PlexAppliance
 @implementation PlexAppliance
 @synthesize topShelfController = _topShelfController;
 @synthesize applianceCat = _applianceCategories;
+//@synthesize machines = _machines;
 
 NSString * const CompoundIdentifierDelimiter = @"|||";
 
@@ -82,14 +48,14 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		[PlexRequest setStreamingKey:@"k3U6GLkZOoNIoSgjDshPErvqMIFdE0xMTx8kgsrhnC0=" forPublicKey:@"KQMIY6GATPC63AIMC4R2"];
 		//instrumentObjcMessageSends(YES);
 		
-    //tell PMS what kind of codecs and media we can play
-    [HWUserDefaults setupPlexClientCapabilities];
+        //tell PMS what kind of codecs and media we can play
+        [HWUserDefaults setupPlexClientCapabilities];
 		
 		DLog(@"==================== plex client starting up ====================");
-		
-		DLog(@"stuff: ",[[NSString stringWithCString:__FILE__ encoding:NSUTF8StringEncoding] lastPathComponent]);
-		_topShelfController = [[TopShelfController alloc] init];
+        
+		_topShelfController = [[PlexTopShelfController alloc] init];
 		_applianceCategories = [[NSMutableArray alloc] init];
+		//_machines = [[NSMutableArray alloc] init];
 		
 		otherServersApplianceCategory = [SERVER_LIST_CAT retain];
 		settingsApplianceCategory = [SETTINGS_CAT retain];
@@ -131,24 +97,23 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		}
 		
 		//HAZAA! we found it! 
-    PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
+		PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
 		DLog(@"matchingCategory: %@", [matchingCategory type]);
-    
-    //determine the user selected view setting
-    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
-      if (matchingCategory.isMovie) {
-        menuController = [self newMoviesController:[matchingCategory contents]];
-      } else if (matchingCategory.isTVShow) {
-        menuController = [self newTVShowsController:[matchingCategory contents]];
-      } else {
-        menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-      }      
-    } else {
-      menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-    }
-    
-    
+        
+        //determine the user selected view setting
+        NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+        if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
+            if (matchingCategory.isMovie) {
+                menuController = [self newMoviesController:[matchingCategory contents]];
+            } else if (matchingCategory.isTVShow) {
+                menuController = [self newTVShowsController:[matchingCategory contents]];
+            } else {
+                menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
+            }      
+        } else {
+            menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
+        }
+        
 	}    
 	return [menuController autorelease];
 }
@@ -179,7 +144,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	BRController *menuController = nil;
 	PlexMediaObject *recent=nil;
 	PlexMediaObject *allMovies=nil;
-  //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
+    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
 	if (movieCategory.directories > 0) {
 		NSUInteger i, count = [movieCategory.directories count];
 		for (i = 0; i < count; i++) {
@@ -237,7 +202,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 - (id)moduleName { return @"Plex"; }
 - (id)applianceKey { return @"Plex"; }
 
--(void) reloadCategories {
+- (void)reloadCategories {
 	[self.applianceCat removeAllObjects];
 	
 	NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
@@ -314,6 +279,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			}
 			[categoryName release];
 		}
+		
 		[machineID release];
 		[machineName release];
 	}
@@ -321,6 +287,87 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	[super reloadCategories];
 }
 
+- (NSArray *)mediaAssetsForPlexMediaObjects:(NSArray *)mediaObjects {
+	NSMutableArray *newAssets = [NSMutableArray array];
+	
+	for(int i=0;i<([mediaObjects count]<20?[mediaObjects count]:20);i++) {
+		PlexMediaObject *pmo = [mediaObjects objectAtIndex:i];
+		
+		//this code crashes when you get the shelf scrolling vv
+		NSURL* mediaURL = [pmo mediaStreamURL];
+		PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
+		[newAssets addObject:pma];
+		[pma release];
+		//this code crashes when you get the shelf scrolling ^^
+		
+		
+		//this code works when you get the shelf scrolling vv
+		//		NSString *thumbURL = nil;
+		//		
+		//		if ([pmo.attributes valueForKey:@"thumb"] != nil){
+		//			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"thumb"]];
+		//		}
+		//		else if ([pmo.attributes valueForKey:@"art"] != nil) {
+		//			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
+		//		}
+		//		
+		//		NSURL* turl = [pmo.request pathForScaledImage:thumbURL ofSize:CGSizeMake(512., 512.)];
+		//		
+		//		SMFBaseAsset *asset = [SMFBaseAsset asset];
+		//		[asset setCoverArt:[BRImage imageWithURL:turl]];
+		//		[asset setTitle:pmo.name];
+		//		[newAssets addObject:asset];
+		//this code works when you get the shelf scrolling ^^
+	}
+	//NSLog(@"converted %d assets: %@", [newAssets count], newAssets);
+	return newAssets;
+}
+
+//#pragma mark -
+//#pragma mark Machine Delegate Methods
+//-(void)machineWasRemoved:(Machine*)m{
+//#if LOCAL_DEBUG_ENABLED
+//	DLog(@"MachineManager: Removed machine %@", m);
+//#endif
+//	if ([self.machines containsObject:m]) {
+//		[self.machines removeObject:m];
+//		[self reloadCategories];
+//	}
+//}
+//
+//-(void)machineWasAdded:(Machine*)m {   
+//#if LOCAL_DEBUG_ENABLED
+//	DLog(@"MachineManager: Added machine %@", m);
+//#endif
+//	BOOL machineIsOnlineAndConnectable = m.isComplete;
+//	
+//	if (machineIsOnlineAndConnectable && ![self.machines containsObject:m]) {
+//		[self.machines addObject:m];
+//	}
+//	[self reloadCategories];
+//}
+//
+//- (void)machineWasChanged:(Machine *)m {}
+//
+//-(void)machine:(Machine *)m updatedInfo:(ConnectionInfoType)updateMask {
+//#if LOCAL_DEBUG_ENABLED
+//	DLog(@"MachineManager: Updated Info with update mask %d from machine %@", updateMask, m);
+//#endif
+//	BOOL machinesCategoryListWasUpdated = (updateMask & (ConnectionInfoTypeRootLevel | ConnectionInfoTypeLibrarySections)) != 0;
+//	BOOL machineHasEitherGoneOnlineOrOffline = (updateMask & ConnectionInfoTypeCanConnect) != 0;
+//	
+//	if (machinesCategoryListWasUpdated) {
+//		[self reloadCategories];
+//	} else if (machineHasEitherGoneOnlineOrOffline) {
+//		if (m.canConnect && ![self.machines containsObject:m]) {
+//			[self.machines addObject:m];
+//			[self reloadCategories];
+//		} else if ([self.machines containsObject:m]) {
+//			[self.machines removeObject:m];
+//			[self reloadCategories];
+//		}
+//	}
+//}
 
 #pragma mark -
 #pragma mark Machine Delegate Methods
@@ -349,10 +396,19 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	DLog(@"MachineManager: Updated Info with update mask %d from machine %@", updateMask, m);
 #endif
 	BOOL machinesCategoryListWasUpdated = (updateMask & (ConnectionInfoTypeRootLevel | ConnectionInfoTypeLibrarySections)) != 0;
+	BOOL machinesRecentlyAddedWasUpdated = (updateMask & ConnectionInfoTypeRecentlyAddedMedia) != 0;
 	BOOL machineHasEitherGoneOnlineOrOffline = (updateMask & ConnectionInfoTypeCanConnect) != 0;
 	
 	if ( machinesCategoryListWasUpdated || machineHasEitherGoneOnlineOrOffline ) {
 		[self reloadCategories];
+	} 
+	
+	if (machinesRecentlyAddedWasUpdated) {
+		//update the shelf
+		if (!_topShelfController.assets) {
+			_topShelfController.assets = [self mediaAssetsForPlexMediaObjects:[[m recentlyAddedMedia] directories]];
+			[_topShelfController refresh];
+		}
 	}
 }
 @end
