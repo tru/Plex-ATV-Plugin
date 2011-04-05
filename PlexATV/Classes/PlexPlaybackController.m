@@ -77,6 +77,7 @@ PlexMediaProvider* __provider = nil;
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
     
+#warning why autorelease?
 	[pmo autorelease];
 	[super dealloc];
 }
