@@ -68,7 +68,7 @@ typedef enum {
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id)initWithPreviewAssets:(NSArray*)previewAssets withSelectedIndex:(int)selIndex {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		self.assets = previewAssets;
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"init with asset count:%d and index:%d", [self.assets count], selIndex);
