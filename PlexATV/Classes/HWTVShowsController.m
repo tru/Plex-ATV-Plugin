@@ -11,6 +11,8 @@
 #import "PlexPreviewAsset.h"
 #import "HWPlexDir.h"
 
+#define LOCAL_DEBUG_ENABLED 0
+
 @interface BRThemeInfo (PlexExtentions)
 - (id)storeRentalPlaceholderImage;
 @end
@@ -32,7 +34,9 @@
             // ceil(6/2)   =   firstShelfToReload=3
         } else {
             //allShelvesLoaded = YES;
+#if LOCAL_DEBUG_ENABLED
             DLog(@"Shelf count is %d. No reloading needed", shelfCount);
+#endif
         }
         //if 4 or less, then this won't loop at all
         int startIndex = firstShelfToReload - 2; // -2 since we are wish to reload i+2
@@ -43,9 +47,13 @@
                     //last item, all prior ones will have been re-layout too. 
                     //Will not need to redo this hack again until view is reloaded
                     allShelvesLoaded = YES;
+#if LOCAL_DEBUG_ENABLED
                     DLog(@"Reloaded last shelf. Our work here is done");
+#endif
                 } else {
+#if LOCAL_DEBUG_ENABLED
                     DLog(@"Reloading shelf at index %d/%d", i+2, shelfCount-1);
+#endif
                     [[shelves objectAtIndex:i+2] setNeedsLayout];
                 }
                 break; //only need to refresh one
@@ -111,7 +119,9 @@
 
 - (NSInteger)numberOfShelfsInBookcaseController:(SMFBookcaseController *)bookcaseController {
 	[allTvShowsSeasonsPlexMediaContainer removeAllObjects];
-  DLog(@"tvShows.directories: %d",[tvShows.directories count]);
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"tvShows.directories: %d",[tvShows.directories count]);
+#endif
 	return [tvShows.directories count];
 }
 
@@ -130,7 +140,9 @@
 	PlexMediaContainer *seasonsContainer = [tvshow contents];
 	[allTvShowsSeasonsPlexMediaContainer addObject:seasonsContainer];
 	NSArray *seasons = [seasonsContainer directories];
-  DLog(@"index: %d, seasons: %d", index, [seasons count]);
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"index: %d, seasons: %d", index, [seasons count]);
+#endif
 	for (PlexMediaObject *season in seasons) {		
 		NSURL* mediaURL = [season mediaStreamURL];
 		PlexPreviewAsset* ppa = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:season];
@@ -141,7 +153,9 @@
 	SMFControlFactory *controlFactory = [SMFControlFactory posterControlFactory];
 	controlFactory.favorProxy = YES;
 	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+#if LOCAL_DEBUG_ENABLED
 	DLog(@"store size: %ld",[store count]);
+#endif
 	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
 	[store release];
 	return provider; 
@@ -155,11 +169,15 @@
 }
 
 -(void)bookcaseController:(SMFBookcaseController *)bookcaseController selectionWillOccurInShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
+#if LOCAL_DEBUG_ENABLED
 	DLog(@"select will occur");
+#endif
 }
 
 -(void)bookcaseController:(SMFBookcaseController *)bookcaseController selectionDidOccurInShelf:(BRMediaShelfControl *)shelfControl atIndex:(NSInteger)index {
+#if LOCAL_DEBUG_ENABLED
 	DLog(@"select did occur at index: %d and shelfindex: %ld",index, [shelfControl focusedIndex]);	
+#endif
     
     PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];  
     PlexMediaObject *season = [[tvshow contents].directories objectAtIndex:[shelfControl focusedIndex]];
