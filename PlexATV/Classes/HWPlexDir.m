@@ -89,8 +89,8 @@
 		 ATV will use the last filter
 		 */
 		//[PlexPrefs defaultPreferences] filterForSection]
-		
-		const NSString* filter = [[PlexPrefs defaultPreferences] filterForSection:pmc.key];
+		Machine *currentMachine = rootContainer.request.machine;
+		const NSString* filter = [currentMachine filterForSection:pmc.key];
 		BOOL handled = NO;
 		PlexMediaContainer* new_pmc = nil;
 		
