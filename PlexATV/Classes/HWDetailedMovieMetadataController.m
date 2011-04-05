@@ -28,6 +28,7 @@
 #import "HWDetailedMovieMetadataController.h"
 #import "PlexMediaProvider.h"
 #import "PlexPlaybackController.h"
+#import <plex-oss/PlexRequest.h>
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
@@ -377,6 +378,16 @@ typedef enum {
 	DLog(@"coverArt: %@", coverArt);
 #endif
 	return coverArt;
+}
+
+- (NSURL *)backgroundImageUrl {
+    NSURL* backgroundImageUrl = nil;
+    PlexMediaObject *pmo = self.selectedMediaItemPreviewData.pmo;
+    if ([pmo.attributes valueForKey:@"art"] != nil) {
+		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
+        backgroundImageUrl = [pmo.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
+	}
+	return backgroundImageUrl;
 }
 
 -(NSArray *)buttons {
