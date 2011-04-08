@@ -77,7 +77,6 @@ PlexMediaProvider* __provider = nil;
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
     
-#warning why autorelease?
 	[pmo autorelease];
 	[super dealloc];
 }
@@ -93,8 +92,15 @@ PlexMediaProvider* __provider = nil;
 	else {
 		DLog(@"viewOffset: %@", [pmo.attributes valueForKey:@"viewOffset"]);
 		
+        NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
+        
+        //if progress is less than 2 minutes, don't even bother to ask if video should start from beginning.
+        if ([viewOffset intValue] < 120) {
+            viewOffset = [NSNumber numberWithInt:0];
+        }
+        
 		//we have offset, ie. already watched a part of the movie, show a dialog asking if you want to resume or start over
-		if ([pmo.attributes valueForKey:@"viewOffset"] != nil) {
+		if ([viewOffset intValue] > 0) {
 			NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
 			
 			BROptionDialog *option = [[BROptionDialog alloc] init];
@@ -168,7 +174,8 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"Starting Playback of %@", mediaURL);
 	
 	BOOL didTimeOut = NO;
-	[pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0  didTimeout:&didTimeOut];
+#warning what cache policy should we use??
+    [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageNotAllowed];
 	
 	
 	
@@ -258,7 +265,7 @@ PlexMediaProvider* __provider = nil;
 			}
             
             //if not already marked as seen, and less than 10% left of playback
-            if ( ([pmo seenState] != PlexMediaObjectSeenStateSeen) && (total - current < 0.10 * total) ) {
+            if ( [pmo seenState] != PlexMediaObjectSeenStateSeen && (total - current < 0.10 * total) ) {
                 DLog(@"not much left, mark as watched");
                 [self markMediaObjectAsWatched:pmo andIncrementViewCount:YES];
             }
@@ -268,8 +275,10 @@ PlexMediaProvider* __provider = nil;
                 seenState = @"unwatched";
             } else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
                 seenState = @"partial";
-            } else {
+            } else if ([pmo seenState] == PlexMediaObjectSeenStateSeen) {
                 seenState = @"watched";
+            } else {
+                seenState = @"unknown";
             }
             DLog(@"current [%f] out of a total [%f] (%f2 percentage). watched status [%@]", current, total, (current/total)*100.f, seenState);
             
@@ -321,6 +330,7 @@ PlexMediaProvider* __provider = nil;
 
 - (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement {
     [mediaObject markSeen];
+    [mediaObject postMediaProgress:[mediaObject duration]]; //post progress as completed
     if (shouldIncrement) {
         [mediaObject.attributes setObject:[NSNumber numberWithInt:[mediaObject.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
     }
@@ -328,6 +338,7 @@ PlexMediaProvider* __provider = nil;
 
 - (void)markMediaObjectAsUnwatched:(PlexMediaObject *)mediaObject andDecrementViewCount:(BOOL)shouldDecrement {
     [mediaObject markUnseen];
+    [mediaObject postMediaProgress:0]; //post progress as not even begun
     if (shouldDecrement) {
         int currentViewCount = [mediaObject.attributes integerForKey:@"viewCount"];
         if (currentViewCount >= 1) {

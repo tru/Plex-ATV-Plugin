@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:atvTwo.xcodeproj">
+      location = "self:plex.xcodeproj">
    </FileRef>
 </Workspace>
