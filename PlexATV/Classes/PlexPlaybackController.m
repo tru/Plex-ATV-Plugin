@@ -77,7 +77,6 @@ PlexMediaProvider* __provider = nil;
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
     
-#warning why autorelease?
 	[pmo autorelease];
 	[super dealloc];
 }
@@ -168,7 +167,8 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"Starting Playback of %@", mediaURL);
 	
 	BOOL didTimeOut = NO;
-	[pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0  didTimeout:&didTimeOut];
+#warning what cache policy should we use??
+    [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageNotAllowed];
 	
 	
 	
@@ -258,7 +258,7 @@ PlexMediaProvider* __provider = nil;
 			}
             
             //if not already marked as seen, and less than 10% left of playback
-            if ( ([pmo seenState] != PlexMediaObjectSeenStateSeen) && (total - current < 0.10 * total) ) {
+            if ( [pmo seenState] != PlexMediaObjectSeenStateSeen && (total - current < 0.10 * total) ) {
                 DLog(@"not much left, mark as watched");
                 [self markMediaObjectAsWatched:pmo andIncrementViewCount:YES];
             }
@@ -268,8 +268,10 @@ PlexMediaProvider* __provider = nil;
                 seenState = @"unwatched";
             } else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
                 seenState = @"partial";
-            } else {
+            } else if ([pmo seenState] == PlexMediaObjectSeenStateSeen) {
                 seenState = @"watched";
+            } else {
+                seenState = @"unknown";
             }
             DLog(@"current [%f] out of a total [%f] (%f2 percentage). watched status [%@]", current, total, (current/total)*100.f, seenState);
             
