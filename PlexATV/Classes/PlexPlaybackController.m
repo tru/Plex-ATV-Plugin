@@ -323,6 +323,7 @@ PlexMediaProvider* __provider = nil;
 
 - (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement {
     [mediaObject markSeen];
+    [mediaObject postMediaProgress:[mediaObject duration]]; //post progress as completed
     if (shouldIncrement) {
         [mediaObject.attributes setObject:[NSNumber numberWithInt:[mediaObject.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
     }
@@ -330,6 +331,7 @@ PlexMediaProvider* __provider = nil;
 
 - (void)markMediaObjectAsUnwatched:(PlexMediaObject *)mediaObject andDecrementViewCount:(BOOL)shouldDecrement {
     [mediaObject markUnseen];
+    [mediaObject postMediaProgress:0]; //post progress as not even begun
     if (shouldDecrement) {
         int currentViewCount = [mediaObject.attributes integerForKey:@"viewCount"];
         if (currentViewCount >= 1) {
