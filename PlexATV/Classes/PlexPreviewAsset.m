@@ -153,6 +153,7 @@
 }
 
 - (id)coverArt {
+  DLog();
   return [BRImage imageWithURL:[self.imageProxy url]];
 }
 
@@ -240,6 +241,7 @@
 }
 
 - (id)imageProxy {
+  DLog();
 	NSString *thumbURL = nil;
 	
 	if ([pmo.attributes valueForKey:@"thumb"] != nil){
@@ -251,7 +253,7 @@
 	
 	NSURL* turl = [pmo.request pathForScaledImage:thumbURL ofSize:CGSizeMake(512, 512)];
 	BRURLImageProxy *imageProxy = [BRURLImageProxy proxyWithURL:turl];
-  [imageProxy setDefaultImage:[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage]];
+  //[imageProxy setDefaultImage:[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage]];
     //DLog(@"imageProxy_defaultImage: %@",[imageProxy defaultImage]);
 	return imageProxy;
 }
