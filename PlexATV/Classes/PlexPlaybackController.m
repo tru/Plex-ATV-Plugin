@@ -92,8 +92,15 @@ PlexMediaProvider* __provider = nil;
 	else {
 		DLog(@"viewOffset: %@", [pmo.attributes valueForKey:@"viewOffset"]);
 		
+        NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
+        
+        //if progress is less than 2 minutes, don't even bother to ask if video should start from beginning.
+        if ([viewOffset intValue] < 120) {
+            viewOffset = [NSNumber numberWithInt:0];
+        }
+        
 		//we have offset, ie. already watched a part of the movie, show a dialog asking if you want to resume or start over
-		if ([pmo.attributes valueForKey:@"viewOffset"] != nil) {
+		if ([viewOffset intValue] > 0) {
 			NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
 			
 			BROptionDialog *option = [[BROptionDialog alloc] init];
