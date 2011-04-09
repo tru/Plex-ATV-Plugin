@@ -12,6 +12,16 @@
 
 @dynamic datasource;
 
+-(void)controlWasActivated
+{
+  DLog();
+  //these 2 are called in SMF on controlWasActivated, so don't call them again here...
+  //[self reload];
+  //[self reloadShelf];
+  [self _removeAllControls];
+  [super controlWasActivated];
+}
+
 -(void)layoutSubcontrols {
     [super layoutSubcontrols];
     
