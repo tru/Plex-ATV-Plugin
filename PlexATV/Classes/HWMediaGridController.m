@@ -226,7 +226,7 @@ void checkNil(NSObject *ctrl)
   [_gridControl setAllRowsAreSameHeight:NO];
 	[_gridControl setAcceptsFocus:YES];
 	[_gridControl setProviderRequester:_gridControl];
-  [_gridControl layoutSubcontrols];
+  //[_gridControl layoutSubcontrols];
   
 	CGRect gridFrame;
 	gridFrame.origin.y = dividerFrame.origin.y-25;
@@ -341,6 +341,9 @@ void checkNil(NSObject *ctrl)
 	
   BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
+  
+  
+  [store release];
 
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid_end");
@@ -399,6 +402,7 @@ void checkNil(NSObject *ctrl)
 -(void)controlWasActivated
 {
 	DLog(@"controlWasActivated");
+  [self _removeAllControls];
 	[self drawSelf];
 	[super controlWasActivated];
 	
