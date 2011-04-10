@@ -261,8 +261,9 @@
 		DLog(@"got some media, switching to PlexPlaybackController");
 #endif
 		PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:pmo];
-		[player startPlaying];
-		[player autorelease];
+		//[player startPlaying];
+		[[[BRApplicationStackManager singleton] stack] pushController:player];
+    [player autorelease];
 	}
     else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
 		[self showGridListControl:[pmo contents]];

@@ -223,7 +223,7 @@ typedef enum {
 				DLog(@"asset: %@", selectedMediaItemPreviewData.title);
         
         PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:selectedMediaItemPreviewData.pmo];
-				[player startPlaying];
+        [[[BRApplicationStackManager singleton] stack] pushController:player];
 				[player autorelease];
 				break;
       case kMoreButton:
@@ -278,9 +278,9 @@ typedef enum {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"subtitle_end: %@", [self.selectedMediaItemPreviewData broadcaster]);
 #endif
-
+  
   if ([self.selectedMediaItemPreviewData broadcaster])
-	return [self.selectedMediaItemPreviewData broadcaster];
+    return [self.selectedMediaItemPreviewData broadcaster];
   else
     return @"";
 }
@@ -381,11 +381,11 @@ typedef enum {
 }
 
 - (NSURL *)backgroundImageUrl {
-    NSURL* backgroundImageUrl = nil;
-    PlexMediaObject *pmo = self.selectedMediaItemPreviewData.pmo;
-    if ([pmo.attributes valueForKey:@"art"] != nil) {
+  NSURL* backgroundImageUrl = nil;
+  PlexMediaObject *pmo = self.selectedMediaItemPreviewData.pmo;
+  if ([pmo.attributes valueForKey:@"art"] != nil) {
 		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
-        backgroundImageUrl = [pmo.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
+    backgroundImageUrl = [pmo.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
 	}
 	return backgroundImageUrl;
 }

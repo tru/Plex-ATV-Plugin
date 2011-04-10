@@ -241,7 +241,6 @@
 }
 
 - (id)imageProxy {
-  DLog();
 	NSString *thumbURL = nil;
 	
 	if ([pmo.attributes valueForKey:@"thumb"] != nil){
