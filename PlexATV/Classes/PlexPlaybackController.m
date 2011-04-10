@@ -37,10 +37,16 @@
 #import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
 
+#define LOCAL_DEBUG_ENABLED 1
+
+
 PlexMediaProvider* __provider = nil;
 
 #define ResumeOptionDialog @"ResumeOptionDialog"
-#define LOCAL_DEBUG_ENABLED 1
+
+#define kStartTrackingProgressTime 120.0f
+#define kEndTrackingProgressTime 120.0f
+#define kEndTrackingProgressPercentageCompleted 0.95f
 
 @implementation PlexPlaybackController
 
@@ -93,9 +99,10 @@ PlexMediaProvider* __provider = nil;
 		DLog(@"viewOffset: %@", [pmo.attributes valueForKey:@"viewOffset"]);
 		
         NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
-        
-        //if progress is less than 2 minutes, don't even bother to ask if video should start from beginning.
-        if ([viewOffset intValue] < 120) {
+
+        float totalOffsetInSeconds = [viewOffset intValue] / 1000.0f;
+        //if progress is less than start tracking time, don't even bother to ask if video should be resumed.
+        if (totalOffsetInSeconds < kStartTrackingProgressTime) {
             viewOffset = [NSNumber numberWithInt:0];
         }
         
@@ -129,7 +136,7 @@ PlexMediaProvider* __provider = nil;
 			[option release];
 		}
 		else {
-			[self playbackVideoWithOffset:0]; //not previously unwatched, just start playback from beginning
+			[self playbackVideoWithOffset:0]; //just start playback from beginning
 		}
 		
 	}
@@ -256,18 +263,21 @@ PlexMediaProvider* __provider = nil;
             playerState = @"playing";
 			//report time back to PMS so we can continue in the right spot
 			float current = playa.elapsedTime;
-			float total = pmo.duration;
-            
-            //logic below is taken from the official plex client
-			// Ignore two minutes at start and either 2 minutes, or up to 5% at end (end credits)
-            if (current > 120 && total - current > 120 && total - current > 0.05 * total) {
+			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
+
+			// Ignore time at start and at the end, or when an item is a certain percentage completed            
+            if (current > kStartTrackingProgressTime 
+                && total - current > kEndTrackingProgressTime 
+                && kEndTrackingProgressPercentageCompleted > current/total) {
+                DLog(@"posting progress [%f]", current);
 				[pmo postMediaProgress:playa.elapsedTime];
 			}
             
-            //if not already marked as seen, and less than 10% left of playback
-            if ( [pmo seenState] != PlexMediaObjectSeenStateSeen && (total - current < 0.10 * total) ) {
-                DLog(@"not much left, mark as watched");
-                [self markMediaObjectAsWatched:pmo andIncrementViewCount:YES];
+            //if not already marked as seen, and when an item is a certain percentage completed
+            if ( [pmo seenState] != PlexMediaObjectSeenStateSeen 
+                && kEndTrackingProgressPercentageCompleted < current/total) {
+                DLog(@"more than %f completed, mark as watched", kEndTrackingProgressPercentageCompleted);
+                [pmo markSeen];
             }
             
             NSString *seenState;
@@ -295,7 +305,7 @@ PlexMediaProvider* __provider = nil;
 }
 
 -(void)movieFinished:(NSNotification*)event {
-    [pmo postMediaProgress:pmo.duration];
+    [pmo markSeen];
 }
 
 -(void)playerStateChanged:(NSNotification*)event {
@@ -326,25 +336,6 @@ PlexMediaProvider* __provider = nil;
             break;
     }
     
-}
-
-- (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement {
-    [mediaObject markSeen];
-    [mediaObject postMediaProgress:[mediaObject duration]]; //post progress as completed
-    if (shouldIncrement) {
-        [mediaObject.attributes setObject:[NSNumber numberWithInt:[mediaObject.attributes integerForKey:@"viewCount"] + 1] forKey:@"viewCount"];
-    }
-}
-
-- (void)markMediaObjectAsUnwatched:(PlexMediaObject *)mediaObject andDecrementViewCount:(BOOL)shouldDecrement {
-    [mediaObject markUnseen];
-    [mediaObject postMediaProgress:0]; //post progress as not even begun
-    if (shouldDecrement) {
-        int currentViewCount = [mediaObject.attributes integerForKey:@"viewCount"];
-        if (currentViewCount >= 1) {
-            [mediaObject.attributes setObject:[NSNumber numberWithInt:currentViewCount - 1] forKey:@"viewCount"];
-        }
-    }
 }
 
 - (void)optionSelected:(id)sender {
