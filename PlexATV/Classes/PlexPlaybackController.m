@@ -296,6 +296,7 @@ PlexMediaProvider* __provider = nil;
 
 -(void)movieFinished:(NSNotification*)event {
     [pmo postMediaProgress:pmo.duration];
+    [[[BRApplicationStackManager singleton] stack] popController];
 }
 
 -(void)playerStateChanged:(NSNotification*)event {
@@ -320,6 +321,7 @@ PlexMediaProvider* __provider = nil;
             //playback stopped, tell MM to fire up again
             [[MachineManager sharedMachineManager] startAutoDetection];
             [[MachineManager sharedMachineManager] startMonitoringMachineState];
+            [[[BRApplicationStackManager singleton] stack] popController];
             break;
             
         default:
@@ -367,6 +369,26 @@ PlexMediaProvider* __provider = nil;
 }
 
 
+#pragma mark -
+#pragma mark Controller Lifecycle behaviour
+- (void)wasPushed {
+	DLog(@"activating plex_playback controller");
+	[self startPlaying];	
+	[super wasPushed];
+}
+
+- (void)wasPopped {
+	[super wasPopped];
+}
+
+- (void)wasExhumed {
+
+	[super wasExhumed];
+}
+
+- (void)wasBuried {
+	[super wasBuried];
+}
 
 
 @end

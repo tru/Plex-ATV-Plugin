@@ -21,7 +21,6 @@
     returnObj.title = [[NSAttributedString alloc]initWithString:title attributes:[[BRThemeInfo sharedTheme] menuItemSmallTextAttributes]];
     returnObj.imageProxy=imageProxy;
     returnObj.defaultImage=self.defaultImage;
-    DLog(@"image size: %@", self.defaultImage);
     returnObj.alwaysShowTitles=self._alwaysShowTitles;
     returnObj.posterBorderWidth=1.0;
     returnObj.titleWidthScale=2.5;

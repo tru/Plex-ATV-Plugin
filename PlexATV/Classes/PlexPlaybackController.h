@@ -25,7 +25,7 @@
 #import <Foundation/Foundation.h>
 @class PlexMediaObject;
 
-@interface PlexPlaybackController : NSObject {
+@interface PlexPlaybackController : BRController {
   PlexMediaObject *pmo;
   NSTimer* playProgressTimer;
 }
