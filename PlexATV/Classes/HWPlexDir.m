@@ -246,9 +246,9 @@
     
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	
-	DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
+	//DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
 	
-	DLog(@"viewgroup: %@, viewmode:%@",pmo.mediaContainer.viewGroup, pmo.containerType);
+	//DLog(@"viewgroup: %@, viewmode:%@",pmo.mediaContainer.viewGroup, pmo.containerType);
 	
 	if ([PlexViewGroupAlbum isEqualToString:pmo.mediaContainer.viewGroup] || [@"albums" isEqualToString:pmo.mediaContainer.content] || [@"playlists" isEqualToString:pmo.mediaContainer.content]) {
 		DLog(@"Accessing Artist/Album %@", pmo);

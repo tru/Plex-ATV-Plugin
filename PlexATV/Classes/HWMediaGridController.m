@@ -86,11 +86,13 @@ void checkNil(NSObject *ctrl)
 		NSURL* mediaURL = [mediaObj mediaStreamURL];
 		PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:mediaObj];
 		[assets addObject:pma];
+    [pma release];
 	}
 	
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"converted %d assets", [assets count]);
 #endif
+
 	return assets;
 }
 
