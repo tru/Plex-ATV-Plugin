@@ -14,6 +14,6 @@
 @interface Plex_SMFMoviePreviewController : SMFMoviePreviewController {
     
 }
-@property(retain) id<Plex_SMFMoviePreviewControllerDatasource> datasource;
+@property(retain) NSObject<Plex_SMFMoviePreviewControllerDatasource> *datasource;
 
 @end

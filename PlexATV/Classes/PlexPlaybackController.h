@@ -35,7 +35,4 @@
 -(void)playbackVideoWithOffset:(int)offset;
 -(void)movieFinished:(NSNotification*)event;
 -(void)playbackAudio;
-
-- (void)markMediaObjectAsUnwatched:(PlexMediaObject *)mediaObject andDecrementViewCount:(BOOL)shouldDecrement;
-- (void)markMediaObjectAsWatched:(PlexMediaObject *)mediaObject andIncrementViewCount:(BOOL)shouldIncrement;
 @end
