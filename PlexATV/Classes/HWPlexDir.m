@@ -154,6 +154,7 @@
 
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+    [self.list reload];
 	[super wasExhumed];
 }
 

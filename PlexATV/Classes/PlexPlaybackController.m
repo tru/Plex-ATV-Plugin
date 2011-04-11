@@ -326,8 +326,8 @@ PlexMediaProvider* __provider = nil;
 }
 
 -(void)movieFinished:(NSNotification*)event {
+    DLog(@"movieFinished");
     [pmo markSeen];
-    [[[BRApplicationStackManager singleton] stack] popController];
 }
 
 -(void)playerStateChanged:(NSNotification*)event {
