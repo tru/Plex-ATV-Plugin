@@ -263,7 +263,7 @@
 		PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:pmo];
 		//[player startPlaying];
 		[[[BRApplicationStackManager singleton] stack] pushController:player];
-    [player autorelease];
+    [player release];
 	}
     else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
 		[self showGridListControl:[pmo contents]];
@@ -271,7 +271,7 @@
 	else 
     {
 		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
-		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+		[[[BRApplicationStackManager singleton] stack] swapController:menuController];
 		
 		[menuController autorelease];
 	}

@@ -106,7 +106,7 @@ typedef enum {
 
 -(void)dealloc {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"deallocing HWMovieListing");
+	DLog(@"deallocing HWDetailedMovieMetadataController");
 #endif
 	self.assets = nil;
 	self.selectedMediaItemPreviewData = nil;
@@ -138,6 +138,9 @@ typedef enum {
 }
 
 - (void)wasPopped {
+  self.datasource = nil;
+  self.assets = nil;
+  self.selectedMediaItemPreviewData = nil;
 	[super wasPopped];
 }
 

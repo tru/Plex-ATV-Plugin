@@ -178,7 +178,7 @@ PlexMediaProvider* __provider = nil;
 	if ([qualitySetting isEqualToString:@"Good"]) {
 		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
 	} else 	if ([qualitySetting isEqualToString:@"Best"]) {
-		streamQuality = [PlexStreamingQualityDescriptor quality1080pLow];
+		streamQuality = [PlexStreamingQualityDescriptor quality1080pHigh];
 	} else { //medium (default)
 		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
 	}
@@ -244,14 +244,20 @@ PlexMediaProvider* __provider = nil;
 	
   //[mgm presentMediaAsset:pma options:0];
 	[mgm presentPlayer:player options:0];
+  
 	DLog(@"presented player");
   playProgressTimer = [[NSTimer scheduledTimerWithTimeInterval:10.0f 
                                                         target:self 
                                                       selector:@selector(reportProgress:) 
                                                       userInfo:nil 
                                                        repeats:YES] retain];
-	[pma release];
   
+  //we need all the memory we can spare so we don't get killed by the OS
+	[pma release];
+  [pmo.thumb release];
+  [pmo.art release];
+  [pmo.banner release];
+  [pmo.parentObject release];
   //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
 }
@@ -279,10 +285,9 @@ PlexMediaProvider* __provider = nil;
 
 -(void)reportProgress:(NSTimer*)tm {
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
-	NSString *playerState = @"unknown";
+
 	switch (playa.playerState) {
 		case kBRMediaPlayerStatePlaying: {
-      playerState = @"playing";
 			//report time back to PMS so we can continue in the right spot
 			float current = playa.elapsedTime;
 			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
@@ -317,7 +322,6 @@ PlexMediaProvider* __provider = nil;
 			break;
 		}
 		case kBRMediaPlayerStatePaused:
-            playerState = @"paused";
 			DLog(@"paused playback, pinging transcoder");
 			[pmo.request pingTranscoder];
 			break;
