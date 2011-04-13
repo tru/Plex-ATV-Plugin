@@ -233,6 +233,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				72172DF91355F94F00F49709 /* Custom SMF */,
 				C4EA913312DCD74600DCC798 /* Assets */,
 				72B2C4FB12DBE0EE00E23F8E /* Controllers */,
 				C4D558A112D66BE900877755 /* NSArray-Shuffle.h */,
@@ -297,6 +298,17 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		72172DF91355F94F00F49709 /* Custom SMF */ = {
+			isa = PBXGroup;
+			children = (
+				C4CA22BA134FB4D1006135E6 /* Plex_SMFControlFactory.h */,
+				C4CA22BB134FB4D1006135E6 /* Plex_SMFControlFactory.m */,
+				7217FABC134AC90800408E48 /* Plex_SMFMoviePreviewController.h */,
+				7217FABD134AC90800408E48 /* Plex_SMFMoviePreviewController.m */,
+			);
+			name = "Custom SMF";
+			sourceTree = "<group>";
+		};
 		727A3F4A12F7914000994193 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -318,8 +330,6 @@
 			isa = PBXGroup;
 			children = (
 				727A3F4A12F7914000994193 /* Settings */,
-				C4CA22BA134FB4D1006135E6 /* Plex_SMFControlFactory.h */,
-				C4CA22BB134FB4D1006135E6 /* Plex_SMFControlFactory.m */,
 				C4D558A312D66BE900877755 /* SongListController.h */,
 				C4D558A412D66BE900877755 /* SongListController.m */,
 				C4ADAFA712D46CA9002DA507 /* HWPlexDir.h */,
@@ -332,8 +342,6 @@
 				C43F0B0512F4CD8E004D0D68 /* HWMediaGridController.m */,
 				729A877713059CF8003799BE /* HWDetailedMovieMetadataController.h */,
 				729A877813059CF8003799BE /* HWDetailedMovieMetadataController.m */,
-				7217FABC134AC90800408E48 /* Plex_SMFMoviePreviewController.h */,
-				7217FABD134AC90800408E48 /* Plex_SMFMoviePreviewController.m */,
 				C440CFBF1311857100015595 /* PlexPlaybackController.h */,
 				C440CFC01311857100015595 /* PlexPlaybackController.m */,
 				72C421B01319E27700B90041 /* HWTVShowsController.h */,
