@@ -434,20 +434,16 @@
 		[previewData release];
 		
 		result = [menuItem autorelease];
-	} else {
+    } else {
 		BRMenuItem * menuItem = [[BRMenuItem alloc] init];
 		
 		if ([mediaType isEqualToString:PlexMediaObjectTypeShow] || [mediaType isEqualToString:PlexMediaObjectTypeSeason]) {
 			if ([pmo.attributes valueForKey:@"agent"] == nil) {
-				int accessoryType;
 				if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
-					accessoryType = 15;
+					[menuItem addAccessoryOfType:15];
 				} else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
-					accessoryType = 16;
-				} else {
-					accessoryType = 0;
+					[menuItem addAccessoryOfType:16];
 				}
-				[menuItem addAccessoryOfType:accessoryType];
 			}
 		}
 		
