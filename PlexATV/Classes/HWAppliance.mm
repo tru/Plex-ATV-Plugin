@@ -13,6 +13,7 @@
 #import "Constants.h"
 #import "HWMediaGridController.h"
 #import "HWTVShowsController.h"
+#import "PlexChannelsController.h"
 
 #define SERVER_LIST_ID @"hwServerList"
 #define SETTINGS_ID @"hwSettings"
@@ -82,12 +83,11 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		[PlexRequest setStreamingKey:@"k3U6GLkZOoNIoSgjDshPErvqMIFdE0xMTx8kgsrhnC0=" forPublicKey:@"KQMIY6GATPC63AIMC4R2"];
 		//instrumentObjcMessageSends(YES);
 		
-    //tell PMS what kind of codecs and media we can play
-    [HWUserDefaults setupPlexClientCapabilities];
+        //tell PMS what kind of codecs and media we can play
+        [HWUserDefaults setupPlexClientCapabilities];
 		
 		DLog(@"==================== plex client starting up ====================");
-		
-		DLog(@"stuff: ",[[NSString stringWithCString:__FILE__ encoding:NSUTF8StringEncoding] lastPathComponent]);
+        
 		_topShelfController = [[TopShelfController alloc] init];
 		_applianceCategories = [[NSMutableArray alloc] init];
 		
@@ -121,34 +121,39 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		Machine *machineWhoCategoryBelongsTo = [[MachineManager sharedMachineManager] machineForMachineID:machineId];
 		if (!machineWhoCategoryBelongsTo) return nil;
 		
-		// ====== find the category selected ======		
-		NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
-		NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
-		NSArray *matchingCategories = [categories filteredArrayUsingPredicate:categoryPredicate];
-		if ([matchingCategories count] != 1) {
-			DLog(@"ERROR: incorrect number of category matches to selected appliance with name [%@]", categoryName);
-			return nil;
-		}
-		
-		//HAZAA! we found it! 
-    PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
-		DLog(@"matchingCategory: %@", [matchingCategory type]);
-    
-    //determine the user selected view setting
-    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
-      if (matchingCategory.isMovie) {
-        menuController = [self newMoviesController:[matchingCategory contents]];
-      } else if (matchingCategory.isTVShow) {
-        menuController = [self newTVShowsController:[matchingCategory contents]];
-      } else {
-        menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-      }      
-    } else {
-      menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-    }
-    
-    
+		// ====== find the category selected ======
+        if ([categoryName isEqualToString:@"Channels"]) {
+            PlexMediaContainer* channelsContainer = [machineWhoCategoryBelongsTo.request query:@"/system/plugins/all" callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+            menuController = [[PlexChannelsController alloc] initWithRootContainer:channelsContainer];
+        } else {
+            NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
+            NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
+            NSArray *matchingCategories = [categories filteredArrayUsingPredicate:categoryPredicate];
+            if ([matchingCategories count] != 1) {
+                DLog(@"ERROR: incorrect number of category matches to selected appliance with name [%@]", categoryName);
+                return nil;
+            }
+            
+            //HAZAA! we found it! 
+            PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
+            DLog(@"matchingCategory: %@", [matchingCategory type]);
+            
+            //determine the user selected view setting
+            NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+            if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
+                if (matchingCategory.isMovie) {
+                    menuController = [self newMoviesController:[matchingCategory contents]];
+                } else if (matchingCategory.isTVShow) {
+                    menuController = [self newTVShowsController:[matchingCategory contents]];
+                } else {
+                    menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
+                }      
+            } else {
+                menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
+            }
+        }
+        
+        
 	}    
 	return [menuController autorelease];
 }
@@ -179,7 +184,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	BRController *menuController = nil;
 	PlexMediaObject *recent=nil;
 	PlexMediaObject *allMovies=nil;
-  //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
+    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
 	if (movieCategory.directories > 0) {
 		NSUInteger i, count = [movieCategory.directories count];
 		for (i = 0; i < count; i++) {
@@ -267,17 +272,28 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		NSMutableArray *allDirectories = [NSMutableArray arrayWithArray:machine.rootLevel.directories];
 		[allDirectories addObjectsFromArray:machine.librarySections.directories];
 		
-		for (PlexMediaObject *pmo in allDirectories) {
-			NSString *categoryName = [pmo.name copy];
+		//for (PlexMediaObject *pmo in allDirectories) {
+        for (int i=0; i<=[allDirectories count]; i++) {
+            NSString *categoryName = nil;
+            if (i == [allDirectories count]) {
+                //add special channels appliance
+                categoryName = @"Channels";
+            } else {
+                //add all others
+                PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
+                
+                categoryName = [pmo.name copy];
+            }
+            
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"Adding category [%@] for machine id [%@]", categoryName, machineID);
+            DLog(@"Adding category [%@] for machine id [%@]", categoryName, machineID);
 #endif
-			
-			//create the compoundIdentifier for the appliance identifier
-			NSMutableDictionary *compoundIdentifier = [NSMutableDictionary dictionary];
-			[compoundIdentifier setObject:categoryName forKey:CategoryNameKey];
-			[compoundIdentifier setObject:machineID forKey:MachineIDKey];
-			[compoundIdentifier setObject:machineName forKey:MachineNameKey];
+            
+            //create the compoundIdentifier for the appliance identifier
+            NSMutableDictionary *compoundIdentifier = [NSMutableDictionary dictionary];
+            [compoundIdentifier setObject:categoryName forKey:CategoryNameKey];
+            [compoundIdentifier setObject:machineID forKey:MachineIDKey];
+            [compoundIdentifier setObject:machineName forKey:MachineNameKey];
 			
 			//================== add the appliance ==================
 			
