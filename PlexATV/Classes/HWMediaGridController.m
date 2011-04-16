@@ -56,6 +56,7 @@ void checkNil(NSObject *ctrl)
 	
 	_shelfAssets = [[fullRecentMovies subarrayWithRange:theRange] retain];
 	_gridAssets = [self convertContainerToMediaAssets:allMovies];
+  [fullRecentMovies release];
 	
 	return self;
 }
@@ -86,11 +87,13 @@ void checkNil(NSObject *ctrl)
 		NSURL* mediaURL = [mediaObj mediaStreamURL];
 		PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:mediaObj];
 		[assets addObject:pma];
+    [pma release];
 	}
 	
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"converted %d assets", [assets count]);
 #endif
+
 	return assets;
 }
 
@@ -103,6 +106,8 @@ void checkNil(NSObject *ctrl)
 }
 
 - (void)wasPopped {
+  _gridControl = nil;
+  _shelfControl = nil;
 	[super wasPopped];
 }
 
@@ -115,7 +120,16 @@ void checkNil(NSObject *ctrl)
 	[super wasBuried];
 }
 
+-(void)controlWasActivated
+{
+	DLog(@"controlWasActivated");
+  [self _removeAllControls];
+	[self drawSelf];
+	[super controlWasActivated];
+	
+}
 
+#pragma mark -
 - (void) drawSelf
 {
 	DLog(@"drawSelf");
@@ -385,7 +399,8 @@ void checkNil(NSObject *ctrl)
 #endif      
 			
 			HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithPreviewAssets:assets withSelectedIndex:index];
-			[[[BRApplicationStackManager singleton] stack] pushController:[previewController autorelease]];      
+			[[[BRApplicationStackManager singleton] stack] pushController:previewController];
+      [previewController release];
 		}
 		else {
 			DLog(@"error: no selected asset");
@@ -395,16 +410,6 @@ void checkNil(NSObject *ctrl)
 		return YES;
 	}
 	return [super brEventAction:action];
-	
-}
-
-
--(void)controlWasActivated
-{
-	DLog(@"controlWasActivated");
-  [self _removeAllControls];
-	[self drawSelf];
-	[super controlWasActivated];
 	
 }
 
