@@ -8,13 +8,16 @@
 #import <Foundation/Foundation.h>
 #import <SMFramework/SMFBookcaseController.h>
 
-@class PlexMediaContainer;
+@class PlexMediaContainer, PlexMediaObject;
 @interface HWTVShowsController : SMFBookcaseController <SMFBookcaseControllerDatasource, SMFBookcaseControllerDelegate> {
 	PlexMediaContainer *tvShows;
 	NSMutableArray *allTvShowsSeasonsPlexMediaContainer;
     
     BOOL allShelvesLoaded;
 }
+@property (nonatomic, retain) PlexMediaContainer *seasonsForSelectedTVShow;
+@property (nonatomic, retain) PlexMediaObject *selectedSeason;
+
 - (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows;
 
 @end

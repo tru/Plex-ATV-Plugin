@@ -18,6 +18,8 @@
 @end
 
 @implementation HWTVShowsController
+@synthesize seasonsForSelectedTVShow;
+@synthesize selectedSeason;
 
 #warning this is a hack to make sure all the shelfs are loaded correctly
 -(BOOL)brEventAction:(BREvent *)action {
@@ -78,6 +80,8 @@
 - (void)dealloc {
 	self.datasource = nil;
 	self.delegate = nil;
+    self.seasonsForSelectedTVShow = nil;
+    self.selectedSeason = nil;
 	
 	[allTvShowsSeasonsPlexMediaContainer release];
 	[tvShows release];
@@ -122,7 +126,7 @@
 #if LOCAL_DEBUG_ENABLED
     DLog(@"tvShows.directories: %d",[tvShows.directories count]);
 #endif
-	return [tvShows.directories count];
+	return 2;//[tvShows.directories count];
 }
 
 - (NSString *)bookcaseController:(SMFBookcaseController *)bookcaseController titleForShelfAtIndex:(NSInteger)index {
@@ -179,10 +183,17 @@
 	DLog(@"select did occur at index: %d and shelfindex: %ld",index, [shelfControl focusedIndex]);	
 #endif
     
-    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];  
-    PlexMediaObject *season = [[tvshow contents].directories objectAtIndex:[shelfControl focusedIndex]];
-    if ([season contents].hasOnlyEpisodes) {
-        HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[season contents]];
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
+    
+    self.seasonsForSelectedTVShow = [tvshow contents];
+    
+    PlexMediaObject *season = [self.seasonsForSelectedTVShow.directories objectAtIndex:[shelfControl focusedIndex]];
+    self.selectedSeason = season;
+    
+    if ([[season contents] hasOnlyEpisodes]) {
+        PlexMediaContainer *episodes = [season contents];
+        
+        HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:episodes];
         [[[BRApplicationStackManager singleton] stack] pushController:menuController];
         [menuController autorelease];    
     }
