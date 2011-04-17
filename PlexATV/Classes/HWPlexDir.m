@@ -247,9 +247,9 @@
     
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	
-	DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
+	//DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
 	
-	DLog(@"viewgroup: %@, viewmode:%@",pmo.mediaContainer.viewGroup, pmo.containerType);
+	//DLog(@"viewgroup: %@, viewmode:%@",pmo.mediaContainer.viewGroup, pmo.containerType);
 	
 	if ([PlexViewGroupAlbum isEqualToString:pmo.mediaContainer.viewGroup] || [@"albums" isEqualToString:pmo.mediaContainer.content] || [@"playlists" isEqualToString:pmo.mediaContainer.content]) {
 		DLog(@"Accessing Artist/Album %@", pmo);
@@ -264,7 +264,7 @@
 		PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:pmo];
 		//[player startPlaying];
 		[[[BRApplicationStackManager singleton] stack] pushController:player];
-    [player autorelease];
+    [player release];
 	}
     else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
 		[self showGridListControl:[pmo contents]];
@@ -272,7 +272,7 @@
 	else 
     {
 		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
-		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+		[[[BRApplicationStackManager singleton] stack] swapController:menuController];
 		
 		[menuController autorelease];
 	}
@@ -435,20 +435,16 @@
 		[previewData release];
 		
 		result = [menuItem autorelease];
-	} else {
+    } else {
 		BRMenuItem * menuItem = [[BRMenuItem alloc] init];
 		
 		if ([mediaType isEqualToString:PlexMediaObjectTypeShow] || [mediaType isEqualToString:PlexMediaObjectTypeSeason]) {
 			if ([pmo.attributes valueForKey:@"agent"] == nil) {
-				int accessoryType;
 				if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
-					accessoryType = 15;
+					[menuItem addAccessoryOfType:15];
 				} else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
-					accessoryType = 16;
-				} else {
-					accessoryType = 0;
+					[menuItem addAccessoryOfType:16];
 				}
-				[menuItem addAccessoryOfType:accessoryType];
 			}
 		}
 		

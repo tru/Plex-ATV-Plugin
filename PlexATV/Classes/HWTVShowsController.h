@@ -15,6 +15,8 @@
     
     BOOL allShelvesLoaded;
 }
+@property (nonatomic, retain) PlexMediaContainer *seasonsForSelectedTVShow;
+
 - (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows;
 
 @end
