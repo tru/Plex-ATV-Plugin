@@ -256,7 +256,8 @@ PlexMediaProvider* __provider = nil;
     [pmo.thumb release];
     [pmo.art release];
     [pmo.banner release];
-    [pmo.parentObject release];
+    //[pmo.parentObject release]; <== cannot be released cause it will crash when items view status is changed
+    
     //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
 }
@@ -324,8 +325,17 @@ PlexMediaProvider* __provider = nil;
 			DLog(@"paused playback, pinging transcoder");
 			[pmo.request pingTranscoder];
 			break;
-		default:
-			break;
+            
+        case kBRMediaPlayerStateSkipping:
+        case kBRMediaPlayerStateForwardSeeking:
+        case kBRMediaPlayerStateForwardSeekingFast:
+        case kBRMediaPlayerStateForwardSeekingFastest:
+        case kBRMediaPlayerStateBackSeeking:
+        case kBRMediaPlayerStateBackSeekingFast:
+        case kBRMediaPlayerStateBackSeekingFastest:
+            break;
+        default:
+            break;
 	}
 }
 
@@ -335,8 +345,14 @@ PlexMediaProvider* __provider = nil;
 
 -(void)playerStateChanged:(NSNotification*)event {
     //DLog(@"%@", event)
-    BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
+    BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];    
+    
     switch (playa.playerState) {
+        case kBRMediaPlayerStatePlaying:
+            //playback has (re)started
+            [self reportProgress:nil];
+            
+            break;
         case kBRMediaPlayerStateStopped:
             DLog(@"stopping the transcoder");
             
@@ -358,6 +374,15 @@ PlexMediaProvider* __provider = nil;
             [[[BRApplicationStackManager singleton] stack] popController];
             break;
             
+        case kBRMediaPlayerStatePaused:
+        case kBRMediaPlayerStateSkipping:
+        case kBRMediaPlayerStateForwardSeeking:
+        case kBRMediaPlayerStateForwardSeekingFast:
+        case kBRMediaPlayerStateForwardSeekingFastest:
+        case kBRMediaPlayerStateBackSeeking:
+        case kBRMediaPlayerStateBackSeekingFast:
+        case kBRMediaPlayerStateBackSeekingFastest:
+            break;
         default:
             break;
     }

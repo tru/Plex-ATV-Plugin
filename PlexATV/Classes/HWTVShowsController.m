@@ -19,7 +19,6 @@
 
 @implementation HWTVShowsController
 @synthesize seasonsForSelectedTVShow;
-@synthesize selectedSeason;
 
 #warning this is a hack to make sure all the shelfs are loaded correctly
 -(BOOL)brEventAction:(BREvent *)action {
@@ -81,7 +80,6 @@
 	self.datasource = nil;
 	self.delegate = nil;
     self.seasonsForSelectedTVShow = nil;
-    self.selectedSeason = nil;
 	
 	[allTvShowsSeasonsPlexMediaContainer release];
 	[tvShows release];
@@ -188,7 +186,6 @@
     self.seasonsForSelectedTVShow = [tvshow contents];
     
     PlexMediaObject *season = [self.seasonsForSelectedTVShow.directories objectAtIndex:[shelfControl focusedIndex]];
-    self.selectedSeason = season;
     
     if ([[season contents] hasOnlyEpisodes]) {
         PlexMediaContainer *episodes = [season contents];
