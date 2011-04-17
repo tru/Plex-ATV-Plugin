@@ -252,9 +252,9 @@ PlexMediaProvider* __provider = nil;
     
     //we need all the memory we can spare so we don't get killed by the OS
 	[pma release];
-    [pmo.thumb release];
-    [pmo.art release];
-    [pmo.banner release];
+    //[pmo.thumb release];      <== cannot be released cause it will crash when list view initiates playback
+    //[pmo.art release];                                                "
+    //[pmo.banner release];                                             "
     //[pmo.parentObject release]; <== cannot be released cause it will crash when items view status is changed
     
     //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
