@@ -2,8 +2,7 @@
 //  PlexChannelsController.m
 //  plex
 //
-//  Created by Serendipity on 13/04/2011.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Created by ccjensen on 13/04/2011.
 //
 
 #import "PlexChannelsController.h"
@@ -23,6 +22,7 @@
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
 #import "PlexPlaybackController.h"
+#import "HWPlexDir.h"
 
 #define LOCAL_DEBUG_ENABLED 1
 
@@ -37,7 +37,7 @@
 	if((self = [super init]) != nil) {
 		[self setListTitle:@"PLEX"];
 		
-		NSString *settingsPng = [[NSBundle bundleForClass:[HWPlexDir class]] pathForResource:@"PlexIcon" ofType:@"png"];
+		NSString *settingsPng = [[NSBundle bundleForClass:[PlexChannelsController class]] pathForResource:@"PlexIcon" ofType:@"png"];
 		BRImage *sp = [BRImage imageWithPath:settingsPng];
 		
 		[self setListIcon:sp horizontalOffset:0.0 kerningFactor:0.15];
@@ -104,11 +104,7 @@
 	switch (remoteAction)
 	{
 		case kBREventRemoteActionSelectHold: {
-			if([event value] == 1) {
-				//get the index of currently selected row
-				long selected = [self getSelection];
-				[self showModifyViewedStatusViewForRow:selected];
-			}
+            return YES;
 			break;
 		}
 		case kBREventRemoteActionSwipeLeft:
@@ -170,55 +166,17 @@
 
 - (void)itemSelected:(long)selected; {
 	PlexMediaObject* pmo = [rootContainer.directories objectAtIndex:selected];
-	
-	NSString* type = [pmo.attributes objectForKey:@"type"];
-	if ([type empty]) type = pmo.containerType;
-	type = [type lowercaseString];
+    PlexMediaContainer *channel = [pmo.request query:[pmo.attributes valueForKey:@"path"] callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
     
-    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-	
-	DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
-	
-	DLog(@"viewgroup: %@, viewmode:%@",pmo.mediaContainer.viewGroup, pmo.containerType);
-	
-	if ([PlexViewGroupAlbum isEqualToString:pmo.mediaContainer.viewGroup] || [@"albums" isEqualToString:pmo.mediaContainer.content] || [@"playlists" isEqualToString:pmo.mediaContainer.content]) {
-		DLog(@"Accessing Artist/Album %@", pmo);
-		SongListController *songlist = [[SongListController alloc] initWithPlexContainer:[pmo contents] title:pmo.name];
-		[[[BRApplicationStackManager singleton] stack] pushController:songlist];
-		[songlist autorelease];
-	}
-	else if (pmo.hasMedia || [@"Video" isEqualToString:pmo.containerType] || [@"Track" isEqualToString:pmo.containerType]){
-#if LOCAL_DEBUG_ENABLED
-		DLog(@"got some media, switching to PlexPlaybackController");
-#endif
-		PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:pmo];
-		//[player startPlaying];
-		[[[BRApplicationStackManager singleton] stack] pushController:player];
-        [player autorelease];
-	}
-    else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
-		[self showGridListControl:[pmo contents]];
-	}
-	else 
-    {
-		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
-		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-		
-		[menuController autorelease];
-	}
+	HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:channel];
+	[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+    
+    [menuController autorelease];
 }
 
 
-- (float)heightForRow:(long)row {	
-	float height;
-	
-	PlexMediaObject *pmo = [rootContainer.directories objectAtIndex:row];
-	if (pmo.hasMedia || [@"Video" isEqualToString:pmo.containerType]) {
-		height = 70.0f;
-	} else {
-		height = 0.0f;
-	}
-	return height;
+- (float)heightForRow:(long)row {
+	return 0.0f;
 }
 
 - (long)itemCount {
@@ -229,63 +187,27 @@
 	if(row > [rootContainer.directories count])
 		return nil;
 	
-	id result;
-	
 	PlexMediaObject *pmo = [rootContainer.directories objectAtIndex:row];
-	NSString *mediaType = [pmo.attributes valueForKey:@"type"];
+    BRMenuItem *menuItem = [[BRMenuItem alloc] init];
     
-	if (pmo.hasMedia || [@"Video" isEqualToString:mediaType]) {
-		BRMenuItem *menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
-        
-		if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
-            [menuItem setImage:[[BRThemeInfo sharedTheme] unplayedVideoImage]];
-		} else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
-            [menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
-		} else {
-            //image will be invisible, but we need it to get the text to line up with ones who have a
-            //visible image
-			[menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
-            BRImageControl *imageControl = [menuItem valueForKey:@"_imageControl"];
-            [imageControl setHidden:YES];
-		}
-        [menuItem setImageAspectRatio:0.5];
-		
-        [menuItem setText:[pmo name] withAttributes:nil];
-		//used to get details about the show, instead of gettings attrs here manually
-		PlexPreviewAsset *previewData = [[PlexPreviewAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:pmo];
-		if ([mediaType isEqualToString:PlexMediaObjectTypeEpisode]) {
-            NSString *detailedText = [NSString stringWithFormat:@"%@, Season %d, Episode %d",[previewData seriesName] ,[previewData season],[previewData episode]];
-			[menuItem setDetailedText:detailedText withAttributes:nil];
-            [menuItem setRightJustifiedText:[previewData datePublishedString] withAttributes:nil];
-		} else {
-            NSString *detailedText = previewData.year ? previewData.year : @" ";
-			[menuItem setDetailedText:detailedText withAttributes:nil];
-            if ([previewData isHD]) {
-                [menuItem addAccessoryOfType:11];
-            }
-		}
-		[previewData release];
-		
-		result = [menuItem autorelease];
-	} else {
-		BRMenuItem * menuItem = [[BRMenuItem alloc] init];
-		
-		if ([mediaType isEqualToString:PlexMediaObjectTypeShow] || [mediaType isEqualToString:PlexMediaObjectTypeSeason]) {
-			if ([pmo.attributes valueForKey:@"agent"] == nil) {
-				if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
-					[menuItem addAccessoryOfType:15];
-				} else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
-					[menuItem addAccessoryOfType:16];
-				}
-			}
-		}
-		
-		[menuItem setText:[pmo name] withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		
-		[menuItem addAccessoryOfType:1];
-		result = [menuItem autorelease];
-	}
-	return result;
+    NSString *menuItemText = nil;
+    NSString *path = [pmo.attributes valueForKey:@"path"];
+    
+    if ([path hasSuffix:@"iTunes"]) {
+        NSString *type = nil;
+        if ([path hasPrefix:@"/video"]) {
+            type = @"video";
+        } else {
+            type = @"music";
+        }
+        menuItemText = [NSString stringWithFormat:@"%@ (%@)", [pmo name], type];
+    } else {
+        menuItemText = [pmo name];
+    }
+    
+    [menuItem setText:menuItemText withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
+    [menuItem addAccessoryOfType:1];
+	return [menuItem autorelease];
 }
 
 - (BOOL)rowSelectable:(long)selectable {
