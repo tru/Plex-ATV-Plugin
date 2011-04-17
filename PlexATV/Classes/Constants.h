@@ -14,6 +14,7 @@
 typedef enum {
 	kBRMediaPlayerStateStopped = 0,
 	kBRMediaPlayerStatePaused = 1,
+	kBRMediaPlayerStateSkipping = 2,
 	kBRMediaPlayerStatePlaying = 3,
 	kBRMediaPlayerStateForwardSeeking = 4,  
 	kBRMediaPlayerStateForwardSeekingFast = 5,
