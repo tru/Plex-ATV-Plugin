@@ -126,7 +126,7 @@
 #if LOCAL_DEBUG_ENABLED
     DLog(@"tvShows.directories: %d",[tvShows.directories count]);
 #endif
-	return 2;//[tvShows.directories count];
+	return [tvShows.directories count];
 }
 
 - (NSString *)bookcaseController:(SMFBookcaseController *)bookcaseController titleForShelfAtIndex:(NSInteger)index {
