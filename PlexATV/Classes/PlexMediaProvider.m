@@ -36,6 +36,10 @@ enum
 	
 };
 
+@interface BRMediaType (PlexExtentions)
++ (id)streamingVideo;
+@end
+
 @implementation PlexMediaProvider
 #pragma mark -
 #pragma mark Object/Class Lifecycle

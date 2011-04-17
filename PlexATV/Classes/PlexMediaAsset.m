@@ -29,6 +29,10 @@
 #import <ambertation-plex/Ambertation.h>
 #import "PlexPreviewAsset.h"
 
+@interface BRMediaType (PlexExtentions)
++ (id)streamingVideo;
+@end
+
 @implementation PlexMediaAsset
 @synthesize pmo;
 
@@ -182,10 +186,6 @@
 	return [ppa episodeNumber];
 }
 
-- (BOOL)forceHDCPProtection {
-	return [ppa forceHDCPProtection];
-}
-
 - (id)genres {
 	return [ppa genres];
 }
@@ -321,10 +321,6 @@
 
 -(id)playbackMetadata {
 	return [ppa playbackMetadata];
-}
-
-- (void)setPlaybackMetadataValue:(id)value forKey:(id)key {
-	[ppa setPlaybackMetadataValue:value forKey:key];
 }
 
 - (id)playbackRightsOwner {
