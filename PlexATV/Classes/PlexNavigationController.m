@@ -9,8 +9,12 @@
 #import "Plex_SynthesizeSingleton.h"
 #import "Constants.h"
 #import "HWUserDefaults.h"
+#import <plex-oss/PlexRequest + Security.h>
 
 //view/controller types
+#import "HWSettingsController.h"
+#import "PlexChannelsController.h"
+#import "HWBasicMenu.h"
 #import "HWPlexDir.h"
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
@@ -18,6 +22,8 @@
 @implementation PlexNavigationController
 @synthesize waitControl;
 @synthesize targetMediaObject;
+@synthesize targetController;
+@synthesize promptText;
 
 PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
@@ -31,24 +37,23 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     return self;
 }
 
-- (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject {
-    self.targetMediaObject = aMediaObject;
-    NSString *promptText = [NSString stringWithFormat:@"Loading \"%@\"...", self.targetMediaObject.name];
-    [self.waitControl setPromptText:promptText];
-    [[[BRApplicationStackManager singleton] stack] pushController:self];
-}
-
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasPushed];
     
-    DLog(@"Navigating to: [%@]", self.targetMediaObject);
-    //determine view/controller type for target container
+    [self.waitControl setPromptText:self.promptText];
     
-    BRController *controller = [self controllerForObject:self.targetMediaObject];
-    [[[BRApplicationStackManager singleton] stack] swapController:controller];
+    //determine view/controller type for target container
+    if (!self.targetController && self.targetMediaObject) {
+        BRController *controller = [self newControllerForObject:self.targetMediaObject];
+        self.targetController = controller;
+        [controller release];
+    }
+    
+    DLog(@"Navigating using controller type: [%@]", [self.targetController class]);
+    [[[BRApplicationStackManager singleton] stack] swapController:self.targetController];
 }
 
 - (void)wasPopped {
@@ -67,15 +72,68 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 	[super wasBuried];
 }
 
+#pragma mark -
+#pragma mark Navigation Methods
+- (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject {
+    DLog(@"Navigating to: [%@]", aMediaObject);
+    
+    self.targetMediaObject = aMediaObject;
+    self.promptText = [NSString stringWithFormat:@"Loading \"%@\"...", self.targetMediaObject.name];
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:self];
+}
+
+- (void)navigateToChannelsForMachine:(Machine *)aMachine {
+    DLog(@"Navigating to: [Channels], for machine: [%@]", aMachine.userName);
+    
+    self.targetMediaObject = nil;
+    self.promptText = @"Loading \"Channels\"...";
+    
+    PlexMediaContainer* channelsContainer = [aMachine.request query:@"/system/plugins/all" callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    PlexChannelsController *channelsController = [[PlexChannelsController alloc] initWithRootContainer:channelsContainer];
+    self.targetController = channelsController;
+    [channelsController release];
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:self];
+}
+
+- (void)navigateToSettingsWithTopLevelController:(BRBaseAppliance *)topLevelController {
+    DLog(@"Navigating to: [Settings]");
+    
+    self.targetMediaObject = nil;
+    self.promptText = @"Loading \"Settings\"...";
+    
+    HWSettingsController *settingsController = [[HWSettingsController alloc] init];
+    settingsController.topLevelController = topLevelController;
+    self.targetController = settingsController;
+    [settingsController release];
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:self];
+}
+
+- (void)navigateToServerList {
+    DLog(@"Navigating to: [Server List]");
+    
+    self.targetMediaObject = nil;
+    self.promptText = @"Loading \"Server List\"...";
+    
+    HWBasicMenu *serverList = [[HWBasicMenu alloc] init];
+    self.targetController = serverList;
+    [serverList release];
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:self];
+}
+
 
 #pragma mark -
 #pragma mark Determine View Type Methods
-- (BRController *)controllerForObject:(PlexMediaObject *)aMediaObject {
+- (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject {
     BRController *controller = nil;
     
     //determine the user selected view setting
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
     if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
+        
         if (aMediaObject.isMovie) {
             controller = [self newMoviesController:[aMediaObject contents]];
         } else if (aMediaObject.isTVShow) {
@@ -87,7 +145,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     } else {
         controller = [[HWPlexDir alloc] initWithRootContainer:[aMediaObject contents]];
     }
-    return [controller autorelease];
+    return controller;
 }
 
 

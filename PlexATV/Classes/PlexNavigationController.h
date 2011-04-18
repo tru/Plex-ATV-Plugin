@@ -10,14 +10,21 @@
 
 @interface PlexNavigationController : BRController {}
 
-@property (retain) PlexMediaObject *targetMediaObject;
 @property (retain) BRWaitPromptControl *waitControl;
+@property (retain) PlexMediaObject *targetMediaObject;
+@property (retain) BRController *targetController;
+@property (retain) NSString *promptText;
 
 + (PlexNavigationController *)sharedPlexNavigationController;
+
+//Navigation Methods
 - (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject;
+- (void)navigateToChannelsForMachine:(Machine *)aMachine;
+- (void)navigateToSettingsWithTopLevelController:(BRBaseAppliance *)topLevelController;
+- (void)navigateToServerList;
 
-
-- (BRController *)controllerForObject:(PlexMediaObject *)aMediaObject;
+//Determine View Type Methods
+- (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject;
 
 //Container Manipulation Methods
 - (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;

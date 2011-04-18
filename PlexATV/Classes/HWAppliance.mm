@@ -102,14 +102,15 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 }
 
 - (id)controllerForIdentifier:(id)identifier args:(id)args {
-	id menuController = nil;
-	
+    PlexNavigationController *navigationController = [PlexNavigationController sharedPlexNavigationController];
+    
 	if ([SERVER_LIST_ID isEqualToString:identifier]) {
-		menuController = [[HWBasicMenu alloc] init];
+		[navigationController navigateToServerList];
+        
 	} else if ([SETTINGS_ID isEqualToString:identifier]) {
-		HWSettingsController* hwsc = [[HWSettingsController alloc] init];
-		hwsc.topLevelController = self;
-		menuController = hwsc;
+        [navigationController navigateToSettingsWithTopLevelController:self];
+		return nil;
+        
 	} else {
 		// ====== get the name of the category and identifier of the machine selected ======
 		NSDictionary *compoundIdentifier = (NSDictionary *)identifier;
@@ -124,8 +125,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		
 		// ====== find the category selected ======
         if ([categoryName isEqualToString:@"Channels"]) {
-            PlexMediaContainer* channelsContainer = [machineWhoCategoryBelongsTo.request query:@"/system/plugins/all" callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
-            menuController = [[PlexChannelsController alloc] initWithRootContainer:channelsContainer];
+            [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
+            
         } else {
             NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
             NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
@@ -137,11 +138,11 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             
             //HAZAA! we found it! 
             PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
-            DLog(@"matchingCategory: %@", [matchingCategory type]);
-            [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:matchingCategory];
+            [navigationController navigateToObjectsContents:matchingCategory];
+            return nil;
         }
-	}    
-	return [menuController autorelease];
+	}
+	return nil;
 }
 
 - (id)applianceCategories {
