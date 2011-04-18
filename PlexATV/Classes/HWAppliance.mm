@@ -14,6 +14,7 @@
 #import "HWTVShowsController.h"
 #import "PlexTopShelfController.h"
 #import "PlexPreviewAsset.h"
+#import "PlexChannelsController.h"
 
 #define SERVER_LIST_ID @"hwServerList"
 #define SETTINGS_ID @"hwSettings"
@@ -232,17 +233,28 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		NSMutableArray *allDirectories = [NSMutableArray arrayWithArray:machine.rootLevel.directories];
 		[allDirectories addObjectsFromArray:machine.librarySections.directories];
 		
-		for (PlexMediaObject *pmo in allDirectories) {
-			NSString *categoryName = [pmo.name copy];
+		//for (PlexMediaObject *pmo in allDirectories) {
+        for (int i=0; i<=[allDirectories count]; i++) {
+            NSString *categoryName = nil;
+            if (i == [allDirectories count]) {
+                //add special channels appliance
+                categoryName = @"Channels";
+            } else {
+                //add all others
+                PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
+                
+                categoryName = [pmo.name copy];
+            }
+            
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"Adding category [%@] for machine id [%@]", categoryName, machineID);
 #endif
-			
-			//create the compoundIdentifier for the appliance identifier
-			NSMutableDictionary *compoundIdentifier = [NSMutableDictionary dictionary];
-			[compoundIdentifier setObject:categoryName forKey:CategoryNameKey];
-			[compoundIdentifier setObject:machineID forKey:MachineIDKey];
-			[compoundIdentifier setObject:machineName forKey:MachineNameKey];
+            
+            //create the compoundIdentifier for the appliance identifier
+            NSMutableDictionary *compoundIdentifier = [NSMutableDictionary dictionary];
+            [compoundIdentifier setObject:categoryName forKey:CategoryNameKey];
+            [compoundIdentifier setObject:machineID forKey:MachineIDKey];
+            [compoundIdentifier setObject:machineName forKey:MachineNameKey];
 			
 			//================== add the appliance ==================
 			

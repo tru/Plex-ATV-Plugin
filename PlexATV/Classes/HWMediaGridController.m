@@ -11,7 +11,7 @@
 #import "PlexPreviewAsset.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
-#import "SMFramework/SMFControlFactory.h"
+#import "Plex_SMFControlFactory.h"
 #import "HWDetailedMovieMetadataController.h"
 
 #define LOCAL_DEBUG_ENABLED 1
@@ -56,6 +56,7 @@ void checkNil(NSObject *ctrl)
 	
 	_shelfAssets = [[fullRecentMovies subarrayWithRange:theRange] retain];
 	_gridAssets = [self convertContainerToMediaAssets:allMovies];
+  [fullRecentMovies release];
 	
 	return self;
 }
@@ -86,11 +87,13 @@ void checkNil(NSObject *ctrl)
 		NSURL* mediaURL = [mediaObj mediaStreamURL];
 		PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:mediaObj];
 		[assets addObject:pma];
+    [pma release];
 	}
 	
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"converted %d assets", [assets count]);
 #endif
+
 	return assets;
 }
 
@@ -103,6 +106,8 @@ void checkNil(NSObject *ctrl)
 }
 
 - (void)wasPopped {
+  _gridControl = nil;
+  _shelfControl = nil;
 	[super wasPopped];
 }
 
@@ -115,14 +120,22 @@ void checkNil(NSObject *ctrl)
 	[super wasBuried];
 }
 
+-(void)controlWasActivated
+{
+	DLog(@"controlWasActivated");
+  [self _removeAllControls];
+	[self drawSelf];
+	[super controlWasActivated];
+	
+}
 
+#pragma mark -
 - (void) drawSelf
 {
 	DLog(@"drawSelf");
 	[self _removeAllControls];
 	
 	CGRect masterFrame = [BRWindow interfaceFrame];
-	logFrame(masterFrame);
 	
 	/*
 	 * Controls init
@@ -170,7 +183,6 @@ void checkNil(NSObject *ctrl)
 	[div1 setAlignmentFactor:0.5f];
 	[div1 setLabel:@"Recently added"];
 	
-	logFrame(div1.frame);
 	
 	/*
 	 * Shelf
@@ -183,7 +195,7 @@ void checkNil(NSObject *ctrl)
 	[_shelfControl setHorizontalGap:23];
     //    [_shelfControl setCoverflowMargin:.021746988594532013];
 	
-	logFrame(_shelfControl.frame);
+
 	
 	DLog(@"box");
 	BRBoxControl *shelfBox = [[BRBoxControl alloc] init];
@@ -219,21 +231,21 @@ void checkNil(NSObject *ctrl)
 	
 	DLog(@"grid");
 	[_gridControl setProvider:[self getProviderForGrid]];
-	[_gridControl setColumnCount:6];
+	[_gridControl setColumnCount:7];
 	[_gridControl setWrapsNavigation:YES];
 	[_gridControl setHorizontalGap:0];
-	[_gridControl setVerticalGap:25.f];
-	[_gridControl setLeftMargin:0.05f];
-	[_gridControl setRightMargin:0.05f];
-  [_gridControl setAllRowsAreSameHeight:YES];
-	
+	[_gridControl setVerticalGap:20.f];
+	[_gridControl setLeftMargin:0.05000000074505806];
+	[_gridControl setRightMargin:0.05000000074505806];
+  [_gridControl setAllRowsAreSameHeight:NO];
 	[_gridControl setAcceptsFocus:YES];
 	[_gridControl setProviderRequester:_gridControl];
+  //[_gridControl layoutSubcontrols];
   
 	CGRect gridFrame;
 	gridFrame.origin.y = dividerFrame.origin.y-25;
 	gridFrame.size.height = [_gridControl _totalHeight] + 50.f;
-	[_gridControl setFrame:gridFrame];
+	[_gridControl setFrame:masterFrame];
 	
 	CGRect gridBoxFrame;
 	gridBoxFrame.origin.x = 0;
@@ -321,9 +333,9 @@ void checkNil(NSObject *ctrl)
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid_start");
 #endif
-	NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
-	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
-	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
+	NSSet *_set = [NSSet setWithObject:[BRMediaType movie]];
+	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType movie]];
+	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello2" predicate:_pred mediaTypes:_set];
 	
 	for (int i=0;i<[_gridAssets count];i++)
 	{
@@ -334,14 +346,19 @@ void checkNil(NSObject *ctrl)
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid - have assets, creating datastore and provider");
 #endif
-	SMFControlFactory *controlFactory = [SMFControlFactory posterControlFactory];
-	controlFactory.favorProxy = YES;
+  
+
+  Plex_SMFControlFactory *controlFactory = [[Plex_SMFControlFactory alloc] initForMainMenu:NO];
+  controlFactory._poster = YES;
+  controlFactory.favorProxy = YES;
 	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 	
-	BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
+  BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
-	
-	
+  
+  
+  [store release];
+
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid_end");
 #endif
@@ -382,7 +399,8 @@ void checkNil(NSObject *ctrl)
 #endif      
 			
 			HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithPreviewAssets:assets withSelectedIndex:index];
-			[[[BRApplicationStackManager singleton] stack] pushController:[previewController autorelease]];      
+			[[[BRApplicationStackManager singleton] stack] pushController:previewController];
+      [previewController release];
 		}
 		else {
 			DLog(@"error: no selected asset");
@@ -393,19 +411,6 @@ void checkNil(NSObject *ctrl)
 	}
 	return [super brEventAction:action];
 	
-}
-
-
--(void)controlWasActivated
-{
-	DLog(@"controlWasActivated");
-	[self drawSelf];
-	[super controlWasActivated];
-	
-}
-
-void logFrame(CGRect frame) {
-	DLog(@"x:%f, y:%f - width:%f, height:%f",frame.origin.x,frame.origin.y,frame.size.width,frame.size.height);
 }
 
 @end

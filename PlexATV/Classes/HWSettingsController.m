@@ -23,7 +23,7 @@
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.7.1b6"
+#define PlexPluginVersion @"0.7.1 RC2"
 
 #define ServersIndex 0
 #define QualitySettingIndex 1
@@ -197,7 +197,7 @@
 		case QualitySettingIndex: {
 			// =========== quality setting ===========
 			[asset setTitle:@"Select the video quality"];
-			[asset setSummary:@"Sets the quality of the streamed video.                                        Good: 720p 1500 kbps, Better: 720p 2300 kbps, Best: 720p 4000 kbps"];
+			[asset setSummary:@"Sets the quality of the streamed video.                                        Good: 720p 1500 kbps, Better: 720p 4000 kbps, Best: 1080p 10Mbps"];
 			break;
 		}
 		case ViewSettingsIndex: {

@@ -2,15 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>DTXcode</key>
-	<string>0324</string>
-	<key>FRApplianceDataSourceType</key>
-	<string>All</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>3</integer>
-		<integer>2</integer>
-	</array>
 	<key>CFBundleExecutable</key>
 	<string>plex</string>
 	<key>CFBundleIdentifier</key>
@@ -31,14 +22,18 @@
 	<string>iphoneos</string>
 	<key>DTSDKName</key>
 	<string>iphoneos3.0</string>
+	<key>DTXcode</key>
+	<string>0324</string>
+	<key>FRApplianceDataSourceType</key>
+	<string>All</string>
 	<key>FRAppliancePreferedOrderValue</key>
 	<integer>1</integer>
 	<key>FRHideIfNoCategories</key>
 	<false/>
-	<key>FRRemoteAppliance</key>
-	<true/>
 	<key>FRPrimaryAppliance</key>
 	<false/>
+	<key>FRRemoteAppliance</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>

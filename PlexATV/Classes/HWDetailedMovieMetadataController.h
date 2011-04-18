@@ -28,8 +28,9 @@
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaStream.h>
 #import "PlexPreviewAsset.h"
+#import "Plex_SMFMoviePreviewController.h"
 
-@interface HWDetailedMovieMetadataController : SMFMoviePreviewController<SMFMoviePreviewControllerDatasource, SMFMoviePreviewControllerDelegate, SMFListDropShadowDatasource, SMFListDropShadowDelegate> {
+@interface HWDetailedMovieMetadataController : Plex_SMFMoviePreviewController<Plex_SMFMoviePreviewControllerDatasource, SMFMoviePreviewControllerDelegate, SMFListDropShadowDatasource, SMFListDropShadowDelegate> {
 	NSArray *_assets;
 	
 	BOOL shelfIsSelected;

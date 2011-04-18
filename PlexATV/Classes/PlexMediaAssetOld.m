@@ -183,10 +183,6 @@
 	return [ppa episodeNumber];
 }
 
-- (BOOL)forceHDCPProtection {
-	return [ppa forceHDCPProtection];
-}
-
 - (id)genres {
 	return [ppa genres];
 }
@@ -322,10 +318,6 @@
 
 -(id)playbackMetadata {
 	return [ppa playbackMetadata];
-}
-
-- (void)setPlaybackMetadataValue:(id)value forKey:(id)key {
-	[ppa setPlaybackMetadataValue:value forKey:key];
 }
 
 - (id)playbackRightsOwner {

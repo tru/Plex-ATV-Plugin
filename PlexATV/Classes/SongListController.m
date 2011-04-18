@@ -47,6 +47,7 @@
 #import "PlexSongAsset.h"
 #import "PlexPreviewAsset.h"
 #import <plex-oss/PlexMediaObject.h>
+#import <plex-oss/PlexMedia.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexRequest.h>
 
@@ -117,7 +118,7 @@
 		NSString* duration = [track.attributes objectForKey:@"duration"];
 		NSString* key = ipod!=nil?ipod:[track.request buildAbsoluteKey:track.key];
 		if (!ipod && duration){
-			PlexDirectory* pmd = [track mediaResource];
+			PlexMedia* pmd = [track mediaResource];
 			NSArray* parts = [pmd.subObjects objectForKey:@"Part"];
 			if (parts && parts.count>0){
 				PlexMediaObject* pmo = [parts objectAtIndex:0];

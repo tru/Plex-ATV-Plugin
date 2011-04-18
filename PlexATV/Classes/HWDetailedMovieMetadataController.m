@@ -28,6 +28,7 @@
 #import "HWDetailedMovieMetadataController.h"
 #import "PlexMediaProvider.h"
 #import "PlexPlaybackController.h"
+#import <plex-oss/PlexRequest.h>
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
@@ -68,7 +69,7 @@ typedef enum {
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id)initWithPreviewAssets:(NSArray*)previewAssets withSelectedIndex:(int)selIndex {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		self.assets = previewAssets;
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"init with asset count:%d and index:%d", [self.assets count], selIndex);
@@ -105,7 +106,7 @@ typedef enum {
 
 -(void)dealloc {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"deallocing HWMovieListing");
+	DLog(@"deallocing HWDetailedMovieMetadataController");
 #endif
 	self.assets = nil;
 	self.selectedMediaItemPreviewData = nil;
@@ -137,6 +138,9 @@ typedef enum {
 }
 
 - (void)wasPopped {
+  self.datasource = nil;
+  self.assets = nil;
+  self.selectedMediaItemPreviewData = nil;
 	[super wasPopped];
 }
 
@@ -222,7 +226,7 @@ typedef enum {
 				DLog(@"asset: %@", selectedMediaItemPreviewData.title);
         
         PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:selectedMediaItemPreviewData.pmo];
-				[player startPlaying];
+        [[[BRApplicationStackManager singleton] stack] pushController:player];
 				[player autorelease];
 				break;
       case kMoreButton:
@@ -277,9 +281,9 @@ typedef enum {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"subtitle_end: %@", [self.selectedMediaItemPreviewData broadcaster]);
 #endif
-
+  
   if ([self.selectedMediaItemPreviewData broadcaster])
-	return [self.selectedMediaItemPreviewData broadcaster];
+    return [self.selectedMediaItemPreviewData broadcaster];
   else
     return @"";
 }
@@ -377,6 +381,16 @@ typedef enum {
 	DLog(@"coverArt: %@", coverArt);
 #endif
 	return coverArt;
+}
+
+- (NSURL *)backgroundImageUrl {
+  NSURL* backgroundImageUrl = nil;
+  PlexMediaObject *pmo = self.selectedMediaItemPreviewData.pmo;
+  if ([pmo.attributes valueForKey:@"art"] != nil) {
+		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
+    backgroundImageUrl = [pmo.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
+	}
+	return backgroundImageUrl;
 }
 
 -(NSArray *)buttons {
