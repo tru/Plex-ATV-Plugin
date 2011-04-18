@@ -22,6 +22,4 @@
 
 - (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory;
 - (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;
-
--(void)setupPlexClientCapabilities;
 @end
