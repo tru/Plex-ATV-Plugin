@@ -19,6 +19,7 @@
 
 //Navigation Methods
 - (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject;
+- (void)navigateToDetailedMetadataController:(NSArray *)previewAssets withSelectedIndex:(int)selectedIndex;
 - (void)navigateToChannelsForMachine:(Machine *)aMachine;
 - (void)navigateToSettingsWithTopLevelController:(BRBaseAppliance *)topLevelController;
 - (void)navigateToServerList;

@@ -18,6 +18,7 @@
 #import "HWPlexDir.h"
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
+#import "HWDetailedMovieMetadataController.h"
 
 @implementation PlexNavigationController
 @synthesize waitControl;
@@ -81,6 +82,19 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     self.targetController = nil;
     self.targetMediaObject = aMediaObject;
     self.promptText = [NSString stringWithFormat:@"Loading \"%@\"...", self.targetMediaObject.name];
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:self];
+}
+
+- (void)navigateToDetailedMetadataController:(NSArray *)previewAssets withSelectedIndex:(int)selectedIndex {
+    DLog(@"Navigating to: [Detailed Metadata]");
+    self.targetController = nil;
+    self.targetMediaObject = nil;
+    self.promptText = @"Loading \"Detailed Metadata\"...";
+    
+    HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithPreviewAssets:previewAssets withSelectedIndex:selectedIndex];
+    self.targetController = previewController;
+    [previewController release];
     
     [[[BRApplicationStackManager singleton] stack] pushController:self];
 }
