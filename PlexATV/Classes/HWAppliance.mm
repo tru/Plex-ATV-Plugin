@@ -2,18 +2,12 @@
 
 #import "HWAppliance.h"
 #import "BackRowExtras.h"
-#import "HWPlexDir.h"
-#import "HWBasicMenu.h"
-#import "HWSettingsController.h"
 #import <Foundation/Foundation.h>
 #import <plex-oss/PlexRequest + Security.h>
 #import <plex-oss/MachineManager.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import "HWUserDefaults.h"
 #import "Constants.h"
-#import "HWMediaGridController.h"
-#import "HWTVShowsController.h"
-#import "PlexChannelsController.h"
 #import "PlexNavigationController.h"
 
 #define SERVER_LIST_ID @"hwServerList"
@@ -57,7 +51,7 @@ NSString * const MachineNameKey = @"PlexMachineName";
 - (BRTopShelfView *)topShelfView {
 	BRTopShelfView *topShelf = [[BRTopShelfView alloc] init];
 	BRImageControl *imageControl = [topShelf productImage];
-	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWPlexDir class]] pathForResource:@"PlexLogo" ofType:@"png"]];
+	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWUserDefaults class]] pathForResource:@"PlexLogo" ofType:@"png"]];
 	[imageControl setImage:theImage];
 	
 	return [topShelf autorelease];

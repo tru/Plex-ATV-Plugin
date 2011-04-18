@@ -34,10 +34,7 @@
 #import "PlexMediaAssetOld.h"
 #import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
-#import "SongListController.h"
 #import "HWUserDefaults.h"
-#import "HWMediaGridController.h"
-#import "HWDetailedMovieMetadataController.h"
 #import "PlexPlaybackController.h"
 #import "PlexNavigationController.h"
 
@@ -353,42 +350,44 @@
 - (void)itemSelected:(long)selected; {
 	PlexMediaObject* pmo = [self.items objectAtIndex:selected];
 	
-	NSString* type = [pmo.attributes objectForKey:@"type"];
-	if ([type empty]) type = pmo.containerType;
-	type = [type lowercaseString];
+//	NSString* type = [pmo.attributes objectForKey:@"type"];
+//	if ([type empty]) type = pmo.containerType;
+//	type = [type lowercaseString];
     
-    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
+//    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	
 	//DLog(@"Item Selected: %@, type:%@", pmo.debugSummary, type);
 	
 	//DLog(@"viewgroup: %@, viewmode:%@",pmo.mediaContainer.viewGroup, pmo.containerType);
-	
-	if ([PlexViewGroupAlbum isEqualToString:pmo.mediaContainer.viewGroup] || [@"albums" isEqualToString:pmo.mediaContainer.content] || [@"playlists" isEqualToString:pmo.mediaContainer.content]) {
-		DLog(@"Accessing Artist/Album %@", pmo);
-		SongListController *songlist = [[SongListController alloc] initWithPlexContainer:[pmo contents] title:pmo.name];
-		[[[BRApplicationStackManager singleton] stack] pushController:songlist];
-		[songlist autorelease];
-	}
-	else if (pmo.hasMedia || [@"Video" isEqualToString:pmo.containerType] || [@"Track" isEqualToString:pmo.containerType]){
-#if LOCAL_DEBUG_ENABLED
-		DLog(@"got some media, switching to PlexPlaybackController");
-#endif
-		PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:pmo];
-		//[player startPlaying];
-		[[[BRApplicationStackManager singleton] stack] pushController:player];
-        [player release];
-	}
-    else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
-		[self showGridListControl:[pmo contents]];
-	}
-	else 
-    {
-//		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
-//		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-//		
-//		[menuController autorelease];
-        [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
-	}
+    [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
+    return;
+//	
+//	if ([PlexViewGroupAlbum isEqualToString:pmo.mediaContainer.viewGroup] || [@"albums" isEqualToString:pmo.mediaContainer.content] || [@"playlists" isEqualToString:pmo.mediaContainer.content]) {
+//		DLog(@"Accessing Artist/Album %@", pmo);
+//		SongListController *songlist = [[SongListController alloc] initWithPlexContainer:[pmo contents] title:pmo.name];
+//		[[[BRApplicationStackManager singleton] stack] pushController:songlist];
+//		[songlist autorelease];
+//	}
+//	else if (pmo.hasMedia || [@"Video" isEqualToString:pmo.containerType] || [@"Track" isEqualToString:pmo.containerType]){
+//#if LOCAL_DEBUG_ENABLED
+//		DLog(@"got some media, switching to PlexPlaybackController");
+//#endif
+//		PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:pmo];
+//		//[player startPlaying];
+//		[[[BRApplicationStackManager singleton] stack] pushController:player];
+//        [player release];
+//	}
+//    else if ([@"movie" isEqualToString:type] && [viewTypeSetting isEqualToString:@"Grid"]) {
+//        [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
+//	}
+//	else 
+//    {
+////		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
+////		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+////		
+////		[menuController autorelease];
+//        [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
+//	}
 }
 
 
@@ -463,31 +462,6 @@
 	}
 	DLog(@"done filtering");
 	return pmc;
-}
-
-- (void)showGridListControl:(PlexMediaContainer*)movieCategory {
-	PlexMediaObject *recent=nil;
-	PlexMediaObject *allMovies=nil;
-    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
-	if (movieCategory.directories > 0) {
-		NSUInteger i, count = [movieCategory.directories count];
-		for (i = 0; i < count; i++) {
-			PlexMediaObject * obj = [movieCategory.directories objectAtIndex:i];
-			NSString *key = [obj.attributes objectForKey:@"key"];
-			//DLog(@"obj_type: %@",key);
-			if ([key isEqualToString:@"all"])
-				allMovies = obj;
-			else if ([key isEqualToString:@"recentlyAdded"])
-				recent = obj;
-		}
-	}
-	
-	if (recent && allMovies){
-		DLog(@"pushing shelfController");
-		HWMediaGridController *shelfController = [[HWMediaGridController alloc] initWithPlexAllMovies:[allMovies contents] andRecentMovies:[recent contents]];
-		[[[BRApplicationStackManager singleton] stack] pushController:[shelfController autorelease]];
-	}
-	
 }
 
 - (void)showModifyViewedStatusViewForRow:(long)row {

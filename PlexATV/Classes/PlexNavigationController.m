@@ -16,6 +16,7 @@
 #import "PlexChannelsController.h"
 #import "HWBasicMenu.h"
 #import "HWPlexDir.h"
+#import "SongListController.h"
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
@@ -146,6 +147,12 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 - (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject {
     BRController *controller = nil;
     PlexMediaContainer *contents = [aMediaObject contents];
+    
+    if ([PlexViewGroupAlbum isEqualToString:aMediaObject.mediaContainer.viewGroup] 
+        || [@"albums" isEqualToString:aMediaObject.mediaContainer.content] 
+        || [@"playlists" isEqualToString:aMediaObject.mediaContainer.content]) {
+        controller = [[SongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
+    }
     
     //determine the user selected view setting
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
