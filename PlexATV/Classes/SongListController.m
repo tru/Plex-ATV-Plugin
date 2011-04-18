@@ -50,6 +50,7 @@
 #import <plex-oss/PlexMedia.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexRequest.h>
+#import "PlexNavigationController.h"
 
 @implementation SongListController
 
@@ -179,9 +180,7 @@
 	} else {
 		PlexMediaObject *mediaObj = [rootContainer.directories objectAtIndex:selected-2];
 		if ([@"album" isEqualToString:mediaObj.type]) {
-			SongListController *songlist = [[SongListController alloc] initWithPlexContainer:[mediaObj contents] title:mediaObj.name];
-			[[[BRApplicationStackManager singleton] stack] pushController:songlist];
-			[songlist autorelease];      
+			[[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:mediaObj];    
 		}
 		else {
 			// Play selected song

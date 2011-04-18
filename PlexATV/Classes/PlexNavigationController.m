@@ -151,12 +151,12 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     if ([PlexViewGroupAlbum isEqualToString:aMediaObject.mediaContainer.viewGroup] 
         || [@"albums" isEqualToString:aMediaObject.mediaContainer.content] 
         || [@"playlists" isEqualToString:aMediaObject.mediaContainer.content]) {
-        controller = [[SongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
+        return [[SongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
     }
     
     //determine the user selected view setting
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if (!controller && viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
+    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
         
         if (aMediaObject.isMovie) {
             controller = [self newMoviesController:contents];
