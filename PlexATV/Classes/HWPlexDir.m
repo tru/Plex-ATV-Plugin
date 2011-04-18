@@ -39,6 +39,7 @@
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
 #import "PlexPlaybackController.h"
+#import "PlexNavigationController.h"
 
 #define LOCAL_DEBUG_ENABLED 1
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"
@@ -126,7 +127,9 @@
 
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
-    [self.list reload];
+    
+    //refresh scope bar in case any items have changed
+    [self scopeChangedTo:[self.scopeBar selectedTabItemIndex]];
 	[super wasExhumed];
 }
 
@@ -380,10 +383,11 @@
 	}
 	else 
     {
-		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
-		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-		
-		[menuController autorelease];
+//		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
+//		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+//		
+//		[menuController autorelease];
+        [[PlexNavigationController sharedPlexNavigationController] navigateToContainer:[pmo contents]];
 	}
 }
 
