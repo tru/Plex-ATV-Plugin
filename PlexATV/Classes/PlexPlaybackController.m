@@ -45,7 +45,6 @@ PlexMediaProvider* __provider = nil;
 #define ResumeOptionDialog @"ResumeOptionDialog"
 
 #define kStartTrackingProgressTime 120.0f
-#define kEndTrackingProgressTime 120.0f
 #define kEndTrackingProgressPercentageCompleted 0.95f
 
 @implementation PlexPlaybackController
@@ -59,13 +58,13 @@ PlexMediaProvider* __provider = nil;
 		//register for notifications when a movie has finished playing properly to the end.
 		//used to mark movie as seen
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieFinished:) name:@"AVPlayerItemDidPlayToEndTimeNotification" object:nil];
-    
+        
 	}
 	return self;
 }
 
 - (void)myMethod:(NSNotification *)notification {
-  DLog(@"notification received: %@", notification);
+    DLog(@"notification received: %@", notification);
 }
 
 -(id)initWithPlexMediaObject:(PlexMediaObject*)mediaObject {
@@ -82,7 +81,7 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"deallocing player controller for %@", pmo.name);
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-  
+    
 	[pmo autorelease];
 	[super dealloc];
 }
@@ -122,7 +121,7 @@ PlexMediaProvider* __provider = nil;
 		DLog(@"viewOffset: %@", [pmo.attributes valueForKey:@"viewOffset"]);
 		
         NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
-
+        
         float totalOffsetInSeconds = [viewOffset intValue] / 1000.0f;
         //if progress is less than start tracking time, don't even bother to ask if video should be resumed.
         if (totalOffsetInSeconds < kStartTrackingProgressTime) {
@@ -137,9 +136,9 @@ PlexMediaProvider* __provider = nil;
 			[option setIdentifier:ResumeOptionDialog];
 			
 			[option setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                           viewOffset, @"viewOffset", 
-                           pmo, @"mediaObject",
-                           nil]];
+                                 viewOffset, @"viewOffset", 
+                                 pmo, @"mediaObject",
+                                 nil]];
 			[option setPrimaryInfoText:@"You have already watched a part of this video.\nWould you like to continue where you left off, or start from beginning?"];
 			[option setSecondaryInfoText:pmo.name];
 			
@@ -172,7 +171,7 @@ PlexMediaProvider* __provider = nil;
 	
 	[pmo.attributes setObject:[NSNumber numberWithInt:offset] forKey:@"viewOffset"]; //set where in the video we want to start...
 	
-  //determine the user selected quality setting
+    //determine the user selected quality setting
 	NSString *qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesQualitySetting];
 	PlexStreamingQualityDescriptor *streamQuality;
 	if ([qualitySetting isEqualToString:@"Good"]) {
@@ -193,7 +192,7 @@ PlexMediaProvider* __provider = nil;
 	
 	BOOL didTimeOut = NO;
 #warning what cache policy should we use??
-  [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageNotAllowed];
+    [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageNotAllowed];
 	
 	
 	
@@ -201,7 +200,7 @@ PlexMediaProvider* __provider = nil;
 		__provider = [[PlexMediaProvider alloc] init];
 		BRMediaHost* mh = [[BRMediaHost mediaHosts] objectAtIndex:0];
 		[mh addMediaProvider:__provider];
-    [__provider release];
+        [__provider release];
 	}
 	
 	if (playProgressTimer){
@@ -217,7 +216,7 @@ PlexMediaProvider* __provider = nil;
 		pma = [[PlexMediaAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
 	}
 	
-  //DLog(@"mediaItem: %@", [pma mediaItemRef]);
+    //DLog(@"mediaItem: %@", [pma mediaItemRef]);
 	
 	BRMediaPlayerManager* mgm = [BRMediaPlayerManager singleton];
 	NSError * error = nil;
@@ -232,24 +231,25 @@ PlexMediaProvider* __provider = nil;
 	}
 	
 	
-  //[mgm presentMediaAsset:pma options:0];
+    //[mgm presentMediaAsset:pma options:0];
 	[mgm presentPlayer:player options:0];
-  
+    
 	DLog(@"presented player");
-  playProgressTimer = [[NSTimer scheduledTimerWithTimeInterval:10.0f 
-                                                        target:self 
-                                                      selector:@selector(reportProgress:) 
-                                                      userInfo:nil 
-                                                       repeats:YES] retain];
-  
-  //we need all the memory we can spare so we don't get killed by the OS
+    playProgressTimer = [[NSTimer scheduledTimerWithTimeInterval:10.0f 
+                                                          target:self 
+                                                        selector:@selector(reportProgress:) 
+                                                        userInfo:nil 
+                                                         repeats:YES] retain];
+    
+    //we need all the memory we can spare so we don't get killed by the OS
 	[pma release];
-  [pmo.thumb release];
-  [pmo.art release];
-  [pmo.banner release];
-  [pmo.parentObject release];
-  //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
+    [pmo.thumb release];
+    [pmo.art release];
+    [pmo.banner release];
+    //[pmo.parentObject release]; <== cannot be released cause it will crash when items view status is changed
+    
+    //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
 }
 
 -(void)playbackAudio {
@@ -275,22 +275,22 @@ PlexMediaProvider* __provider = nil;
 
 -(void)reportProgress:(NSTimer*)tm {
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
-
+    
 	switch (playa.playerState) {
 		case kBRMediaPlayerStatePlaying: {
 			//report time back to PMS so we can continue in the right spot
 			float current = playa.elapsedTime;
-			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
-
-			// Ignore time at start and at the end, or when an item is a certain percentage completed            
-            if (current > kStartTrackingProgressTime 
-                && total - current > kEndTrackingProgressTime 
+			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;            
+            
+            // Only report progress after a certain number of seconds have been watched
+            // and the movie is less than a certain percentage left
+            if (current > kStartTrackingProgressTime
                 && kEndTrackingProgressPercentageCompleted > current/total) {
                 DLog(@"posting progress [%f]", current);
 				[pmo postMediaProgress:playa.elapsedTime];
 			}
             
-            //if not already marked as seen, and when an item is a certain percentage completed
+            //if not already marked as seen, and when an item has less than a certain percentage left
             if ( [pmo seenState] != PlexMediaObjectSeenStateSeen 
                 && kEndTrackingProgressPercentageCompleted < current/total) {
                 DLog(@"more than %f completed, mark as watched", kEndTrackingProgressPercentageCompleted);
@@ -315,45 +315,68 @@ PlexMediaProvider* __provider = nil;
 			DLog(@"paused playback, pinging transcoder");
 			[pmo.request pingTranscoder];
 			break;
-		default:
-			break;
+            
+        case kBRMediaPlayerStateSkipping:
+        case kBRMediaPlayerStateForwardSeeking:
+        case kBRMediaPlayerStateForwardSeekingFast:
+        case kBRMediaPlayerStateForwardSeekingFastest:
+        case kBRMediaPlayerStateBackSeeking:
+        case kBRMediaPlayerStateBackSeekingFast:
+        case kBRMediaPlayerStateBackSeekingFastest:
+            break;
+        default:
+            break;
 	}
 }
 
 -(void)movieFinished:(NSNotification*)event {
-    [pmo markSeen];
-    [[[BRApplicationStackManager singleton] stack] popController];
+    [pmo markSeen]; //makes sure the item is marked as seen
 }
 
 -(void)playerStateChanged:(NSNotification*)event {
-  //DLog(@"%@", event)
-  BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
-  switch (playa.playerState) {
-    case kBRMediaPlayerStateStopped:
-      DLog(@"stopping the transcoder");
-      
-      //stop the transcoding on PMS
-      [pmo.request stopTranscoder];
-      DLog(@"transcoder stopped");
-      
-      if (playProgressTimer && [playProgressTimer isValid]){
-        [playProgressTimer invalidate];
-        [playProgressTimer release];
-        playProgressTimer = nil;
-        DLog(@"stopped progress timer");
-      }
-      
-      DLog(@"Finished Playback, fire up MM");
-      //playback stopped, tell MM to fire up again
-      [[MachineManager sharedMachineManager] startAutoDetection];
-      [[MachineManager sharedMachineManager] startMonitoringMachineState];
-      [[[BRApplicationStackManager singleton] stack] popController];
-      break;
-      
-    default:
-      break;
-  }
-  
+    //DLog(@"%@", event)
+    BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];    
+    
+    switch (playa.playerState) {
+        case kBRMediaPlayerStatePlaying:
+            //playback has (re)started
+            [self reportProgress:nil];
+            
+            break;
+        case kBRMediaPlayerStateStopped:
+            DLog(@"stopping the transcoder");
+            
+            //stop the transcoding on PMS
+            [pmo.request stopTranscoder];
+            DLog(@"transcoder stopped");
+            
+            if (playProgressTimer && [playProgressTimer isValid]){
+                [playProgressTimer invalidate];
+                [playProgressTimer release];
+                playProgressTimer = nil;
+                DLog(@"stopped progress timer");
+            }
+            
+            DLog(@"Finished Playback, fire up MM");
+            //playback stopped, tell MM to fire up again
+            [[MachineManager sharedMachineManager] startAutoDetection];
+            [[MachineManager sharedMachineManager] startMonitoringMachineState];
+            [[[BRApplicationStackManager singleton] stack] popController];
+            break;
+            
+        case kBRMediaPlayerStatePaused:
+        case kBRMediaPlayerStateSkipping:
+        case kBRMediaPlayerStateForwardSeeking:
+        case kBRMediaPlayerStateForwardSeekingFast:
+        case kBRMediaPlayerStateForwardSeekingFastest:
+        case kBRMediaPlayerStateBackSeeking:
+        case kBRMediaPlayerStateBackSeekingFast:
+        case kBRMediaPlayerStateBackSeekingFastest:
+            break;
+        default:
+            break;
+    }
+    
 }
 
 #pragma mark -
