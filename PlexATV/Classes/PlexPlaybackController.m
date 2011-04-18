@@ -178,23 +178,13 @@ PlexMediaProvider* __provider = nil;
 	if ([qualitySetting isEqualToString:@"Good"]) {
 		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
 	} else 	if ([qualitySetting isEqualToString:@"Best"]) {
-		streamQuality = [PlexStreamingQualityDescriptor quality1080pHigh];
+		streamQuality = [PlexStreamingQualityDescriptor quality1080pLow];
 	} else { //medium (default)
 		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
 	}
 	pmo.request.machine.streamQuality = streamQuality;
 	
-	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);
-	
-	/*
-	 //player get's confused if we're running a transcoder already (tried playing and failed on ATV, transcoder still running)
-	 if ([pmo.request transcoderRunning]) {
-	 [pmo.request stopTranscoder];
-	 [NSThread sleepForTimeInterval:3.0]; //give the PMS chance to kill transcoder, since we're gonna start a new one right away
-	 }
-	 */
-	
-	
+	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
 	//DLog(@"%@", pmo.request.machine.capabilities.qualities);
 	NSURL* mediaURL = [pmo mediaURL];
@@ -222,7 +212,7 @@ PlexMediaProvider* __provider = nil;
 	
 	BRBaseMediaAsset* pma = nil;
 	if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.1"]){
-		pma = [[PlexMediaAssetOld alloc] initWithURL:mediaURL mediaProvider:__provider mediaObject:pmo];
+		pma = [[PlexMediaAssetOld alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
 	} else {
 		pma = [[PlexMediaAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
 	}

@@ -292,7 +292,7 @@
 
 - (id)mediaType {
 #pragma mark only different one
-	return [BRMediaType streamingVideo];
+	return [BRMediaType sedonaMovie];
 }
 
 - (NSString *)mediaURL{
