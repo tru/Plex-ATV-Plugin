@@ -30,15 +30,20 @@
 
 
 @class PlexMediaObject;
-@interface HWPlexDir: SMFMediaMenuController {
-	
+@interface HWPlexDir: SMFMediaMenuController <BRTabControlDelegate> {
 	PlexMediaContainer* rootContainer;
 	PlexMediaObject* playbackItem;
 }
 
-@property (readwrite, retain) PlexMediaContainer* rootContainer;
+@property (retain) BRTabControl *scopeBar;
+@property (retain) PlexMediaContainer* rootContainer;
+@property (retain) NSArray *items;
+
+
+
 - (void)log:(NSNotificationCenter *)note;
 
+- (void)scopeChangedTo:(int)newScopeSelection;
 - (void)showModifyViewedStatusViewForRow:(long)row;
 - (id) initWithRootContainer:(PlexMediaContainer*)container;
 - (PlexMediaContainer*) applySkipFilteringOnContainer:(PlexMediaContainer*)container;
