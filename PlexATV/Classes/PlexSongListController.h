@@ -40,10 +40,10 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 
 
-#import "NSArray-Shuffle.h";
+#import "NSArray-Shuffle.h"
 @class PlexMediaContainer;
 
-@interface SongListController : BRMediaMenuController {
+@interface PlexSongListController : BRMediaMenuController {
  	PlexMediaContainer* rootContainer;
 	NSMutableArray *songs;
 }

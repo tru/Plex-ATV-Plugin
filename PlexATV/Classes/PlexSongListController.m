@@ -42,7 +42,7 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 
 
-#import "SongListController.h"
+#import "PlexSongListController.h"
 #import "PlexMediaProvider.h"
 #import "PlexSongAsset.h"
 #import "PlexPreviewAsset.h"
@@ -52,7 +52,7 @@
 #import <plex-oss/PlexRequest.h>
 #import "PlexNavigationController.h"
 
-@implementation SongListController
+@implementation PlexSongListController
 
 @synthesize songs;
 @synthesize rootContainer;

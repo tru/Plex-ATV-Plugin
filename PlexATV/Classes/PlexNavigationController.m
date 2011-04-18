@@ -16,7 +16,7 @@
 #import "PlexChannelsController.h"
 #import "HWBasicMenu.h"
 #import "HWPlexDir.h"
-#import "SongListController.h"
+#import "PlexSongListController.h"
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
@@ -151,7 +151,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     if ([PlexViewGroupAlbum isEqualToString:aMediaObject.mediaContainer.viewGroup] 
         || [@"albums" isEqualToString:aMediaObject.mediaContainer.content] 
         || [@"playlists" isEqualToString:aMediaObject.mediaContainer.content]) {
-        return [[SongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
+        return [[PlexSongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
     }
     
     //determine the user selected view setting
