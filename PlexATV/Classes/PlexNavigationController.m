@@ -49,7 +49,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     
     [self.waitControl setPromptText:self.promptText];
     
-    //determine view/controller type for target container
+    //determine view/controller type for target container if not already determined before we were pushed
     if (!self.targetController && self.targetMediaObject) {
         BRController *controller = [self newControllerForObject:self.targetMediaObject];
         self.targetController = controller;
