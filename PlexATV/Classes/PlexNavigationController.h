@@ -6,14 +6,21 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <plex-oss/PlexMediaContainer.h>
+#import <plex-oss/PlexMediaObject.h>
 
 @interface PlexNavigationController : BRController {}
 
-@property (retain) PlexMediaContainer *rootContainer;
+@property (retain) PlexMediaObject *targetMediaObject;
 @property (retain) BRWaitPromptControl *waitControl;
 
 + (PlexNavigationController *)sharedPlexNavigationController;
-- (void)navigateToContainer:(PlexMediaContainer *)aContainer;
+- (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject;
+
+
+- (BRController *)controllerForObject:(PlexMediaObject *)aMediaObject;
+
+//Container Manipulation Methods
+- (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;
+- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory;
 
 @end

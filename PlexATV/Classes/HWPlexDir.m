@@ -387,7 +387,7 @@
 //		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 //		
 //		[menuController autorelease];
-        [[PlexNavigationController sharedPlexNavigationController] navigateToContainer:[pmo contents]];
+        [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
 	}
 }
 

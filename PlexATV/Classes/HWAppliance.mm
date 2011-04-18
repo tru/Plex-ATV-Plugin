@@ -14,6 +14,7 @@
 #import "HWMediaGridController.h"
 #import "HWTVShowsController.h"
 #import "PlexChannelsController.h"
+#import "PlexNavigationController.h"
 
 #define SERVER_LIST_ID @"hwServerList"
 #define SETTINGS_ID @"hwSettings"
@@ -137,72 +138,10 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             //HAZAA! we found it! 
             PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
             DLog(@"matchingCategory: %@", [matchingCategory type]);
-            
-            //determine the user selected view setting
-            NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-            if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
-                if (matchingCategory.isMovie) {
-                    menuController = [self newMoviesController:[matchingCategory contents]];
-                } else if (matchingCategory.isTVShow) {
-                    menuController = [self newTVShowsController:[matchingCategory contents]];
-                } else {
-                    menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-                }      
-            } else {
-                menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-            }
+            [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:matchingCategory];
         }
-        
-        
 	}    
 	return [menuController autorelease];
-}
-
-- (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory {
-	BRController *menuController = nil;
-	PlexMediaObject *allTvShows=nil;
-	if (tvShowCategory.directories > 0) {
-		NSUInteger i, count = [tvShowCategory.directories count];
-		for (i = 0; i < count; i++) {
-			PlexMediaObject * obj = [tvShowCategory.directories objectAtIndex:i];
-			NSString *key = [obj.attributes objectForKey:@"key"];
-			DLog(@"obj_type: %@",key);
-			if ([key isEqualToString:@"all"]) {
-				allTvShows = obj;
-				break;
-			}
-		}
-	}
-	
-	if (allTvShows) {
-		menuController = [[HWTVShowsController alloc] initWithPlexAllTVShows:[allTvShows contents]];
-	}
-	return menuController;
-}
-
-- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory {
-	BRController *menuController = nil;
-	PlexMediaObject *recent=nil;
-	PlexMediaObject *allMovies=nil;
-    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
-	if (movieCategory.directories > 0) {
-		NSUInteger i, count = [movieCategory.directories count];
-		for (i = 0; i < count; i++) {
-			PlexMediaObject * obj = [movieCategory.directories objectAtIndex:i];
-			NSString *key = [obj.attributes objectForKey:@"key"];
-			DLog(@"obj_type: %@",key);
-			if ([key isEqualToString:@"all"])
-				allMovies = obj;
-			else if ([key isEqualToString:@"recentlyAdded"])
-				recent = obj;
-		}
-	}
-	
-	if (recent && allMovies){
-		DLog(@"pushing shelfController");
-		menuController = [[HWMediaGridController alloc] initWithPlexAllMovies:[allMovies contents] andRecentMovies:[recent contents]];
-	}
-	return menuController;
 }
 
 - (id)applianceCategories {
