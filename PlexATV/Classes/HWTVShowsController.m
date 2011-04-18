@@ -9,7 +9,7 @@
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexMediaObject.h>
 #import "PlexPreviewAsset.h"
-#import "HWPlexDir.h"
+#import "PlexNavigationController.h"
 
 #define LOCAL_DEBUG_ENABLED 0
 
@@ -188,11 +188,7 @@
     PlexMediaObject *season = [self.seasonsForSelectedTVShow.directories objectAtIndex:[shelfControl focusedIndex]];
     
     if ([[season contents] hasOnlyEpisodes]) {
-        PlexMediaContainer *episodes = [season contents];
-        
-        HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:episodes];
-        [[[BRApplicationStackManager singleton] stack] pushController:menuController];
-        [menuController autorelease];    
+        [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:season];
     }
 }
 

@@ -30,6 +30,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 - (id)init {
     self = [super init];
     if (self) {
+        //this will allow us to have a nice 'wait spinner' when we
+        //refactor the code so it can be loaded on a background thread
         self.waitControl = [[BRWaitPromptControl alloc] init];
         [self.waitControl setFrame:[BRWindow interfaceFrame]];
         [self addControl:self.waitControl];
@@ -76,7 +78,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 #pragma mark Navigation Methods
 - (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject {
     DLog(@"Navigating to: [%@]", aMediaObject);
-    
+    self.targetController = nil;
     self.targetMediaObject = aMediaObject;
     self.promptText = [NSString stringWithFormat:@"Loading \"%@\"...", self.targetMediaObject.name];
     
@@ -85,7 +87,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
 - (void)navigateToChannelsForMachine:(Machine *)aMachine {
     DLog(@"Navigating to: [Channels], for machine: [%@]", aMachine.userName);
-    
+    self.targetController = nil;
     self.targetMediaObject = nil;
     self.promptText = @"Loading \"Channels\"...";
     
@@ -99,7 +101,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
 - (void)navigateToSettingsWithTopLevelController:(BRBaseAppliance *)topLevelController {
     DLog(@"Navigating to: [Settings]");
-    
+    self.targetController = nil;
     self.targetMediaObject = nil;
     self.promptText = @"Loading \"Settings\"...";
     
@@ -113,7 +115,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
 - (void)navigateToServerList {
     DLog(@"Navigating to: [Server List]");
-    
+    self.targetController = nil;
     self.targetMediaObject = nil;
     self.promptText = @"Loading \"Server List\"...";
     
@@ -129,21 +131,22 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 #pragma mark Determine View Type Methods
 - (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject {
     BRController *controller = nil;
+    PlexMediaContainer *contents = [aMediaObject contents];
     
     //determine the user selected view setting
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
+    if (!controller && viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
         
         if (aMediaObject.isMovie) {
-            controller = [self newMoviesController:[aMediaObject contents]];
+            controller = [self newMoviesController:contents];
         } else if (aMediaObject.isTVShow) {
-            controller = [self newTVShowsController:[aMediaObject contents]];
+            controller = [self newTVShowsController:contents];
         } else {
-            controller = [[HWPlexDir alloc] initWithRootContainer:[aMediaObject contents]];
+            controller = [[HWPlexDir alloc] initWithRootContainer:contents];
         }
         
     } else {
-        controller = [[HWPlexDir alloc] initWithRootContainer:[aMediaObject contents]];
+        controller = [[HWPlexDir alloc] initWithRootContainer:contents];
     }
     return controller;
 }
