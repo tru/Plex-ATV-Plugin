@@ -7,22 +7,11 @@
 
 #import "PlexChannelsController.h"
 #import "Constants.h"
-#import <plex-oss/PlexMediaObject.h>
-#import <plex-oss/PlexMediaContainer.h>
-#import <plex-oss/PlexImage.h>
 #import <plex-oss/PlexRequest.h>
-#import <plex-oss/Preferences.h>
-#import "PlexMediaProvider.h"
-#import "PlexMediaAsset.h"
-#import "PlexMediaAssetOld.h"
 #import "PlexPreviewAsset.h"
-#import "PlexSongAsset.h"
-#import "SongListController.h"
-#import "HWUserDefaults.h"
-#import "HWMediaGridController.h"
-#import "HWDetailedMovieMetadataController.h"
-#import "PlexPlaybackController.h"
+#import "PlexPreviewAsset.h"
 #import "HWPlexDir.h"
+#import "HWUserDefaults.h"
 
 #define LOCAL_DEBUG_ENABLED 1
 
@@ -167,6 +156,8 @@
 - (void)itemSelected:(long)selected; {
 	PlexMediaObject* pmo = [rootContainer.directories objectAtIndex:selected];
     PlexMediaContainer *channel = [pmo.request query:[pmo.attributes valueForKey:@"path"] callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    
+    
     
 	HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:channel];
 	[[[BRApplicationStackManager singleton] stack] pushController:menuController];
