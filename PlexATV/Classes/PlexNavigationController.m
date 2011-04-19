@@ -20,6 +20,7 @@
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
+#import <SMFramework/SMFControllerPasscodeController.h>
 
 @implementation PlexNavigationController
 @synthesize waitControl;
@@ -123,8 +124,13 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     
     HWSettingsController *settingsController = [[HWSettingsController alloc] init];
     settingsController.topLevelController = topLevelController;
-    self.targetController = settingsController;
+    
+    
+    SMFControllerPasscodeController *passcodeController = [[SMFControllerPasscodeController alloc] initForController:settingsController withPasscode:1234];
     [settingsController release];
+    
+    self.targetController = passcodeController;
+    [passcodeController release];
     
     [[[BRApplicationStackManager singleton] stack] pushController:self];
 }
