@@ -17,7 +17,6 @@
 #import "PlexMediaAssetOld.h"
 #import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
-#import "SongListController.h"
 #import "HWUserDefaults.h"
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
