@@ -20,6 +20,7 @@
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
+#import <SMFramework/SMFControllerPasscodeController.h>
 
 @implementation PlexNavigationController
 @synthesize waitControl;
@@ -50,6 +51,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     [self.waitControl setPromptText:self.promptText];
     
     //determine view/controller type for target container if not already determined before we were pushed
+    //(some types are pre-set like settings, server list, etc)
     if (!self.targetController && self.targetMediaObject) {
         BRController *controller = [self newControllerForObject:self.targetMediaObject];
         self.targetController = controller;
@@ -122,8 +124,13 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     
     HWSettingsController *settingsController = [[HWSettingsController alloc] init];
     settingsController.topLevelController = topLevelController;
-    self.targetController = settingsController;
+    
+    
+    SMFControllerPasscodeController *passcodeController = [[SMFControllerPasscodeController alloc] initForController:settingsController withPasscode:1234];
     [settingsController release];
+    
+    self.targetController = passcodeController;
+    [passcodeController release];
     
     [[[BRApplicationStackManager singleton] stack] pushController:self];
 }

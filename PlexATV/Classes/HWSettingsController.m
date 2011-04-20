@@ -49,6 +49,10 @@
 	[super dealloc];	
 }
 
+- (NSString *)description {
+    return @"Plex Settings";
+}
+
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
