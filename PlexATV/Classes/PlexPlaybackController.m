@@ -177,9 +177,9 @@ PlexMediaProvider* __provider = nil;
 	if ([qualitySetting isEqualToString:@"Good"]) {
 		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
 	} else 	if ([qualitySetting isEqualToString:@"Best"]) {
-		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
+		streamQuality = [PlexStreamingQualityDescriptor quality1080pMed];
 	} else { //medium (default)
-		streamQuality = [PlexStreamingQualityDescriptor qualityWiFiMed];
+		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
 	}
 	pmo.request.machine.streamQuality = streamQuality;
 	
