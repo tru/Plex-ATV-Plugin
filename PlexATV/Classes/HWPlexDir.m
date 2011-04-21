@@ -90,7 +90,7 @@
 
 - (id) initWithRootContainer:(PlexMediaContainer*)container {
 	self = [self init];
-	self.rootContainer = [self applySkipFilteringOnContainer:container];
+	self.rootContainer = container;
     self.items = [self.rootContainer directories]; //default is all
 	return self;
 }
@@ -370,60 +370,6 @@
         }
     }
     [self.list reload];
-}
-
-- (PlexMediaContainer*) applySkipFilteringOnContainer:(PlexMediaContainer*)container {
-	PlexMediaContainer *pmc = container;
-	
-	BOOL skipFilteringOptionsMenu = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
-	DLog(@"skipFilteringOption: %@", skipFilteringOptionsMenu ? @"YES" : @"NO");
-	
-	if (pmc.sectionRoot && !pmc.requestsMessage && skipFilteringOptionsMenu) { 
-		//open "/library/section/x/all or the first item in the list"
-		//bypass the first filter node
-		
-		/*
-		 at some point wou will present the user a selection for the available filters, right?
-		 when the user selects one, you should write to that preference so next time user comes back
-		 ATV will use the last filter
-		 */
-		//[PlexPrefs defaultPreferences] filterForSection]
-		Machine *currentMachine = rootContainer.request.machine;
-		const NSString* filter = [currentMachine filterForSection:pmc.key];
-		BOOL handled = NO;
-		PlexMediaContainer* new_pmc = nil;
-		
-		for(PlexMediaObject* po in pmc.directories){
-			DLog(@"%@: %@ == %@", pmc.key, po.lastKeyComponent, filter);
-			if ([filter isEqualToString:po.lastKeyComponent]){
-				PlexMediaContainer* my_new_pmc = [po contents];
-				if (my_new_pmc.directories.count>0) new_pmc = my_new_pmc;
-				handled = YES;
-				break;
-			}
-		}
-		
-		DLog(@"handled: %@", handled ? @"YES" : @"NO");
-		if (handled && new_pmc==nil) new_pmc = [[pmc.directories objectAtIndex:0] contents];
-		if (new_pmc==nil || new_pmc.directories.count==0){
-			for(PlexMediaObject* po in pmc.directories){
-				PlexMediaContainer* my_new_pmc = [po contents];
-				if (my_new_pmc.directories.count>0) {
-					new_pmc = my_new_pmc;
-					handled = YES;
-					break;
-				}
-			}
-		}
-		
-		if (new_pmc) {
-			pmc = new_pmc;
-		}
-		
-		if (!handled && pmc.directories.count>0) pmc = [[pmc.directories objectAtIndex:0] contents];
-	}
-	DLog(@"done filtering");
-	return pmc;
 }
 
 - (void)showModifyViewedStatusViewForRow:(long)row {

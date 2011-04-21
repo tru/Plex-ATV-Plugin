@@ -159,6 +159,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     BRController *controller = nil;
     PlexMediaContainer *contents = [aMediaObject contents];
     
+    contents = [self applySkipFilteringOnContainer:contents];
+    
     if ([PlexViewGroupAlbum isEqualToString:aMediaObject.mediaContainer.viewGroup] 
         || [@"albums" isEqualToString:aMediaObject.mediaContainer.content] 
         || [@"playlists" isEqualToString:aMediaObject.mediaContainer.content]) {
@@ -230,6 +232,64 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 		menuController = [[HWMediaGridController alloc] initWithPlexAllMovies:[allMovies contents] andRecentMovies:[recent contents]];
 	}
 	return menuController;
+}
+
+
+- (PlexMediaContainer *)applySkipFilteringOnContainer:(PlexMediaContainer *)container {
+	PlexMediaContainer *pmc = container;
+	
+	BOOL skipFilteringOptionsMenu = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
+	DLog(@"skipFilteringOption: %@", skipFilteringOptionsMenu ? @"YES" : @"NO");
+	
+	if (pmc.sectionRoot && !pmc.requestsMessage && skipFilteringOptionsMenu) { 
+		//open "/library/section/x/all or the first item in the list"
+		//bypass the first filter node
+		
+		/*
+		 at some point wou will present the user a selection for the available filters, right?
+		 when the user selects one, you should write to that preference so next time user comes back
+		 ATV will use the last filter
+		 */
+		//[PlexPrefs defaultPreferences] filterForSection]
+		Machine *currentMachine = container.request.machine;
+		const NSString* filterWeAreLookingFor = [currentMachine filterForSection:pmc.key]; //all, unwatched, recentlyAdded, etc
+		BOOL handled = NO;
+		PlexMediaContainer* newPmc = nil;
+		
+		for(PlexMediaObject* po in pmc.directories){
+			DLog(@"%@: %@ == %@", pmc.key, po.lastKeyComponent, filterWeAreLookingFor);
+			if ([filterWeAreLookingFor isEqualToString:po.lastKeyComponent]) { //po.lastKeyComponent == one of [all, unwatched, recentlyAdded, etc]
+				PlexMediaContainer* potentialNewPmc = [po contents]; //the contents like all the tv shows, movies, etc
+				if (potentialNewPmc.directories.count>0) 
+                    newPmc = potentialNewPmc; //if it contains at least some stuff, then use it
+				handled = YES;
+				break;
+			}
+		}
+		
+		DLog(@"handled: %@", handled ? @"YES" : @"NO");
+		if (handled && newPmc==nil) 
+            newPmc = [[pmc.directories objectAtIndex:0] contents]; //if we did find it, but it was empty, use the "default"
+        
+		if (newPmc==nil || newPmc.directories.count==0) { //if it wasn't "handled"
+			for (PlexMediaObject* po in pmc.directories) { //iterate over all again
+				PlexMediaContainer* potentialNewPmc = [po contents]; //the contents like all the tv shows, movies, etc
+				if (potentialNewPmc.directories.count>0) { //find the first one who has some contents
+					newPmc = potentialNewPmc;
+					handled = YES;
+					break;
+				}
+			}
+		}
+		
+		if (newPmc) {
+			pmc = newPmc; //if found, store it
+		}
+		
+		if (!handled && pmc.directories.count>0) pmc = [[pmc.directories objectAtIndex:0] contents]; //we have failed, just use the "default
+	}
+	DLog(@"done filtering");
+	return pmc;
 }
 
 @end

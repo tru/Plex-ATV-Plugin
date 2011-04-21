@@ -30,5 +30,6 @@
 //Container Manipulation Methods
 - (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;
 - (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory;
+- (PlexMediaContainer *)applySkipFilteringOnContainer:(PlexMediaContainer *)container;
 
 @end
