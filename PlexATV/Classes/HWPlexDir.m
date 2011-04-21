@@ -69,13 +69,13 @@
         self.scopeBar = [BRTabControl menuTabControl];
         [self.scopeBar setAcceptsFocus:NO];
         BRTabControlItem *i = [[BRTabControlItem alloc] init];
-        [i setLabel:@"All"];
+        [i setLabel:(BRTextControl *)@"All"]; //cast to avoid compiler warning
         [i setIdentifier:ScopeBarAllItemsIdentifier];
         [self.scopeBar addTabItem:i];
         [i release];
         
         i = [[BRTabControlItem alloc] init];
-        [i setLabel:@"Unwatched"];
+        [i setLabel:(BRTextControl *)@"Unwatched"];
         [i setIdentifier:ScopeBarUnwatchedItemsIdentifier];
         [self.scopeBar addTabItem:i];
         [i release];        

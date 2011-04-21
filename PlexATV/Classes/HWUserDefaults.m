@@ -79,6 +79,10 @@
 										@"Grid", PreferencesViewTypeSetting,
 										NO, PreferencesViewEnableSkipFilteringOptionsMenu,
 										NO, PreferencesViewDisablePosterZoomingInListView,
+                                        NO, PreferencesAudioEnableAC3,
+                                        NO, PreferencesAudioEnableDTS,
+                                        0, PreferencesSecurityPasscode,
+                                        NO, PreferencesSettingsEnableLock,
 										nil]];
     }
     return _preferences;

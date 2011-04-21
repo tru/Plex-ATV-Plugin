@@ -1,5 +1,5 @@
 //
-//  HWAdvancedSettingsController.h
+//  PlexAudioSettingsController.h
 //  atvTwo
 //
 //  Created by bob on 10/01/2011.

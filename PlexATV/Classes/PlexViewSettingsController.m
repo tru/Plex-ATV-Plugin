@@ -1,5 +1,5 @@
 //
-//  HWAdvancedSettingsController.m
+//  PlexViewSettingsController.m
 //  atvTwo
 //
 //  Created by ccjensen on 10/01/2011.

@@ -10,6 +10,8 @@
 #define PreferencesAudioEnableAC3 @"PreferencesAudioEnableAC3"
 #define PreferencesAudioEnableDTS @"PreferencesAudioEnableDTS"
 
+#define PreferencesSecurityPasscode @"PreferencesSecurityPasscode"
+#define PreferencesSettingsEnableLock @"PreferencesSettingsEnableLock"
 
 typedef enum {
 	kBRMediaPlayerStateStopped = 0,

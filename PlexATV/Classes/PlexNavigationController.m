@@ -125,12 +125,16 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     HWSettingsController *settingsController = [[HWSettingsController alloc] init];
     settingsController.topLevelController = topLevelController;
     
-    
-    SMFControllerPasscodeController *passcodeController = [[SMFControllerPasscodeController alloc] initForController:settingsController withPasscode:1234];
-    [settingsController release];
-    
-    self.targetController = passcodeController;
-    [passcodeController release];
+    if ([[HWUserDefaults preferences] boolForKey:PreferencesSettingsEnableLock]) {
+        NSInteger securityPasscode = [[HWUserDefaults preferences] integerForKey:PreferencesSecurityPasscode];
+        SMFControllerPasscodeController *passcodeController = [[SMFControllerPasscodeController alloc] initForController:settingsController withPasscode:securityPasscode];
+        [settingsController release];
+        self.targetController = passcodeController;
+        [passcodeController release];
+    } else {
+        self.targetController = settingsController;
+        [settingsController release];
+    }
     
     [[[BRApplicationStackManager singleton] stack] pushController:self];
 }

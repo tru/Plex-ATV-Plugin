@@ -17,6 +17,7 @@
 #import "HWServersController.h"
 #import "PlexViewSettingsController.h"
 #import "PlexAudioSettingsController.h"
+#import "PlexSecuritySettingsController.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
@@ -29,7 +30,8 @@
 #define QualitySettingIndex 1
 #define ViewSettingsIndex 2
 #define AudioSettingsIndex 3
-#define PluginVersionNumberIndex 4
+#define SecuritySettingsIndex 4
+#define PluginVersionNumberIndex 5
 
 
 #pragma mark -
@@ -112,6 +114,12 @@
 	SMFMenuItem *audioSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[audioSettingsMenuItem setTitle:@"Audio settings"];
 	[_items addObject:audioSettingsMenuItem];
+    
+    
+    // =========== security settings ===========
+	SMFMenuItem *securitySettingsMenuItem = [SMFMenuItem folderMenuItem];
+	[securitySettingsMenuItem setTitle:@"Security settings"];
+	[_items addObject:securitySettingsMenuItem];
 	
     
 	// =========== version number ===========
@@ -164,19 +172,25 @@
 			break;
 		}
 		case ViewSettingsIndex: {
-			// =========== advanced settings ===========
+			// =========== view settings ===========
 			PlexViewSettingsController* menuController = [[PlexViewSettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController autorelease];
+			[menuController release];
 			break;
 		}
         case AudioSettingsIndex: {
 			// =========== audio settings ===========
 			PlexAudioSettingsController* menuController = [[PlexAudioSettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController autorelease];
+			[menuController release];
 			break;
-            
+        }
+        case SecuritySettingsIndex: {
+			// =========== security settings ===========
+			PlexSecuritySettingsController* menuController = [[PlexSecuritySettingsController alloc] init];
+			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+			[menuController release];
+			break;
         }
 		case PluginVersionNumberIndex: {
 			//do nothing
@@ -214,6 +228,12 @@
 			// =========== audio settings ===========
 			[asset setTitle:@"Modify audio output settings"];
 			[asset setSummary:@"Setup the kind of multi-channel audio you want to output"];
+			break;
+		}
+		case SecuritySettingsIndex: {
+			// =========== security settings ===========
+			[asset setTitle:@"Modify security settings"];
+			[asset setSummary:@"Change passcode and activate security measures"];
 			break;
 		}
 		case PluginVersionNumberIndex: {
