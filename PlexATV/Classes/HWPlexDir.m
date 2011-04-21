@@ -543,13 +543,13 @@
 			[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as watched: %@", pmo.name);
             [pmo markSeen];
-            [self.list reload];
+            [self scopeChangedTo:[self.scopeBar selectedTabItemIndex]];
 		} else if ([[sender selectedText] hasSuffix:@"Unwatched"]) {
 			//mark item(s) as unwatched
 			[[self stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as unwatched: %@", pmo.name);
 			[pmo markUnseen];
-			[self.list reload];
+            [self scopeChangedTo:[self.scopeBar selectedTabItemIndex]];
 		} else if ([[sender selectedText] isEqualToString:@"Go back"]) {
 			//go back to movie listing...
 			[[[BRApplicationStackManager singleton] stack] popController];
