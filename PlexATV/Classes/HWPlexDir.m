@@ -271,8 +271,7 @@
 	else 
     {
 		HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:[pmo contents]];
-		[[[BRApplicationStackManager singleton] stack] swapController:menuController];
-		
+		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 		[menuController autorelease];
 	}
 }
