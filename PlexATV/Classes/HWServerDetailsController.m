@@ -365,53 +365,98 @@
 #pragma mark -
 #pragma mark Dialog Boxes and Data Entry
 - (void)showEnterServerNameDialogBoxWithInitialText:(NSString *)initalText {
-	[self showDialogBoxWithTitle:@"Server - Name" 
-			   secondaryInfoText:@"You may enter a custom server name to be associated with this new server" 
-				  textFieldLabel:@"Server name (optional)" 
-				 withInitialText:initalText];
+    NSString *title = @"Server - Name";
+    NSString *secondaryInfoText = @"You may enter a custom server name to be associated with this new server";
+    NSString *deviceTitle = title;
+    NSString *deviceSecondaryInfoText = secondaryInfoText;
+    NSString *textFieldLabel = @"Server name (optional)";
+    NSInteger keyboardType = kBRTextEntryStyleFull;
+    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
+    
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
 }
 
 - (void)showEnterUsernameDialogBoxWithInitialText:(NSString *)initalText {
-	[self showDialogBoxWithTitle:@"Server - Secure Server Access - Username" 
-			   secondaryInfoText:@"Supply the username to log in to the server if Secure Server Access is enabled" 
-				  textFieldLabel:@"Username"
-				 withInitialText:initalText];
+    NSString *title = @"Server - Secure Server Access - Username";
+    NSString *secondaryInfoText = @"Supply the username to log in to the server if Secure Server Access is enabled";
+    NSString *deviceTitle = title;
+    NSString *deviceSecondaryInfoText = secondaryInfoText;
+    NSString *textFieldLabel = @"Username";
+    NSInteger keyboardType = kBRTextEntryStyleFull;
+    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
+    
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
 }
 
 - (void)showEnterPasswordDialogBoxWithInitialText:(NSString *)initalText {
-	[self showDialogBoxWithTitle:@"Server - Secure Server Access - Password" 
-			   secondaryInfoText:@"Supply the password to log in to the server if Secure Server Access is enabled" 
-				  textFieldLabel:@"Password"
-				 withInitialText:initalText];
+    NSString *title = @"Server - Secure Server Access - Password";
+    NSString *secondaryInfoText = @"Supply the password to log in to the server if Secure Server Access is enabled";
+    NSString *deviceTitle = title;
+    NSString *deviceSecondaryInfoText = secondaryInfoText;
+    NSString *textFieldLabel = @"Password";
+    NSInteger keyboardType = kBRTextEntryStyleFull;
+    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
+    
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
 }
 
 - (void)showEnterHostNameDialogBoxWithInitialText:(NSString *)initalText {
-	[self showDialogBoxWithTitle:@"Connection - IP/Hostname" 
-			   secondaryInfoText:@"Please enter the IP address or hostname for this connection" 
-				  textFieldLabel:@"IP/Hostname"
-				 withInitialText:initalText];
+    NSString *title = @"Connection - IP/Hostname";
+    NSString *secondaryInfoText = @"Please enter the IP address or hostname for this connection";
+    NSString *deviceTitle = title;
+    NSString *deviceSecondaryInfoText = secondaryInfoText;
+    NSString *textFieldLabel = @"IP/Hostname";
+    NSInteger keyboardType = kBRTextEntryStyleInternetFull;
+    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
+    
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
 }
 
 - (void)showEnterPortNumberDialogBoxWithInitialText:(NSString *)initalText {
-	[self showDialogBoxWithTitle:@"Connection - Port Number" 
-			   secondaryInfoText:@"Please enter the port number for this connection (default is 32400)" 
-				  textFieldLabel:@"Port Number"
-				 withInitialText:initalText];
+    NSString *title = @"Connection - Port Number";
+    NSString *secondaryInfoText = @"Please enter the port number for this connection (default is 32400)";
+    NSString *deviceTitle = title;
+    NSString *deviceSecondaryInfoText = secondaryInfoText;
+    NSString *textFieldLabel = @"Port Number";
+    NSInteger keyboardType = kBRTextEntryStyleNumpad;
+    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
+    
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
 }
 
-- (void)showDialogBoxWithTitle:(NSString *)title 
-			 secondaryInfoText:(NSString *)infoText 
+- (void)showDialogBoxWithTitle:(NSString *)title
+             secondaryInfoText:(NSString *)infoText
+                   deviceTitle:(NSString *)deviceTitle
+       deviceSecondaryInfoText:(NSString *)deviceInfoText
 				textFieldLabel:(NSString *)textFieldLabel
 			   withInitialText:(NSString *)initialText
+                  keyboardType:(NSInteger)keyboardType
+            deviceKeyboardType:(NSInteger)deviceKeyboardType
 {
-	BRTextEntryController *textCon = [[BRTextEntryController alloc] init];
-	[textCon editor];
+    
+	BRTextEntryController *textCon = [[BRTextEntryController alloc] initWithTextEntryStyle:keyboardType];
+    
 	[textCon setTextFieldDelegate:self];
 	[textCon setTitle:title];
 	[textCon setSecondaryInfoText:infoText];
 	[textCon setTextEntryTextFieldLabel:textFieldLabel];
 	[textCon setInitialTextEntryText:initialText];
-	[[[BRApplicationStackManager singleton] stack] pushController:textCon];
+    
+    //set device text to match
+    [textCon.editor setDeviceKeyboardTitle:deviceTitle subText:deviceInfoText];    
+    
+    //set device keyboard
+    BRDeviceKeyboardMessage *deviceKeyboardMessage = [textCon.editor valueForKey:@"_deviceKeyboardMessage"];
+    deviceKeyboardMessage.keyboardType = deviceKeyboardType;
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:textCon];
+    
+    if (keyboardType == kBRTextEntryStyleNumpad) {
+        //frame needs fixing (weird bug)
+        [self performSelector:@selector(adjustNumpadFrame:) withObject:textCon afterDelay:0.3];
+    }
+    
+    [textCon release];
 	
 #ifdef LOCAL_DEBUG_ENABLED
 	//DLog(@"newMachine: %@", isCreatingNewMachine ? @"YES" : @"NO");
@@ -422,11 +467,17 @@
 #endif
 }
 
+//this method is used to "hack" the numpad frame into place
+- (void)adjustNumpadFrame:(BRTextEntryController *)textCon {
+    [textCon.editor setFrame:CGRectZero];
+    [textCon.editor setNeedsLayout];
+}
+
 - (void)textDidEndEditing:(id)text
 {
 	NSString *textEntered = [text stringValue];
 #ifdef LOCAL_DEBUG_ENABLED
-	DLog(@"text entered into dialog box: %@", textEntered);
+	DLog(@"text entered into dialog box: [%@]", textEntered);
 #endif
 	if (isCreatingNewConnection) {
 		[self addNewConnectionWizardWithInput:textEntered];
@@ -441,7 +492,7 @@
 		} else if (isEditingUserName) {
 			isEditingUserName = NO;
 			[self.machine setUsername:textEntered andPassword:self.machine.password];
-            #warning does this change should perhaps re-test the connection? ^^
+            #warning this change should perhaps re-test the connection? ^^
 			
 		} else if (isEditingPassword) {
 			isEditingPassword = NO;
@@ -640,9 +691,8 @@
 		//stop spinner
 		[waitPromptControl controlWasDeactivated];
 		
-		//wait x amount of seconds then hide waitPromptControl and pop view 
-		[waitPromptControl performSelector:@selector(removeFromParent) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
-		[[[BRApplicationStackManager singleton] stack] performSelector:@selector(popController) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
+		//wait x amount of seconds then pop view 
+		[self performSelector:@selector(popSelfFromStack) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
 	
 		
 	} else if (err.code==ConditionallyAddErrorCodeNeedCredentials) {
@@ -655,9 +705,8 @@
 		//stop spinner
 		[waitPromptControl controlWasDeactivated];
 		
-		//wait x amount of seconds then hide waitPromptControl and pop view 
-		[waitPromptControl performSelector:@selector(removeFromParent) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
-		[[[BRApplicationStackManager singleton] stack] performSelector:@selector(popController) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
+		//wait x amount of seconds pop view 
+		[self performSelector:@selector(popSelfFromStack) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
 		
 		
 	} else if (err.code==ConditionallyAddErrorCodeWrongMachineID) {
@@ -688,12 +737,19 @@
 		//stop spinner
 		[waitPromptControl controlWasDeactivated];
 		
-		//wait x amount of seconds then hide waitPromptControl and pop view 
-		[waitPromptControl performSelector:@selector(removeFromParent) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
-		[[[BRApplicationStackManager singleton] stack] performSelector:@selector(popController) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
+		//wait x amount of seconds then pop view
+		[self performSelector:@selector(popSelfFromStack) withObject:nil afterDelay:SecondsBeforeDismissingPrompt];
 	}
 	
 	[waitPromptControl setPromptText:promptText];
+}
+
+- (void)popSelfFromStack {
+    BRControllerStack *stack = [[BRApplicationStackManager singleton] stack];
+    
+    if ([stack peekController] == self) {
+        [stack popController];
+    }
 }
 
 @end
