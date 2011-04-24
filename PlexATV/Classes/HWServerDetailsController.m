@@ -379,7 +379,7 @@
 - (void)showEnterUsernameDialogBoxWithInitialText:(NSString *)initalText {
     NSString *title = @"Server - Secure Server Access - Username";
     NSString *secondaryInfoText = @"Supply the username to log in to the server if Secure Server Access is enabled";
-    NSString *deviceTitle = title;
+    NSString *deviceTitle = @"SSA - Username";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Username";
     NSInteger keyboardType = kBRTextEntryStyleFull;
@@ -391,7 +391,7 @@
 - (void)showEnterPasswordDialogBoxWithInitialText:(NSString *)initalText {
     NSString *title = @"Server - Secure Server Access - Password";
     NSString *secondaryInfoText = @"Supply the password to log in to the server if Secure Server Access is enabled";
-    NSString *deviceTitle = title;
+    NSString *deviceTitle = @"SSA - Password";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Password";
     NSInteger keyboardType = kBRTextEntryStyleFull;
@@ -403,11 +403,11 @@
 - (void)showEnterHostNameDialogBoxWithInitialText:(NSString *)initalText {
     NSString *title = @"Connection - IP/Hostname";
     NSString *secondaryInfoText = @"Please enter the IP address or hostname for this connection";
-    NSString *deviceTitle = title;
+    NSString *deviceTitle = @"IP/Hostname";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"IP/Hostname";
     NSInteger keyboardType = kBRTextEntryStyleInternetFull;
-    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
+    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeInternetFull;
     
     [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
 }
@@ -415,11 +415,11 @@
 - (void)showEnterPortNumberDialogBoxWithInitialText:(NSString *)initalText {
     NSString *title = @"Connection - Port Number";
     NSString *secondaryInfoText = @"Please enter the port number for this connection (default is 32400)";
-    NSString *deviceTitle = title;
+    NSString *deviceTitle = @"Port Number";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Port Number";
     NSInteger keyboardType = kBRTextEntryStyleNumpad;
-    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
+    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullNumberScreen;
     
     [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
 }
@@ -446,6 +446,7 @@
     [textCon.editor setDeviceKeyboardTitle:deviceTitle subText:deviceInfoText];    
     
     //set device keyboard
+#warning not working. perhaps sublcass BRTextEntryController to get working
     BRDeviceKeyboardMessage *deviceKeyboardMessage = [textCon.editor valueForKey:@"_deviceKeyboardMessage"];
     deviceKeyboardMessage.keyboardType = deviceKeyboardType;
     
@@ -455,22 +456,17 @@
         //frame needs fixing (weird bug)
         [self performSelector:@selector(adjustNumpadFrame:) withObject:textCon afterDelay:0.3];
     }
-    
     [textCon release];
-	
-#ifdef LOCAL_DEBUG_ENABLED
-	//DLog(@"newMachine: %@", isCreatingNewMachine ? @"YES" : @"NO");
-	//DLog(@"newConnection: %@", isCreatingNewConnection ? @"YES" : @"NO");
-	//DLog(@"isEditingPW: %@", isEditingPassword ? @"YES" : @"NO");
-	//DLog(@"isEditingUsername: %@", isEditingUserName ? @"YES" : @"NO");
-	//DLog(@"isEditingServername: %@", isEditingServerName ? @"YES" : @"NO");
-#endif
 }
 
 //this method is used to "hack" the numpad frame into place
 - (void)adjustNumpadFrame:(BRTextEntryController *)textCon {
-    [textCon.editor setFrame:CGRectZero];
-    [textCon.editor setNeedsLayout];
+    if (textCon.editor.frame.origin.x != 0) {
+        [textCon.editor setFrame:CGRectZero];
+        [textCon.editor setNeedsLayout];
+        [self performSelector:@selector(adjustNumpadFrame:) withObject:textCon afterDelay:0.2];
+        DLog(@"adjusting numpad frame");
+    }
 }
 
 - (void)textDidEndEditing:(id)text
