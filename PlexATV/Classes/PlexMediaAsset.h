@@ -26,7 +26,7 @@
 #import <Backrow/Backrow.h>
 
 @class PlexMediaObject, PlexPreviewAsset;
-@interface PlexMediaAsset : BRStreamingMediaAsset {//BRBaseMediaAsset<BRMediaAsset> {
+@interface PlexMediaAsset : BRXMLMediaAsset {//BRBaseMediaAsset<BRMediaAsset> {
 	//BRBaseMediaAsset* bma;
 	NSURL* url;
 	PlexMediaObject* pmo;
