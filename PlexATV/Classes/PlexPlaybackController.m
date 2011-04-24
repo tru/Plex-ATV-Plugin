@@ -177,7 +177,7 @@ PlexMediaProvider* __provider = nil;
 	if ([qualitySetting isEqualToString:@"Good"]) {
 		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
 	} else 	if ([qualitySetting isEqualToString:@"Best"]) {
-		streamQuality = [PlexStreamingQualityDescriptor quality1080pMed];
+		streamQuality = [pmo.request bestQuality];
 	} else { //medium (default)
 		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
 	}
@@ -192,7 +192,7 @@ PlexMediaProvider* __provider = nil;
 	
 	BOOL didTimeOut = NO;
 #warning what cache policy should we use??
-  [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageNotAllowed];
+  [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageAllowedInMemoryOnly];
 	
 	
 	
