@@ -6,6 +6,8 @@ Main project developers: b0bben and ccjensen
 
 Apple TV guru and project consultant: tomcool420
 
+Contributors: jcoene
+
 ## PREPARING
 1. You need to install the "beigelist" on your Apple TV (if you installed the Plex-Plugin using apt, it is already there )
 2. Set up a password-less ssh connection to your Apple TV using [O'Reilly's instructions](http://oreilly.com/pub/h/66)
