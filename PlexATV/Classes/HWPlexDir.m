@@ -67,6 +67,7 @@
 - (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar {
 	self = [self init];
 	self.rootContainer = container;
+    
     self.items = [self.rootContainer directories];
     self.tabBar = aTabBar;
     if (self.tabBar) {
@@ -320,20 +321,39 @@
 }
 
 - (id)previewControlForItem:(long)item {
-    
+    id preview = nil;
 	PlexMediaObject* pmo = [self.items objectAtIndex:item];
     
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"media object: %@", pmo);
-#endif	
+#endif
     
-	NSURL* mediaURL = [pmo mediaStreamURL];
-	PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
-	BRMetadataPreviewControl *preview =[[BRMetadataPreviewControl alloc] init];
-	[preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
-	[preview setAsset:pma];
-    [pma release];
-	
+    if (pmo.hasMedia) { 
+        //single covert
+        NSURL* mediaURL = [pmo mediaStreamURL];
+        PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
+        
+        preview = [[BRMetadataPreviewControl alloc] init];
+        [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
+        [preview setAsset:pma];
+        [pma release];
+        
+    } else {
+        //cascading
+        NSMutableArray *imageProxies = [NSMutableArray array];
+        PlexMediaContainer *subItemsContainer = [pmo contents];
+        NSArray *subItems = subItemsContainer.directories;
+        
+        for (PlexMediaObject *pmo in subItems) {
+            NSURL* mediaURL = [pmo mediaStreamURL];
+            PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
+            [imageProxies addObject:[pma imageProxy]];
+            [pma release];
+        }
+        
+        preview = [[BRMediaParadeControl alloc] init];
+        [preview setImageProxies:imageProxies];
+    }
 	return [preview autorelease];
 }
 
