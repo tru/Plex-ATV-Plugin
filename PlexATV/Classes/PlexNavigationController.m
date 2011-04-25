@@ -166,7 +166,6 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     
     PlexMediaContainer *contents = [aMediaObject contents];
     
-    contents = [self applySkipFilteringOnContainer:contents];
     // ============ music view ============
     if ([PlexViewGroupAlbum isEqualToString:aMediaObject.mediaContainer.viewGroup] 
         || [@"albums" isEqualToString:aMediaObject.mediaContainer.content] 
@@ -174,21 +173,21 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
         return [[PlexSongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
     }
     
-    //determine the user selected view setting
-    BRTabControl *tabBar = [self newTabBarForContents:contents];
     // ============ tv or movie view ============    
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
     if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
         
         if (aMediaObject.isMovie) {
             controller = [self newMoviesController:contents];
+        
         } else if (aMediaObject.isTVShow) {
             controller = [self newTVShowsController:contents];
-        } else {
-            controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
         }
-        
-    } else {
+    } 
+    
+    contents = [self applySkipFilteringOnContainer:contents];
+    BRTabControl *tabBar = [self newTabBarForContents:contents];
+    if (!controller) {
         controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
     }
     return controller;
