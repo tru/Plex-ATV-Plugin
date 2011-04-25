@@ -21,6 +21,7 @@
 #import "HWMediaGridController.h"
 #import "HWDetailedMovieMetadataController.h"
 #import <SMFramework/SMFControllerPasscodeController.h>
+#import "PlexPlaybackController.h"
 
 @implementation PlexNavigationController
 @synthesize waitControl;
@@ -157,10 +158,16 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 #pragma mark Determine View Type Methods
 - (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject {
     BRController *controller = nil;
+    
+    // ============ media, initiate playback ============
+    if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType] || [@"Track" isEqualToString:aMediaObject.containerType]){
+        return [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];
+	}
+    
     PlexMediaContainer *contents = [aMediaObject contents];
     
     contents = [self applySkipFilteringOnContainer:contents];
-    
+    // ============ music view ============
     if ([PlexViewGroupAlbum isEqualToString:aMediaObject.mediaContainer.viewGroup] 
         || [@"albums" isEqualToString:aMediaObject.mediaContainer.content] 
         || [@"playlists" isEqualToString:aMediaObject.mediaContainer.content]) {
@@ -169,7 +176,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     
     //determine the user selected view setting
     BRTabControl *tabBar = [self newTabBarForContents:contents];
-    
+    // ============ tv or movie view ============    
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
     if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
         

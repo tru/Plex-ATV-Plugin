@@ -124,7 +124,6 @@
     [super layoutSubcontrols];
     //thanks to tom for the layout code
     if (self.tabBar) {
-//        [self.tabBar setFrame:CGRectMake(718.f, 567.f, 405.f, 25.f)];
         [self.tabBar setFrame:CGRectMake(661.f, 567.f, 520.f, 25.f)];
 
         CGRect listFrame = [self list].frame;
@@ -350,7 +349,6 @@
             [imageProxies addObject:[pma imageProxy]];
             [pma release];
         }
-        
         preview = [[BRMediaParadeControl alloc] init];
         [preview setImageProxies:imageProxies];
     }
@@ -372,24 +370,6 @@
 
 #pragma mark -
 #pragma mark Actions
-//- (void)tabControlChangedTo:(int)newScopeSelection {
-//    NSArray *allItems = self.rootContainer.directories;
-//    
-//    switch (newScopeSelection) {
-//        case ScopeBarCurrentItemsIndex:
-//            self.items = allItems;
-//            break;
-//        case ScopeBarUnwatchedItemsIndex: {
-//            NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
-//            self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
-//            break;
-//        case ScopeBarOtherFiltersItemsIndex:
-//            break;
-//        }
-//    }
-//    [self.list reload];
-//}
-
 - (void)showModifyViewedStatusViewForRow:(long)row {
     //get the currently selected row
 	PlexMediaObject* pmo = [self.items objectAtIndex:row];
