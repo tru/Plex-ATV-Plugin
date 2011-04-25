@@ -35,14 +35,14 @@
 	PlexMediaObject* playbackItem;
 }
 
-@property (retain) BRTabControl *scopeBar;
+@property (retain) BRTabControl *tabBar;
 @property (retain) PlexMediaContainer* rootContainer;
 @property (retain) NSArray *items;
 
-- (id)initWithRootContainer:(PlexMediaContainer*)container;
+- (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar;
 - (void)log:(NSNotificationCenter *)note;
-- (void)scopeChangedTo:(int)newScopeSelection;
 - (void)showModifyViewedStatusViewForRow:(long)row;
+- (void)reselectCurrentTabBarItem;
 
 //list provider
 - (float)heightForRow:(long)row;

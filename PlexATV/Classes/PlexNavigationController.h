@@ -26,6 +26,7 @@
 
 //Determine View Type Methods
 - (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject;
+- (BRTabControl *)newTabBarForContents:(PlexMediaContainer *)someContents;
 
 //Container Manipulation Methods
 - (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;

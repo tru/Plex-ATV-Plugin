@@ -168,6 +168,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     }
     
     //determine the user selected view setting
+    BRTabControl *tabBar = [self newTabBarForContents:contents];
+    
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
     if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
         
@@ -176,13 +178,54 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
         } else if (aMediaObject.isTVShow) {
             controller = [self newTVShowsController:contents];
         } else {
-            controller = [[HWPlexDir alloc] initWithRootContainer:contents];
+            controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
         }
         
     } else {
-        controller = [[HWPlexDir alloc] initWithRootContainer:contents];
+        controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
     }
     return controller;
+}
+
+- (BRTabControl *)newTabBarForContents:(PlexMediaContainer *)someContents {
+    BRTabControl *tabBar = nil;
+    DLog(@"tab bar for: [%@]", someContents);
+    DLog(@"view group: [%@], [%@]", someContents.viewGroup, PlexViewGroupSecondary);
+    if (![someContents.viewGroup isEqualToString:PlexViewGroupSecondary]) {
+        tabBar = [[BRTabControl menuTabControl] retain];
+        
+        
+        BRTabControlItem *i = [[BRTabControlItem alloc] init];
+        NSString *currentlySelectedFilterName;
+        if (someContents.parentFilterContainer) {
+            currentlySelectedFilterName = someContents.parentObject.name;
+        } else {
+            currentlySelectedFilterName = @"All";
+        }
+        [i setLabel:currentlySelectedFilterName];
+        [i setIdentifier:ScopeBarCurrentItemsIdentifier];
+        [tabBar addTabItem:i];
+        [i release];
+        
+        
+        i = [[BRTabControlItem alloc] init];
+        [i setLabel:@"Unwatched"];
+        [i setIdentifier:ScopeBarUnwatchedItemsIdentifier];
+        [tabBar addTabItem:i];
+        [i release];
+        
+        
+        if (someContents.parentFilterContainer) {
+            //only add third item if we are navigating to one step below the filters (which we skip)
+            //so this would be visible in the tv shows listing, movies listing, etc
+            i = [[BRTabControlItem alloc] init];
+            [i setLabel:@"Other Filters"];
+            [i setIdentifier:someContents.parentFilterContainer];
+            [tabBar addTabItem:i];
+            [i release];
+        }
+    }
+    return tabBar;
 }
 
 
@@ -241,6 +284,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 	BOOL skipFilteringOptionsMenu = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
 	DLog(@"skipFilteringOption: %@", skipFilteringOptionsMenu ? @"YES" : @"NO");
 	
+    skipFilteringOptionsMenu = YES;
 	if (pmc.sectionRoot && !pmc.requestsMessage && skipFilteringOptionsMenu) { 
 		//open "/library/section/x/all or the first item in the list"
 		//bypass the first filter node

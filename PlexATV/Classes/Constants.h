@@ -13,6 +13,15 @@
 #define PreferencesSecurityPasscode @"PreferencesSecurityPasscode"
 #define PreferencesSettingsEnableLock @"PreferencesSettingsEnableLock"
 
+
+#define ScopeBarCurrentItemsIdentifier @"current"
+#define ScopeBarCurrentItemsIndex 0
+#define ScopeBarUnwatchedItemsIdentifier @"unwatched"
+#define ScopeBarUnwatchedItemsIndex 1
+#define ScopeBarOtherFiltersItemsIdentifier @"otherfilters"
+#define ScopeBarOtherFiltersItemsIndex 2
+
+
 typedef enum {
 	kBRMediaPlayerStateStopped = 0,
 	kBRMediaPlayerStatePaused = 1,

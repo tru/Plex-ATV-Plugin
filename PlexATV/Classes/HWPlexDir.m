@@ -41,14 +41,9 @@
 #define LOCAL_DEBUG_ENABLED 1
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"
 
-#define ScopeBarAllItemsIdentifier @"all"
-#define ScopeBarAllItemsIndex 0
-#define ScopeBarUnwatchedItemsIdentifier @"unwatched"
-#define ScopeBarUnwatchedItemsIndex 1
-
 @implementation HWPlexDir
 @synthesize rootContainer;
-@synthesize scopeBar;
+@synthesize tabBar;
 @synthesize items;
 
 #pragma mark -
@@ -63,35 +58,22 @@
 		BRImage *listIcon = [BRImage imageWithPath:plexIcon];
 		[self setListIcon:listIcon horizontalOffset:0.0 kerningFactor:0.15];
         
-		rootContainer = nil;
-        
-        //scope bar
-        self.scopeBar = [BRTabControl menuTabControl];
-        [self.scopeBar setAcceptsFocus:NO];
-        BRTabControlItem *i = [[BRTabControlItem alloc] init];
-        [i setLabel:(BRTextControl *)@"All"]; //cast to avoid compiler warning
-        [i setIdentifier:ScopeBarAllItemsIdentifier];
-        [self.scopeBar addTabItem:i];
-        [i release];
-        
-        i = [[BRTabControlItem alloc] init];
-        [i setLabel:(BRTextControl *)@"Unwatched"];
-        [i setIdentifier:ScopeBarUnwatchedItemsIdentifier];
-        [self.scopeBar addTabItem:i];
-        [i release];        
-        [self addControl:self.scopeBar];   
-        
-        
-        //[_tab setTabControlDelegate:self];
+		rootContainer = nil;        
         [self.list setDatasource:self];
     }
     return self;
 }
 
-- (id) initWithRootContainer:(PlexMediaContainer*)container {
+- (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar {
 	self = [self init];
 	self.rootContainer = container;
-    self.items = [self.rootContainer directories]; //default is all
+    self.items = [self.rootContainer directories];
+    self.tabBar = aTabBar;
+    if (self.tabBar) {
+        [self.tabBar setAcceptsFocus:NO];
+        [self.tabBar setTabControlDelegate:self];
+        [self addControl:self.tabBar];
+    }
 	return self;
 }
 
@@ -104,7 +86,7 @@
 	DLog(@"deallocing HWPlexDir");
 	[playbackItem release];
 	[rootContainer release];
-    [scopeBar release];
+    [tabBar release];
     [items release];
 	
 	[super dealloc];
@@ -126,7 +108,7 @@
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
     
     //refresh scope bar in case any items have changed
-    [self scopeChangedTo:[self.scopeBar selectedTabItemIndex]];
+    [self reselectCurrentTabBarItem];
 	[super wasExhumed];
 }
 
@@ -138,16 +120,19 @@
 #pragma mark -
 #pragma mark Controller Drawing and Events
 -(void)layoutSubcontrols {
-    //thanks to tom for the layout code
-    [self.scopeBar setFrame:CGRectMake(718.f, 567.f, 405.f, 25.f)];
-    
     [super layoutSubcontrols];
-    CGRect lf = [self list].frame;
-    lf.size.height = 550.0f;
-    lf.size.width = lf.size.width + 30.0;
-    lf.origin.x = lf.origin.x - 15.0f;
-    id l = [self list];
-    [l setFrame:lf];
+    //thanks to tom for the layout code
+    if (self.tabBar) {
+//        [self.tabBar setFrame:CGRectMake(718.f, 567.f, 405.f, 25.f)];
+        [self.tabBar setFrame:CGRectMake(661.f, 567.f, 520.f, 25.f)];
+
+        CGRect listFrame = [self list].frame;
+        listFrame.size.height = 550.0f;
+        listFrame.size.width = listFrame.size.width + 30.0;
+        listFrame.origin.x = listFrame.origin.x - 15.0f;
+        id l = [self list];
+        [l setFrame:listFrame];
+    }
 }
 
 //handle custom event
@@ -158,7 +143,6 @@
 		remoteAction = 0;
 	
 	int listItemCount = [[(BRListControl *)[self list] datasource] itemCount];
-    int currentScopeSelection = [self.scopeBar selectedTabItemIndex];
 	switch (remoteAction)
 	{
 		case kBREventRemoteActionSelectHold: {
@@ -172,20 +156,14 @@
 		case kBREventRemoteActionSwipeLeft:
 		case kBREventRemoteActionLeft:
             if([event value] == 1) {
-                [self.scopeBar selectPreviousTabItem];
-                int newScopeSelection = [self.scopeBar selectedTabItemIndex];
-                if (currentScopeSelection != newScopeSelection)
-                    [self scopeChangedTo:newScopeSelection];
+                [self.tabBar selectPreviousTabItem];
                 return YES;
             }
 			break;
 		case kBREventRemoteActionSwipeRight:
 		case kBREventRemoteActionRight:
             if([event value] == 1) {
-                [self.scopeBar selectNextTabItem];
-                int newScopeSelection = [self.scopeBar selectedTabItemIndex];
-                if (currentScopeSelection != newScopeSelection)
-                    [self scopeChangedTo:newScopeSelection];
+                [self.tabBar selectNextTabItem];
                 return YES;
             }
 			break;
@@ -218,24 +196,42 @@
 
 #pragma mark -
 #pragma mark BRTabBarControllerDelegate Methods
-- (void)tabControl:(id)control didSelectTabItem:(id)item {
-    //change scope
-    BRTabControlItem *selectedItem = (BRTabControlItem *)item;
-    if ([selectedItem.identifier isEqualToString:ScopeBarAllItemsIdentifier]) {
-        //all items
-    } else if ([selectedItem.identifier isEqualToString:ScopeBarUnwatchedItemsIdentifier]) {
-        //unwatched
-    }
-}
-
 - (void)tabControl:(id)control willSelectTabItem:(id)item {
     //nothing needed
+}
+
+- (void)tabControl:(id)control didSelectTabItem:(id)item {
+    //change scope
+    NSInteger newScopeSelection = [self.tabBar selectedTabItemIndex];
+
+    NSArray *allItems = self.rootContainer.directories;    
+    switch (newScopeSelection) {
+        case ScopeBarCurrentItemsIndex: {
+            self.items = allItems;
+            break;
+        }
+        case ScopeBarUnwatchedItemsIndex: {
+            NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
+            self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
+            break;
+        }
+        case ScopeBarOtherFiltersItemsIndex: {
+            PlexMediaContainer *filters = (PlexMediaContainer *)[item identifier];
+            self.items = filters.directories;
+            break;
+        }
+    }
+    [self.list reload];
 }
 
 - (void)tabControlDidChangeNumberOfTabItems:(id)tabControl {
     //not possible at this stage
 }
 
+- (void)reselectCurrentTabBarItem {
+    [self tabControl:self.tabBar willSelectTabItem:[self.tabBar selectedTabItem]];
+    [self tabControl:self.tabBar didSelectTabItem:[self.tabBar selectedTabItem]];
+}
 
 #pragma mark -
 #pragma mark BRMenuListItemProvider Datasource
@@ -356,21 +352,23 @@
 
 #pragma mark -
 #pragma mark Actions
-- (void)scopeChangedTo:(int)newScopeSelection {
-    NSArray *allItems = self.rootContainer.directories;
-    
-    switch (newScopeSelection) {
-        case ScopeBarAllItemsIndex:
-            self.items = allItems;
-            break;
-        case ScopeBarUnwatchedItemsIndex: {
-            NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
-            self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
-            break;
-        }
-    }
-    [self.list reload];
-}
+//- (void)tabControlChangedTo:(int)newScopeSelection {
+//    NSArray *allItems = self.rootContainer.directories;
+//    
+//    switch (newScopeSelection) {
+//        case ScopeBarCurrentItemsIndex:
+//            self.items = allItems;
+//            break;
+//        case ScopeBarUnwatchedItemsIndex: {
+//            NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
+//            self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
+//            break;
+//        case ScopeBarOtherFiltersItemsIndex:
+//            break;
+//        }
+//    }
+//    [self.list reload];
+//}
 
 - (void)showModifyViewedStatusViewForRow:(long)row {
     //get the currently selected row
@@ -428,14 +426,15 @@
 			//mark item(s) as watched
 			[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as watched: %@", pmo.name);
-            [pmo markSeen];
-            [self scopeChangedTo:[self.scopeBar selectedTabItemIndex]];
+            [pmo markSeen];            
+            [self reselectCurrentTabBarItem];
 		} else if ([[sender selectedText] hasSuffix:@"Unwatched"]) {
 			//mark item(s) as unwatched
 			[[self stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as unwatched: %@", pmo.name);
 			[pmo markUnseen];
-            [self scopeChangedTo:[self.scopeBar selectedTabItemIndex]];
+            [self reselectCurrentTabBarItem];
+            //[self tabControlChangedTo:[self.tabBar selectedTabItemIndex]];
 		} else if ([[sender selectedText] isEqualToString:@"Go back"]) {
 			//go back to movie listing...
 			[[[BRApplicationStackManager singleton] stack] popController];
