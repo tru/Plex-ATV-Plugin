@@ -284,6 +284,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 	BOOL skipFilteringOptionsMenu = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
 	DLog(@"skipFilteringOption: %@", skipFilteringOptionsMenu ? @"YES" : @"NO");
 	
+#warning skip filtering forced to be on
     skipFilteringOptionsMenu = YES;
 	if (pmc.sectionRoot && !pmc.requestsMessage && skipFilteringOptionsMenu) { 
 		//open "/library/section/x/all or the first item in the list"
