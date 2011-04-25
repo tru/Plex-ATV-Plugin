@@ -80,7 +80,7 @@
 		[_preferences registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
 										[NSArray array], PreferencesMachinesExcludedFromServerList,
 										@"Good", PreferencesQualitySetting,
-										@"Grid", PreferencesViewTypeSetting,
+										@"List", PreferencesViewTypeSetting,
 										NO, PreferencesViewEnableSkipFilteringOptionsMenu,
 										NO, PreferencesViewDisablePosterZoomingInListView,
                                         NO, PreferencesAudioEnableAC3,
