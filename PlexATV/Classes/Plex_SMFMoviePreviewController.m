@@ -14,7 +14,6 @@
 
 -(void)controlWasActivated
 {
-  DLog();
   //these 2 are called in SMF on controlWasActivated, so don't call them again here...
   //[self reload];
   //[self reloadShelf];
@@ -63,7 +62,29 @@
         
         //remove background from textbox
         _summaryControl.backgroundColor = [[UIColor clearColor] CGColor];
+        
+        if (_summaryToggled==YES) {
+            if (!_summaryControlBackground) {
+                _summaryControlBackground = [[BRControl alloc] init];
+                _summaryControlBackground.backgroundColor = [[UIColor blackColor] CGColor];
+                _summaryControlBackground.borderColor = [[UIColor grayColor] CGColor];
+                _summaryControlBackground.borderWidth = 2.0f;
+                
+                [[_summaryControlBackground layer] setCornerRadius:5.0f];
+                
+                _summaryControlBackground.frame = CGRectMake(_summaryControl.frame.origin.x-10.0f, _summaryControl.frame.origin.y+2.0f, _summaryControl.frame.size.width+20.0f, _summaryControl.frame.size.height+4.0f);
+            }
+            [self insertControl:_summaryControlBackground below:_summaryControl];
+            
+        } else {
+            [_summaryControlBackground removeFromParent];
+        }
     }
+}
+
+- (void)dealloc {
+    [_summaryControlBackground release];
+    [super dealloc];
 }
 
 @end
