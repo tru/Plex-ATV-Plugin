@@ -157,7 +157,7 @@
 	PlexMediaObject* pmo = [rootContainer.directories objectAtIndex:selected];
     PlexMediaContainer *channel = [pmo.request query:[pmo.attributes valueForKey:@"path"] callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
     
-	HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:channel];
+	HWPlexDir* menuController = [[HWPlexDir alloc] initWithRootContainer:channel andTabBar:nil];
 	[[[BRApplicationStackManager singleton] stack] pushController:menuController];
     
     [menuController autorelease];
