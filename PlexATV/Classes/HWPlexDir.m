@@ -122,17 +122,19 @@
 #pragma mark Controller Drawing and Events
 -(void)layoutSubcontrols {
     [super layoutSubcontrols];
-    //thanks to tom for the layout code
+    
     if (self.tabBar) {
         //if there is a tab bar, move the list down to make room for it
-        [self.tabBar setFrame:CGRectMake(661.f, 567.f, 520.f, 25.f)];
-
+        //thanks to tom for the layout code
         CGRect listFrame = [self list].frame;
         listFrame.size.height = 550.0f;
-        listFrame.size.width = listFrame.size.width + 30.0; //make list wider, not sure if we should keep this
-        listFrame.origin.x = listFrame.origin.x - 15.0f;
+        listFrame.size.width = listFrame.size.width; //don't change the width
+        listFrame.origin.x = listFrame.origin.x;
         id l = [self list];
         [l setFrame:listFrame];
+        
+        //tab bar same width as list
+        [self.tabBar setFrame:CGRectMake(listFrame.origin.x, 567.f, listFrame.size.width, 25.f)];
     }
 }
 
