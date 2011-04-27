@@ -67,7 +67,7 @@
 - (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar {
 	self = [self init];
 	self.rootContainer = container;
-    
+    self.listTitle = self.rootContainer.name;
     self.items = [self.rootContainer directories];
     self.tabBar = aTabBar;
     if (self.tabBar) {
@@ -289,7 +289,7 @@
 		//used to get details about the show, instead of gettings attrs here manually
 		PlexPreviewAsset *previewData = [[PlexPreviewAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:pmo];
 		if ([mediaType isEqualToString:PlexMediaObjectTypeEpisode]) {
-            NSString *detailedText = [NSString stringWithFormat:@"%@, Season %d, Episode %d",[previewData seriesName] ,[previewData season],[previewData episode]];
+            NSString *detailedText = [NSString stringWithFormat:@"Season %d, Episode %d (%@)", [previewData season], [previewData episode], [previewData seriesName]];
 			[menuItem setDetailedText:detailedText withAttributes:nil];
             [menuItem setRightJustifiedText:[previewData datePublishedString] withAttributes:nil];
 		} else {
