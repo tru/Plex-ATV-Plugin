@@ -43,6 +43,7 @@
 - (void)log:(NSNotificationCenter *)note;
 - (void)showModifyViewedStatusViewForRow:(long)row;
 - (void)reselectCurrentTabBarItem;
+-(void)startPlayingThemeMusic;
 
 //list provider
 - (float)heightForRow:(long)row;
