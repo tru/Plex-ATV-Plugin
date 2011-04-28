@@ -171,8 +171,7 @@
 }
 
 //handle custom event
--(BOOL)brEventAction:(BREvent *)event
-{
+-(BOOL)brEventAction:(BREvent *)event {
 	int remoteAction = [event remoteAction];
 	if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
@@ -364,17 +363,7 @@
 	DLog(@"media object: %@", pmo);
 #endif
     
-    if (pmo.hasMedia) { 
-        //single covert
-        NSURL* mediaURL = [pmo mediaStreamURL];
-        PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
-        
-        preview = [[BRMetadataPreviewControl alloc] init];
-        [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
-        [preview setAsset:pma];
-        [pma release];
-        
-    } else {
+    if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
         //cascading
         NSMutableArray *imageProxies = [NSMutableArray array];
         PlexMediaContainer *subItemsContainer = [pmo contents];
@@ -385,9 +374,20 @@
             PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
             [imageProxies addObject:[pma imageProxy]];
             [pma release];
-        }
+        }   
         preview = [[BRMediaParadeControl alloc] init];
         [preview setImageProxies:imageProxies];
+        
+    } else {
+        
+        //single covert
+        NSURL* mediaURL = [pmo mediaStreamURL];
+        PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
+        
+        preview = [[BRMetadataPreviewControl alloc] init];
+        [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
+        [preview setAsset:pma];
+        [pma release];
     }
 	return [preview autorelease];
 }
