@@ -355,9 +355,12 @@
 	return result;
 }
 
-- (id)previewControlForItem:(long)item {
+- (id)previewControlForItem:(long)item {    
     id preview = nil;
 	PlexMediaObject* pmo = [self.items objectAtIndex:item];
+    
+    //we force set the hash so two movies with same title don't end up with the same preview
+    [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
     
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"media object: %@", pmo);
