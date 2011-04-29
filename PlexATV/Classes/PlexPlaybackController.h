@@ -35,4 +35,6 @@
 -(void)playbackVideoWithOffset:(int)offset;
 -(void)movieFinished:(NSNotification*)event;
 -(void)playbackAudio;
+
+- (void)showResumeDialog;
 @end
