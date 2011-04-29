@@ -81,6 +81,7 @@
 										[NSArray array], PreferencesMachinesExcludedFromServerList,
 										@"Good", PreferencesQualitySetting,
 										@"List", PreferencesViewTypeSetting,
+                                        NO, PreferencesViewDisableFanartInDetailedMetadataView,
 										NO, PreferencesViewEnableSkipFilteringOptionsMenu,
 										NO, PreferencesViewDisablePosterZoomingInListView,
                                         NO, PreferencesAudioEnableAC3,
