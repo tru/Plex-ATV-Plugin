@@ -185,8 +185,13 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
         }
     } 
     
-    contents = [self applySkipFilteringOnContainer:contents];
-    BRTabControl *tabBar = [self newTabBarForContents:contents];
+    BRTabControl *tabBar = nil;
+    //only filter and create tab bar if we are navigating plex's built in stuff
+    if ([contents.identifier isEqualToString:@"com.plexapp.plugins.library"]) {
+        contents = [self applySkipFilteringOnContainer:contents];
+        tabBar = [self newTabBarForContents:contents];
+    }
+    
     if (!controller) {
         controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
     }
