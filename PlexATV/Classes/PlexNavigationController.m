@@ -109,7 +109,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     self.targetMediaObject = nil;
     self.promptText = @"Loading \"Channels\"...";
     
-    PlexMediaContainer* channelsContainer = [aMachine.request query:@"/system/plugins/all" callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    PlexMediaContainer* channelsContainer = [aMachine.request channels];
     PlexChannelsController *channelsController = [[PlexChannelsController alloc] initWithRootContainer:channelsContainer];
     self.targetController = channelsController;
     [channelsController release];
