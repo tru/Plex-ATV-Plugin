@@ -35,7 +35,6 @@
 #import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
 #import "HWUserDefaults.h"
-#import "PlexPlaybackController.h"
 #import "PlexNavigationController.h"
 
 #define LOCAL_DEBUG_ENABLED 1

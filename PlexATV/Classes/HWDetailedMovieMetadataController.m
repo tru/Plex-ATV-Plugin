@@ -27,7 +27,7 @@
 
 #import "HWDetailedMovieMetadataController.h"
 #import "PlexMediaProvider.h"
-#import "PlexPlaybackController.h"
+#import "PlexNavigationController.h"
 #import <plex-oss/PlexRequest.h>
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
@@ -224,10 +224,7 @@ typedef enum {
 			case kPlayButton:
 				DLog(@"play movie plz kthxbye");
 				DLog(@"asset: %@", selectedMediaItemPreviewData.title);
-        
-        PlexPlaybackController *player = [[PlexPlaybackController alloc] initWithPlexMediaObject:selectedMediaItemPreviewData.pmo];
-        [[[BRApplicationStackManager singleton] stack] pushController:player];
-				[player autorelease];
+                [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:selectedMediaItemPreviewData.pmo];
 				break;
       case kMoreButton:
         [listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
