@@ -370,10 +370,8 @@
     NSString *deviceTitle = title;
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Server name (optional)";
-    NSInteger keyboardType = kBRTextEntryStyleFull;
-    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
 }
 
 - (void)showEnterUsernameDialogBoxWithInitialText:(NSString *)initalText {
@@ -382,10 +380,8 @@
     NSString *deviceTitle = @"SSA - Username";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Username";
-    NSInteger keyboardType = kBRTextEntryStyleFull;
-    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
 }
 
 - (void)showEnterPasswordDialogBoxWithInitialText:(NSString *)initalText {
@@ -394,10 +390,8 @@
     NSString *deviceTitle = @"SSA - Password";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Password";
-    NSInteger keyboardType = kBRTextEntryStyleFull;
-    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullMainScreen;
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
 }
 
 - (void)showEnterHostNameDialogBoxWithInitialText:(NSString *)initalText {
@@ -406,10 +400,8 @@
     NSString *deviceTitle = @"IP/Hostname";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"IP/Hostname";
-    NSInteger keyboardType = kBRTextEntryStyleInternetFull;
-    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeInternetFull;
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
 }
 
 - (void)showEnterPortNumberDialogBoxWithInitialText:(NSString *)initalText {
@@ -418,10 +410,8 @@
     NSString *deviceTitle = @"Port Number";
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Port Number";
-    NSInteger keyboardType = kBRTextEntryStyleNumpad;
-    NSInteger deviceKeyboardType = kBRDeviceKeyboardTypeFullNumberScreen;
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText keyboardType:keyboardType deviceKeyboardType:deviceKeyboardType];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
 }
 
 - (void)showDialogBoxWithTitle:(NSString *)title
@@ -430,11 +420,9 @@
        deviceSecondaryInfoText:(NSString *)deviceInfoText
 				textFieldLabel:(NSString *)textFieldLabel
 			   withInitialText:(NSString *)initialText
-                  keyboardType:(NSInteger)keyboardType
-            deviceKeyboardType:(NSInteger)deviceKeyboardType
 {
     
-	BRTextEntryController *textCon = [[BRTextEntryController alloc] initWithTextEntryStyle:keyboardType];
+	BRTextEntryController *textCon = [[BRTextEntryController alloc] init];
     
 	[textCon setTextFieldDelegate:self];
 	[textCon setTitle:title];
@@ -443,30 +431,10 @@
 	[textCon setInitialTextEntryText:initialText];
     
     //set device text to match
-    [textCon.editor setDeviceKeyboardTitle:deviceTitle subText:deviceInfoText];    
-    
-    //set device keyboard
-#warning not working. perhaps sublcass BRTextEntryController to get working
-    BRDeviceKeyboardMessage *deviceKeyboardMessage = [textCon.editor valueForKey:@"_deviceKeyboardMessage"];
-    deviceKeyboardMessage.keyboardType = deviceKeyboardType;
+    [textCon.editor setDeviceKeyboardTitle:deviceTitle subText:deviceInfoText];
     
     [[[BRApplicationStackManager singleton] stack] pushController:textCon];
-    
-    if (keyboardType == kBRTextEntryStyleNumpad) {
-        //frame needs fixing (weird bug)
-        [self performSelector:@selector(adjustNumpadFrame:) withObject:textCon afterDelay:0.3];
-    }
     [textCon release];
-}
-
-//this method is used to "hack" the numpad frame into place
-- (void)adjustNumpadFrame:(BRTextEntryController *)textCon {
-    if (textCon.editor.frame.origin.x != 0) {
-        [textCon.editor setFrame:CGRectZero];
-        [textCon.editor setNeedsLayout];
-        [self performSelector:@selector(adjustNumpadFrame:) withObject:textCon afterDelay:0.2];
-        DLog(@"adjusting numpad frame");
-    }
 }
 
 - (void)textDidEndEditing:(id)text
