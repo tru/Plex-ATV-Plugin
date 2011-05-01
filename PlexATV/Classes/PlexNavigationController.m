@@ -14,6 +14,7 @@
 //view/controller types
 #import "HWSettingsController.h"
 #import "PlexChannelsController.h"
+#import "PlexSearchController.h"
 #import "HWBasicMenu.h"
 #import "HWPlexDir.h"
 #import "PlexSongListController.h"
@@ -99,6 +100,19 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithPreviewAssets:previewAssets withSelectedIndex:selectedIndex];
     self.targetController = previewController;
     [previewController release];
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:self];
+}
+
+- (void)navigateToSearchForMachine:(Machine *)aMachine {
+    DLog(@"Navigating to: [Search], for machine: [%@]", aMachine.userName);
+    self.targetController = nil;
+    self.targetMediaObject = nil;
+    self.promptText = @"Loading \"Search\"...";
+    
+    PlexSearchController *searchController = [[PlexSearchController alloc] initWithMachine:aMachine];
+    self.targetController = searchController;
+    [searchController release];
     
     [[[BRApplicationStackManager singleton] stack] pushController:self];
 }

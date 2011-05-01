@@ -121,6 +121,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         if ([categoryName isEqualToString:@"Channels"]) {
             [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
             
+        } else if ([categoryName isEqualToString:@"Search"]) {
+            [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
+            
         } else {
             NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
             NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
@@ -207,15 +210,19 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		[allDirectories addObjectsFromArray:machine.librarySections.directories];
 		
 		//for (PlexMediaObject *pmo in allDirectories) {
-        for (int i=0; i<=[allDirectories count]; i++) {
+        int totalItems = [allDirectories count] + 2; //channels + search
+        for (int i=0; i<totalItems; i++) {
             NSString *categoryName = nil;
+            
             if (i == [allDirectories count]) {
                 //add special channels appliance
                 categoryName = @"Channels";
+            } else if (i == [allDirectories count]+1) {
+                //add special search appliance
+                categoryName = @"Search";
             } else {
                 //add all others
                 PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
-                
                 categoryName = [pmo.name copy];
             }
             
