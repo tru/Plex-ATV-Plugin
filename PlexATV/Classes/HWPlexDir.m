@@ -101,8 +101,6 @@
 }
 
 - (void)wasPopped {
-  BRMediaPlayer *player = [[BRMediaPlayerManager singleton] activeAudioPlayer];
-  [player setState:kBRMediaPlayerStateStopped error:nil];
 	[super wasPopped];
 }
 
@@ -116,37 +114,6 @@
 
 - (void)wasBuried {
 	[super wasBuried];
-}
-
--(void)controlWasActivated
-{
-	DLog(@"%@",self.rootContainer.viewGroup);
-  DLog(@"%@",[self.rootContainer.attributes valueForKey:@"theme"]);
-  if ([self.rootContainer.attributes valueForKey:@"theme"] != nil){
-    NSString *themeUrlAsString = [self.rootContainer.request buildAbsoluteKey: [self.rootContainer.attributes valueForKey:@"theme"]];
-
-    NSURL *themeUrl = [NSURL URLWithString:themeUrlAsString];
-    DLog(@"themeUrl: %@",themeUrl);
-    
-    NSError *error;
-    PlexSongAsset *psa = [[PlexSongAsset alloc] initWithURL:themeUrl mediaProvider:nil mediaObject:[self.rootContainer.directories objectAtIndex:0]];
-
-    BRMediaPlayerManager* mgm = [BRMediaPlayerManager singleton];
-    BRMediaPlayer *playa = [mgm playerForMediaAsset:psa error:&error];
-    
-    mgm.autoPresentTimeout = 0;
-    playa.repeatMode = 1;
-    [playa cueMediaWithError:nil];
-    [self performSelector:@selector(startPlayingThemeMusic) withObject:nil afterDelay:5.0];   
-  }
- 	[super controlWasActivated];
-	
-}
-
--(void)startPlayingThemeMusic {
-  DLog();
-  BRMediaPlayer *player = [[BRMediaPlayerManager singleton] activeAudioPlayer];
-  [player setState:kBRMediaPlayerStatePlaying error:nil];
 }
 
 #pragma mark -
