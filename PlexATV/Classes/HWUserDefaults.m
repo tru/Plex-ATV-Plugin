@@ -7,6 +7,7 @@
 
 #import "HWUserDefaults.h"
 #import <plex-oss/PlexClientCapabilities.h>
+#import <plex-oss/PlexRequest + Security.h>
 #import "Constants.h"
 
 
@@ -35,9 +36,11 @@
 
 - (void)_setDefaults {}
 
-+ (void)setupPlexClientCapabilities {
-  DLog(@"setting up client caps");
++ (void)setupPlexClient {
+  DLog(@"registering ourselves with the PMS <DISABLED>");
+  //[PlexRequest setApplicationName:@"Gerawesome" version:@"0.8"];
   
+  DLog(@"setting up client caps");  
   BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableAC3];
   BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableDTS];  
   

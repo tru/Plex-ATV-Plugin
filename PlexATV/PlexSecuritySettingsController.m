@@ -114,7 +114,7 @@
 	}
     
     //re-send the caps to the PMS
-    [HWUserDefaults setupPlexClientCapabilities];
+    [HWUserDefaults setupPlexClient];
 }
 
 
