@@ -37,8 +37,8 @@
 - (void)_setDefaults {}
 
 + (void)setupPlexClient {
-  DLog(@"registering ourselves with the PMS <DISABLED>");
-  //[PlexRequest setApplicationName:@"Gerawesome" version:@"0.8"];
+  DLog(@"registering ourselves with the PMS");
+  [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8"];
   
   DLog(@"setting up client caps");  
   BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableAC3];

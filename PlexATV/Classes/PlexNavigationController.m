@@ -61,7 +61,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
   }
   
   DLog(@"Navigating using controller type: [%@]", [self.targetController class]);
-  [[[BRApplicationStackManager singleton] stack] swapController:self.targetController];
+  [[[BRApplicationStackManager singleton] stack] pushController:self.targetController];
 }
 
 - (void)wasPopped {
@@ -69,6 +69,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 }
 
 - (void)wasExhumed {
+  DLog();
   //should never get called as we always swap self out of the stack
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasExhumed];

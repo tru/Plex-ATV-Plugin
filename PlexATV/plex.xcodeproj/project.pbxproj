@@ -69,6 +69,7 @@
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		C43F0B0612F4CD8E004D0D68 /* HWMediaGridController.m in Sources */ = {isa = PBXBuildFile; fileRef = C43F0B0512F4CD8E004D0D68 /* HWMediaGridController.m */; };
 		C440CFC11311857100015595 /* PlexPlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = C440CFC01311857100015595 /* PlexPlaybackController.m */; };
+		C48D9554137090E900715D8E /* PlexAudioSubsController.m in Sources */ = {isa = PBXBuildFile; fileRef = C48D9553137090E900715D8E /* PlexAudioSubsController.m */; };
 		C4ADAFAE12D46CA9002DA507 /* HWPlexDir.m in Sources */ = {isa = PBXBuildFile; fileRef = C4ADAFA812D46CA9002DA507 /* HWPlexDir.m */; };
 		C4ADAFAF12D46CA9002DA507 /* PlexMediaAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = C4ADAFAA12D46CA9002DA507 /* PlexMediaAsset.m */; };
 		C4ADAFB012D46CA9002DA507 /* PlexMediaProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = C4ADAFAD12D46CA9002DA507 /* PlexMediaProvider.m */; };
@@ -156,6 +157,8 @@
 		C43F0B0512F4CD8E004D0D68 /* HWMediaGridController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWMediaGridController.m; path = Classes/HWMediaGridController.m; sourceTree = "<group>"; };
 		C440CFBF1311857100015595 /* PlexPlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexPlaybackController.h; path = Classes/PlexPlaybackController.h; sourceTree = "<group>"; };
 		C440CFC01311857100015595 /* PlexPlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexPlaybackController.m; path = Classes/PlexPlaybackController.m; sourceTree = "<group>"; };
+		C48D9552137090E900715D8E /* PlexAudioSubsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexAudioSubsController.h; path = Classes/PlexAudioSubsController.h; sourceTree = "<group>"; };
+		C48D9553137090E900715D8E /* PlexAudioSubsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexAudioSubsController.m; path = Classes/PlexAudioSubsController.m; sourceTree = "<group>"; };
 		C4ADAFA712D46CA9002DA507 /* HWPlexDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWPlexDir.h; path = Classes/HWPlexDir.h; sourceTree = "<group>"; };
 		C4ADAFA812D46CA9002DA507 /* HWPlexDir.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWPlexDir.m; path = Classes/HWPlexDir.m; sourceTree = "<group>"; };
 		C4ADAFA912D46CA9002DA507 /* PlexMediaAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexMediaAsset.h; path = Classes/PlexMediaAsset.h; sourceTree = "<group>"; };
@@ -248,10 +251,10 @@
 				72B2C4FB12DBE0EE00E23F8E /* Controllers */,
 				C4D558A112D66BE900877755 /* NSArray-Shuffle.h */,
 				C4D558A212D66BE900877755 /* NSArray-Shuffle.m */,
+				01F4DD2D12C3875500A0A0B5 /* BackRowExtras.h */,
 				C4ADAFAB12D46CA9002DA507 /* PlexMediaContainer + SkinResources.h */,
 				C4ADAFAC12D46CA9002DA507 /* PlexMediaProvider.h */,
 				C4ADAFAD12D46CA9002DA507 /* PlexMediaProvider.m */,
-				01F4DD2D12C3875500A0A0B5 /* BackRowExtras.h */,
 				72EA810712DEB6B500138F7D /* Constants.h */,
 				7297238212EE81000064E776 /* HWUserDefaults.h */,
 				7297238312EE81000064E776 /* HWUserDefaults.m */,
@@ -363,6 +366,8 @@
 				C440CFC01311857100015595 /* PlexPlaybackController.m */,
 				72C421B01319E27700B90041 /* HWTVShowsController.h */,
 				72C421B11319E27700B90041 /* HWTVShowsController.m */,
+				C48D9552137090E900715D8E /* PlexAudioSubsController.h */,
+				C48D9553137090E900715D8E /* PlexAudioSubsController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -505,6 +510,7 @@
 				7205CCE4135A7E7C001EFC55 /* PlexChannelsController.m in Sources */,
 				721D91E7135C9D060067DE9E /* PlexNavigationController.m in Sources */,
 				72ECCD7A135FEE1A0025D3E2 /* PlexSecuritySettingsController.m in Sources */,
+				C48D9554137090E900715D8E /* PlexAudioSubsController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

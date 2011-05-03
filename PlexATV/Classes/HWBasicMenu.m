@@ -14,7 +14,7 @@
 - (id) init {
 	if((self = [super init]) != nil) {
 		
-		DLog(@"--- %@ %s", self, _cmd);
+		//DLog(@"--- %@ %s", self, _cmd);
 		
 		[self setListTitle:@"Server List"];
 		
@@ -32,7 +32,7 @@
 
 -(void)dealloc
 {
-	DLog(@"--- %@ %s", self, _cmd);
+	//DLog(@"--- %@ %s", self, _cmd);
 	[_names release];
 	
 	[super dealloc];

@@ -28,7 +28,9 @@
 #import "HWDetailedMovieMetadataController.h"
 #import "PlexMediaProvider.h"
 #import "PlexNavigationController.h"
+#import "PlexAudioSubsController.h"
 #import <plex-oss/PlexRequest.h>
+#import <plex-oss/PlexMediaObject + VideoDetails.h>
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
@@ -92,9 +94,6 @@ typedef enum {
 		[listDropShadowControl setCDelegate:self];
 		[listDropShadowControl setCDatasource:self];
 		
-#if LOCAL_DEBUG_ENABLED
-		DLog(@"init done. assets rigged");
-#endif
 	}
 	return self;
 }
@@ -213,12 +212,15 @@ typedef enum {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"controller selected %@", ctrl);
 #endif
+    PlexAudioSubsController *subCtrl;
+  
 	if ([ctrl isKindOfClass:[BRButtonControl class]]) {
     //one of the buttons have been pushed
 		BRButtonControl *buttonControl = (BRButtonControl *)ctrl;
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"button chosen: %@", buttonControl.identifier);
 #endif
+
 		int buttonId = [buttonControl.identifier intValue];
 		switch (buttonId) {
 			case kPlayButton:
@@ -229,6 +231,9 @@ typedef enum {
       case kMoreButton:
         [listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
         break;
+      case kQueueButton:
+        subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaItemPreviewData.pmo];
+        [[[BRApplicationStackManager singleton] stack] pushController:subCtrl];
 			default:
 				break;
 		}
@@ -408,13 +413,13 @@ typedef enum {
    badge:nil];
    [b setIdentifier:[NSNumber numberWithInt:kPreviewButton]];
    [buttons addObject:b];
-   
+   */
    b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]queueActionImage] 
-   subtitle:@"Queue" 
+   subtitle:@"Audio/subs" 
    badge:nil];
    [b setIdentifier:[NSNumber numberWithInt:kQueueButton]];
    [buttons addObject:b];
-   */
+   
   
   b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]rateActionImage] 
                                     subtitle:@"More" 
