@@ -118,23 +118,26 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		if (!machineWhoCategoryBelongsTo) return nil;
 		
 		// ====== find the category selected ======
-    if ([categoryName isEqualToString:@"Channels"]) {
-      [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
-      
-    } else {
-      NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
-      NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
-      NSArray *matchingCategories = [categories filteredArrayUsingPredicate:categoryPredicate];
-      if ([matchingCategories count] != 1) {
-        DLog(@"ERROR: incorrect number of category matches to selected appliance with name [%@]", categoryName);
-        return nil;
-      }
-      
-      //HAZAA! we found it! 
-      PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
-      [navigationController navigateToObjectsContents:matchingCategory];
-      return nil;
-    }
+        if ([categoryName isEqualToString:@"Channels"]) {
+            [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
+            
+        } else if ([categoryName isEqualToString:@"Search"]) {
+            [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
+            
+        } else {
+            NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
+            NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
+            NSArray *matchingCategories = [categories filteredArrayUsingPredicate:categoryPredicate];
+            if ([matchingCategories count] != 1) {
+                DLog(@"ERROR: incorrect number of category matches to selected appliance with name [%@]", categoryName);
+                return nil;
+            }
+            
+            //HAZAA! we found it! 
+            PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
+            [navigationController navigateToObjectsContents:matchingCategory];
+            return nil;
+        }
 	}
 	return nil;
 }
@@ -207,27 +210,31 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		[allDirectories addObjectsFromArray:machine.librarySections.directories];
 		
 		//for (PlexMediaObject *pmo in allDirectories) {
-    for (int i=0; i<=[allDirectories count]; i++) {
-      NSString *categoryName = nil;
-      if (i == [allDirectories count]) {
-        //add special channels appliance
-        categoryName = @"Channels";
-      } else {
-        //add all others
-        PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
-        
-        categoryName = [pmo.name copy];
-      }
-      
+        int totalItems = [allDirectories count] + 2; //channels + search
+        for (int i=0; i<totalItems; i++) {
+            NSString *categoryName = nil;
+            
+            if (i == [allDirectories count]) {
+                //add special channels appliance
+                categoryName = @"Channels";
+            } else if (i == [allDirectories count]+1) {
+                //add special search appliance
+                categoryName = @"Search";
+            } else {
+                //add all others
+                PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
+                categoryName = [pmo.name copy];
+            }
+            
 #if LOCAL_DEBUG_ENABLED
-      DLog(@"Adding category [%@] for machine id [%@]", categoryName, machineID);
+            DLog(@"Adding category [%@] for machine id [%@]", categoryName, machineID);
 #endif
-      
-      //create the compoundIdentifier for the appliance identifier
-      NSMutableDictionary *compoundIdentifier = [NSMutableDictionary dictionary];
-      [compoundIdentifier setObject:categoryName forKey:CategoryNameKey];
-      [compoundIdentifier setObject:machineID forKey:MachineIDKey];
-      [compoundIdentifier setObject:machineName forKey:MachineNameKey];
+            
+            //create the compoundIdentifier for the appliance identifier
+            NSMutableDictionary *compoundIdentifier = [NSMutableDictionary dictionary];
+            [compoundIdentifier setObject:categoryName forKey:CategoryNameKey];
+            [compoundIdentifier setObject:machineID forKey:MachineIDKey];
+            [compoundIdentifier setObject:machineName forKey:MachineNameKey];
 			
 			//================== add the appliance ==================
 			

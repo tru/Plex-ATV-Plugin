@@ -153,6 +153,7 @@
 		return result;
 	} else if (row == 1) {
 		BRMenuItem * result = [[[BRMenuItem alloc] init] autorelease];
+    [result setDefaultImage:[[BRThemeInfo sharedTheme] shuffleImage]];
 		[result setText:@"Shuffle" withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
 		[result addAccessoryOfType:0];
 		return result;
