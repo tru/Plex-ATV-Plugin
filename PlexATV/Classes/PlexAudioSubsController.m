@@ -56,7 +56,7 @@
   
   self.listTitle = @"Audio & Video";
   [self populateListWithStreams];
-
+  
 #if LOCAL_DEBUG_ENABLED
   DLog(@"Audio Streams: %@", [detailedItem audioStreamsForLanguage:nil haveFallback:NO]);
   DLog(@"Sub Streams: %@", [detailedItem subtitleStreamsForLanguage:nil haveFallback:NO]);
@@ -145,10 +145,19 @@
   PlexMediaStream *stream = [self.items objectAtIndex:row];
   BRMenuItem * menuItem = [[BRMenuItem alloc] init];
   
-  [menuItem setText:stream.language withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-  NSString *onOrOff = stream.selected ? @"On" : @"Off";
-  [menuItem setRightJustifiedText:onOrOff withAttributes:nil];
-  [menuItem addAccessoryOfType:0];
+  NSString *streamInfo = [NSString stringWithFormat:@"%@ (%@)",stream.language,stream.streamDescription];
+
+  //format the text
+  if ([stream.streamDescription length] != 0)
+    [menuItem setText:streamInfo withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
+  else
+    [menuItem setText:stream.language withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];  
+
+  //show which is selected by using the checkmark icon
+  if (stream.selected)
+    [menuItem addAccessoryOfType:17];
+  else
+    [menuItem addAccessoryOfType:0];
   return [menuItem autorelease];
   
 }

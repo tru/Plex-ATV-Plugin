@@ -149,13 +149,12 @@
 	if(row == 0) {
 		BRMenuItem * result = [[[BRMenuItem alloc] init] autorelease];
 		[result setText:@"Play all" withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		[result addAccessoryOfType:0];
+		[result addAccessoryOfType:12];
 		return result;
 	} else if (row == 1) {
 		BRMenuItem * result = [[[BRMenuItem alloc] init] autorelease];
-    [result setDefaultImage:[[BRThemeInfo sharedTheme] shuffleImage]];
 		[result setText:@"Shuffle" withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		[result addAccessoryOfType:0];
+		[result addAccessoryOfType:2];
 		return result;
 	} else {
 		PlexSongAsset *song = [self.songs objectAtIndex:row-2];
