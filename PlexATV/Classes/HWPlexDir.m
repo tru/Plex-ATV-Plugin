@@ -261,62 +261,8 @@
 	if(row > [self.items count])
 		return nil;
 	
-	id result;
-	
 	PlexMediaObject *pmo = [self.items objectAtIndex:row];
-	NSString *mediaType = [pmo.attributes valueForKey:@"type"];
-    
-	if (pmo.hasMedia || [@"Video" isEqualToString:mediaType]) {
-		BRMenuItem *menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
-        
-		if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
-            [menuItem setImage:[[BRThemeInfo sharedTheme] unplayedVideoImage]];
-		} else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
-            [menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
-		} else {
-            //image will be invisible, but we need it to get the text to line up with ones who have a
-            //visible image
-			[menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
-            BRImageControl *imageControl = [menuItem valueForKey:@"_imageControl"];
-            [imageControl setHidden:YES];
-		}
-        [menuItem setImageAspectRatio:0.5];
-		
-        [menuItem setText:[pmo name] withAttributes:nil];
-		//used to get details about the show, instead of gettings attrs here manually
-		PlexPreviewAsset *previewAsset = [pmo previewAsset];
-		if ([mediaType isEqualToString:PlexMediaObjectTypeEpisode]) {
-            NSString *detailedText = [NSString stringWithFormat:@"Season %d, Episode %d (%@)", [previewAsset season], [previewAsset episode], [previewAsset seriesName]];
-			[menuItem setDetailedText:detailedText withAttributes:nil];
-            [menuItem setRightJustifiedText:[previewAsset datePublishedString] withAttributes:nil];
-		} else {
-            NSString *detailedText = previewAsset.year ? previewAsset.year : @" ";
-			[menuItem setDetailedText:detailedText withAttributes:nil];
-            if ([previewAsset isHD]) {
-                [menuItem addAccessoryOfType:11];
-            }
-		}
-		
-		result = [menuItem autorelease];
-    } else {
-		BRMenuItem * menuItem = [[BRMenuItem alloc] init];
-		
-		if ([mediaType isEqualToString:PlexMediaObjectTypeShow] || [mediaType isEqualToString:PlexMediaObjectTypeSeason]) {
-			if ([pmo.attributes valueForKey:@"agent"] == nil) {
-				if ([pmo seenState] == PlexMediaObjectSeenStateUnseen) {
-					[menuItem addAccessoryOfType:15];
-				} else if ([pmo seenState] == PlexMediaObjectSeenStateInProgress) {
-					[menuItem addAccessoryOfType:16];
-				}
-			}
-		}
-		
-		[menuItem setText:[pmo name] withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		
-		[menuItem addAccessoryOfType:1];
-		result = [menuItem autorelease];
-	}
-	return result;
+	return pmo.menuItem;
 }
 
 - (id)previewControlForItem:(long)item {    

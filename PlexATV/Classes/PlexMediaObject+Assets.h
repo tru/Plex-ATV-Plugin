@@ -13,7 +13,8 @@
 
 @property (readonly) PlexPreviewAsset *previewAsset;
 @property (readonly) PlexMediaAsset *mediaAsset;
-
 //@property (readonly) PlexSongAsset *songAsset;
+
+@property (readonly) BRMenuItem *menuItem;
 
 @end
