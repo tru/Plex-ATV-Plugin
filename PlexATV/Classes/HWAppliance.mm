@@ -159,7 +159,11 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	BRApplianceCategory *appliance;
 	for (int i = 0; i<[self.applianceCat count]; i++) {
 		appliance = [self.applianceCat objectAtIndex:i];
-		[appliance setPreferredOrder:i];
+        if ([appliance.name isEqualToString:@"Search"]) {
+            [appliance setPreferredOrder:0];
+        } else {
+            [appliance setPreferredOrder:i+1]; //+1 so we reserve 0 for search
+        }
 	}
 	//other servers appliance category, set it to the second to last
 	[otherServersApplianceCategory setPreferredOrder:[self.applianceCat count]];
@@ -182,7 +186,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 - (id)moduleName { return @"Plex"; }
 - (id)applianceKey { return @"Plex"; }
 
--(void) reloadCategories {
+- (void)reloadCategories {
 	[self.applianceCat removeAllObjects];
 	
 	NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
