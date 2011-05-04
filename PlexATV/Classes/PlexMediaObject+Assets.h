@@ -16,5 +16,6 @@
 //@property (readonly) PlexSongAsset *songAsset;
 
 @property (readonly) BRMenuItem *menuItem;
+@property (readonly) id previewControl;
 
 @end

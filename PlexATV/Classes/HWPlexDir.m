@@ -286,19 +286,15 @@
             PlexPreviewAsset *previewAsset = [pmo previewAsset];
             [imageProxies addObject:[previewAsset imageProxy]];
         }   
-        preview = [[BRMediaParadeControl alloc] init];
+        preview = [[[BRMediaParadeControl alloc] init] autorelease];
         [preview setImageProxies:imageProxies];
         
     } else {
         
         //single coverart
-        PlexPreviewAsset *previewAsset = [pmo previewAsset];
-        
-        preview = [[BRMetadataPreviewControl alloc] init];
-        [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
-        [preview setAsset:previewAsset];
+        preview = pmo.previewControl; //already autoreleased
     }
-	return [preview autorelease];
+	return preview;
 }
 
 #pragma mark -

@@ -9,6 +9,8 @@
 #import "PlexPreviewAsset.h"
 #import "PlexMediaAsset.h"
 #import "PlexSongAsset.h"
+#import "HWUserDefaults.h"
+#import "Constants.h"
 
 @implementation PlexMediaObject (Assets)
 
@@ -29,13 +31,13 @@
 
 
 #pragma mark -
-#pragma mark Menu Items
+#pragma mark List Items
 
 - (BRMenuItem *)menuItem {
-    id result;
+    BRMenuItem *menuItem = nil;
     
 	if (self.hasMedia) {
-		BRMenuItem *menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
+		menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
         
 		if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
             [menuItem setImage:[[BRThemeInfo sharedTheme] unplayedVideoImage]];
@@ -66,11 +68,10 @@
                 [menuItem addAccessoryOfType:11];
             }
 		}
-		result = [menuItem autorelease];
         
     } else {
         //not a media item
-		BRMenuItem * menuItem = [[BRMenuItem alloc] init];
+        menuItem = [[BRMenuItem alloc] init];
 		
 		if ([self.type isEqualToString:PlexMediaObjectTypeShow] || [self.type isEqualToString:PlexMediaObjectTypeSeason]) {
 			if ([self.attributes valueForKey:@"agent"] == nil) {
@@ -85,9 +86,22 @@
 		[menuItem setText:[self name] withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
 		
 		[menuItem addAccessoryOfType:1];
-		result = [menuItem autorelease];
 	}
-	return result;
+	return [menuItem autorelease];
+}
+
+- (id)previewControl {
+    id preview = nil;
+    
+//    preview = [[BRMetadataPreviewControl alloc] init];
+//    [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
+//    [preview setAsset:self.previewAsset];
+    
+    preview = [[BRMetadataPreviewControl alloc] init];
+    [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
+    [preview setAsset:self.previewAsset];
+    
+    return preview;
 }
 
 @end
