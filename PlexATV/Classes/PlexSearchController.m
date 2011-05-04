@@ -8,6 +8,7 @@
 #import "PlexSearchController.h"
 #import "Constants.h"
 #import <plex-oss/Machine.h>
+#import "PlexMediaObject+Assets.h"
 
 @implementation PlexSearchController
 @synthesize datasource, header, totalResults, textEntry, arrow, previewControl;
@@ -20,14 +21,7 @@
         [self.list setDatasource:self];
         self.datasource = self;
         
-        PlexMediaContainer *librarySections = self.machine.librarySections;
-        NSArray *directories = [[librarySections directories] retain];
-        PlexMediaObject *disney = [[directories objectAtIndex:0]retain];
-        
-        PlexMediaContainer *allFilters = [[disney contents]retain];
-        NSArray *filters = [[allFilters directories]retain];
-        PlexMediaObject *allDisney = [[filters objectAtIndex:0]retain];
-        pmc = [[allDisney contents] retain];
+        pmc = self.machine.recentlyAddedMedia;
     }
     return self;
 }
@@ -203,20 +197,17 @@
 #pragma mark -
 #pragma mark list
 - (float)heightForRow:(long)row {
-    return 105.0f;
+    PlexMediaObject *pmo = [pmc.directories objectAtIndex:row];
+    return pmo.heightForMenuItem;
 }
 
 - (long)itemCount {
     return [pmc.directories count];
 }
 
-- (id)itemForRow:(long)row {    
-    BRMenuItem *menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
-    
-    [menuItem setText:[self.list.datasource titleForRow:row] withAttributes:nil];
-    [menuItem setDetailedText:@"2009" withAttributes:nil];
-    [menuItem addAccessoryOfType:11];
-    return menuItem;
+- (id)itemForRow:(long)row {
+    PlexMediaObject *pmo = [pmc.directories objectAtIndex:row];
+    return pmo.menuItem;
 }
 
 - (BOOL)rowSelectable:(long)selectable {
@@ -225,16 +216,7 @@
 
 - (id)previewControlForItem:(long)item {
     PlexMediaObject *pmo = [pmc.directories objectAtIndex:item];
-    
-    NSURL* mediaURL = [pmo mediaStreamURL];
-    PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
-    
-    BRMetadataPreviewControl *preview = [[BRMetadataPreviewControl alloc] init];
-    [preview setShowsMetadataImmediately:YES];
-    [preview setAsset:pma];
-    [pma release];
-    
-    return [preview autorelease];
+    return pmo.previewControl;
     
 //    SMFMediaPreview *preview = [SMFMediaPreview mediaPreview];
 //    
