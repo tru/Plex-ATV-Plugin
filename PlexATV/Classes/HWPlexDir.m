@@ -30,10 +30,8 @@
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/Preferences.h>
 #import "PlexMediaProvider.h"
-#import "PlexMediaAsset.h"
-#import "PlexMediaAssetOld.h"
 #import "PlexPreviewAsset.h"
-#import "PlexSongAsset.h"
+#import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "PlexNavigationController.h"
 
@@ -286,19 +284,18 @@
 		
         [menuItem setText:[pmo name] withAttributes:nil];
 		//used to get details about the show, instead of gettings attrs here manually
-		PlexPreviewAsset *previewData = [[PlexPreviewAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:pmo];
+		PlexPreviewAsset *previewAsset = [pmo previewAsset];
 		if ([mediaType isEqualToString:PlexMediaObjectTypeEpisode]) {
-            NSString *detailedText = [NSString stringWithFormat:@"Season %d, Episode %d (%@)", [previewData season], [previewData episode], [previewData seriesName]];
+            NSString *detailedText = [NSString stringWithFormat:@"Season %d, Episode %d (%@)", [previewAsset season], [previewAsset episode], [previewAsset seriesName]];
 			[menuItem setDetailedText:detailedText withAttributes:nil];
-            [menuItem setRightJustifiedText:[previewData datePublishedString] withAttributes:nil];
+            [menuItem setRightJustifiedText:[previewAsset datePublishedString] withAttributes:nil];
 		} else {
-            NSString *detailedText = previewData.year ? previewData.year : @" ";
+            NSString *detailedText = previewAsset.year ? previewAsset.year : @" ";
 			[menuItem setDetailedText:detailedText withAttributes:nil];
-            if ([previewData isHD]) {
+            if ([previewAsset isHD]) {
                 [menuItem addAccessoryOfType:11];
             }
 		}
-		[previewData release];
 		
 		result = [menuItem autorelease];
     } else {
@@ -340,24 +337,20 @@
         NSArray *subItems = subItemsContainer.directories;
         
         for (PlexMediaObject *pmo in subItems) {
-            NSURL* mediaURL = [pmo mediaStreamURL];
-            PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
-            [imageProxies addObject:[pma imageProxy]];
-            [pma release];
+            PlexPreviewAsset *previewAsset = [pmo previewAsset];
+            [imageProxies addObject:[previewAsset imageProxy]];
         }   
         preview = [[BRMediaParadeControl alloc] init];
         [preview setImageProxies:imageProxies];
         
     } else {
         
-        //single covert
-        NSURL* mediaURL = [pmo mediaStreamURL];
-        PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
+        //single coverart
+        PlexPreviewAsset *previewAsset = [pmo previewAsset];
         
         preview = [[BRMetadataPreviewControl alloc] init];
         [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
-        [preview setAsset:pma];
-        [pma release];
+        [preview setAsset:previewAsset];
     }
 	return [preview autorelease];
 }
