@@ -2,8 +2,7 @@
 //  PlexSearchController.h
 //  plex
 //
-//  Created by Serendipity on 29/04/2011.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Created by ccjensen on 29/04/2011.
 //
 
 #import <Foundation/Foundation.h>
