@@ -33,6 +33,17 @@
 #pragma mark -
 #pragma mark List Items
 
+- (float)heightForMenuItem {
+	float height;
+	
+	if (self.hasMedia) {
+		height = 70.0f;
+	} else {
+		height = 0.0f;
+	}
+	return height;
+}
+
 - (BRMenuItem *)menuItem {
     BRMenuItem *menuItem = nil;
     

@@ -240,16 +240,9 @@
 	return [self.items count];
 }
 
-- (float)heightForRow:(long)row {	
-	float height;
-	
-	PlexMediaObject *pmo = [self.items objectAtIndex:row];
-	if (pmo.hasMedia || [@"Video" isEqualToString:pmo.containerType]) {
-		height = 70.0f;
-	} else {
-		height = 0.0f;
-	}
-	return height;
+- (float)heightForRow:(long)row {
+    PlexMediaObject *pmo = [self.items objectAtIndex:row];
+	return pmo.heightForMenuItem; 
 }
 
 - (id)titleForRow:(long)row {

@@ -15,6 +15,7 @@
 @property (readonly) PlexMediaAsset *mediaAsset;
 //@property (readonly) PlexSongAsset *songAsset;
 
+@property (readonly) float heightForMenuItem;
 @property (readonly) BRMenuItem *menuItem;
 @property (readonly) id previewControl;
 
