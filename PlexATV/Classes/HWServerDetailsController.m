@@ -335,7 +335,12 @@
 	} else if (row == ServerPropertyUserNameIndex) {
 		title = [NSString stringWithFormat:@"Username        %@", [self.machine.userName length] > 0 ? self.machine.userName : @""];
 	} else if (row == ServerPropertyPasswordIndex) {
-		title = [NSString stringWithFormat:@"Password         %@", [self.machine.password length] > 0 ? self.machine.password : @""];
+        int passwordLength = [self.machine.password length];
+        NSMutableString *obfuscatedPassword = [NSMutableString string];
+        for (int i = 0; i<passwordLength; i++) {
+            [obfuscatedPassword appendString:@"·"];
+        }
+		title = [NSString stringWithFormat:@"Password         %@", obfuscatedPassword];
 
 	} else if (row == ServerExcludedFromList) {
 		title = [NSString stringWithFormat:@"List Status        %@", [self isExcludedFromServerList] ? @"Excluded" : @"Included"];
@@ -371,7 +376,7 @@
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Server name (optional)";
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText usingSecureText:NO];
 }
 
 - (void)showEnterUsernameDialogBoxWithInitialText:(NSString *)initalText {
@@ -381,7 +386,7 @@
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Username";
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText usingSecureText:NO];
 }
 
 - (void)showEnterPasswordDialogBoxWithInitialText:(NSString *)initalText {
@@ -391,7 +396,7 @@
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Password";
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText usingSecureText:YES];
 }
 
 - (void)showEnterHostNameDialogBoxWithInitialText:(NSString *)initalText {
@@ -401,7 +406,7 @@
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"IP/Hostname";
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText usingSecureText:NO];
 }
 
 - (void)showEnterPortNumberDialogBoxWithInitialText:(NSString *)initalText {
@@ -411,7 +416,7 @@
     NSString *deviceSecondaryInfoText = secondaryInfoText;
     NSString *textFieldLabel = @"Port Number";
     
-    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText];
+    [self showDialogBoxWithTitle:title secondaryInfoText:secondaryInfoText deviceTitle:deviceTitle deviceSecondaryInfoText:deviceSecondaryInfoText textFieldLabel:textFieldLabel withInitialText:initalText usingSecureText:NO];
 }
 
 - (void)showDialogBoxWithTitle:(NSString *)title
@@ -420,6 +425,7 @@
        deviceSecondaryInfoText:(NSString *)deviceInfoText
 				textFieldLabel:(NSString *)textFieldLabel
 			   withInitialText:(NSString *)initialText
+               usingSecureText:(BOOL)useSecureText
 {
     
 	BRTextEntryController *textCon = [[BRTextEntryController alloc] init];
@@ -432,6 +438,9 @@
     
     //set device text to match
     [textCon.editor setDeviceKeyboardTitle:deviceTitle subText:deviceInfoText];
+    
+    //obfuscated text?
+    [textCon.editor.textField setUseSecureText:useSecureText];
     
     [[[BRApplicationStackManager singleton] stack] pushController:textCon];
     [textCon release];

@@ -65,7 +65,7 @@
 - (void)showEnterUsernameDialogBoxWithInitialText:(NSString *)initalText;
 - (void)showEnterPasswordDialogBoxWithInitialText:(NSString *)initalText;
 
-- (void)showDialogBoxWithTitle:(NSString *)title secondaryInfoText:(NSString *)infoText deviceTitle:(NSString *)deviceTitle deviceSecondaryInfoText:(NSString *)deviceInfoText textFieldLabel:(NSString *)textFieldLabel withInitialText:(NSString *)initialText;
+- (void)showDialogBoxWithTitle:(NSString *)title secondaryInfoText:(NSString *)infoText deviceTitle:(NSString *)deviceTitle deviceSecondaryInfoText:(NSString *)deviceInfoText textFieldLabel:(NSString *)textFieldLabel withInitialText:(NSString *)initialText usingSecureText:(BOOL)useSecureText;
 
 - (void)showEditConnectionViewForConnection:(MachineConnectionBase *)connection;
 
