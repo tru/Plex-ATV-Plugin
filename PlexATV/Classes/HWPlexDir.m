@@ -101,6 +101,7 @@
 }
 
 - (void)wasPopped {
+    [[PlexNavigationController sharedPlexNavigationController] stopPlayingThemeMusicForMediaObject:self.rootContainer.parentObject];
 	[super wasPopped];
 }
 

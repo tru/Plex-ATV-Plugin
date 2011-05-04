@@ -26,7 +26,10 @@
 - (void)navigateToSearchForMachine:(Machine *)aMachine;
 - (void)navigateToSettingsWithTopLevelController:(BRBaseAppliance *)topLevelController;
 - (void)navigateToServerList;
-- (void)startPlayingThemeMusic;
+
+//Action Methods
+- (void)startPlayingThemeMusicIfAppropiate;
+- (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo;
 
 //Determine View Type Methods
 - (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject;
