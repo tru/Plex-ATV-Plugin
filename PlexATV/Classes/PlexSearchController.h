@@ -7,23 +7,37 @@
 //
 
 #import <Foundation/Foundation.h>
-@class Machine;
+#import <plex-oss/PlexMediaObject.h>
+#import <plex-oss/PlexMediaContainer.h>
+#import <plex-oss/PlexRequest + Security.h>
+#import "PlexPreviewAsset.h"
+@class PlexSearchController;
 
-@interface PlexSearchController : BRController {
-	//NSObject<SMFBookcaseControllerDatasource> *datasource;
-    //NSObject<SMFBookcaseControllerDelegate> *delegate;
-	
+@protocol PlexSearchControllerDatasource
+- (NSString *)headerTitleForSearchController:(PlexSearchController *)searchController;
+@optional
+- (BRImage *)headerIconForSearchController:(PlexSearchController *)searchController;
+@end
+
+
+
+@class Machine;
+@interface PlexSearchController : BRMediaMenuController <BRMenuListItemProvider, PlexSearchControllerDatasource> {
+    
 @private
-	//datasource variables
-	NSInteger numberOfShelfControls;
-	NSMutableArray *_shelfTitles;
-	
-	//ui controls
-	NSMutableArray *_shelfControls;
-	BRPanelControl *_panelControl;
+    PlexMediaContainer *pmc;
 }
-@property (retain) Machine *machine;
+@property (assign) NSObject <PlexSearchControllerDatasource> *datasource;
+//@property (assign) NSObject <PlexSearchControllerDelegate> *delegate;
+
+@property (retain) BRHeaderControl *header;
+@property (retain) BRTextControl *totalResults;
+@property (retain) BRTextEntryControl *textEntry;
+@property (retain) BRImageControl *arrow;
+@property (retain) BRControl *previewControl;
 
 - (id)initWithMachine:(Machine *)aMachine;
-- (void)rebuildInterface;
+
+
+@property (retain) Machine *machine;
 @end

@@ -78,11 +78,11 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		[PlexRequest setStreamingKey:@"k3U6GLkZOoNIoSgjDshPErvqMIFdE0xMTx8kgsrhnC0=" forPublicKey:@"KQMIY6GATPC63AIMC4R2"];
 		//instrumentObjcMessageSends(YES);
 		
-    //tell PMS what kind of codecs and media we can play
-    [HWUserDefaults setupPlexClient];
+        //tell PMS what kind of codecs and media we can play
+        [HWUserDefaults setupPlexClient];
 		
 		DLog(@"==================== plex client starting up ====================");
-    
+        
 		_topShelfController = [[TopShelfController alloc] init];
 		_applianceCategories = [[NSMutableArray alloc] init];
 		
@@ -96,15 +96,15 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 }
 
 - (id)controllerForIdentifier:(id)identifier args:(id)args {
-  PlexNavigationController *navigationController = [PlexNavigationController sharedPlexNavigationController];
-  
+    PlexNavigationController *navigationController = [PlexNavigationController sharedPlexNavigationController];
+    
 	if ([SERVER_LIST_ID isEqualToString:identifier]) {
 		[navigationController navigateToServerList];
-    
+        
 	} else if ([SETTINGS_ID isEqualToString:identifier]) {
-    [navigationController navigateToSettingsWithTopLevelController:self];
+        [navigationController navigateToSettingsWithTopLevelController:self];
 		return nil;
-    
+        
 	} else {
 		// ====== get the name of the category and identifier of the machine selected ======
 		NSDictionary *compoundIdentifier = (NSDictionary *)identifier;
@@ -119,6 +119,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		
 		// ====== find the category selected ======
         if ([categoryName isEqualToString:@"Channels"]) {
+//used for debug            
+//            [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
+//            return nil;
             [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
             
         } else if ([categoryName isEqualToString:@"Search"]) {
