@@ -44,7 +44,7 @@
 typedef enum {
 	kPreviewButton = 0,
 	kPlayButton,
-	kQueueButton,
+	kAudioSubsButton,
 	kMoreButton
 } ActionButton;
 
@@ -231,7 +231,7 @@ typedef enum {
       case kMoreButton:
         [listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
         break;
-      case kQueueButton:
+      case kAudioSubsButton:
         subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaItemPreviewData.pmo];
         [[[BRApplicationStackManager singleton] stack] pushController:subCtrl];
 			default:
@@ -417,7 +417,7 @@ typedef enum {
    b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]queueActionImage] 
    subtitle:@"Audio/subs" 
    badge:nil];
-   [b setIdentifier:[NSNumber numberWithInt:kQueueButton]];
+   [b setIdentifier:[NSNumber numberWithInt:kAudioSubsButton]];
    [buttons addObject:b];
    
   

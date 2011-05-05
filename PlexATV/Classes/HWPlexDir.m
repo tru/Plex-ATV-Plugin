@@ -34,6 +34,7 @@
 #import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "PlexNavigationController.h"
+#import "PlexAudioSubsController.h"
 
 #define LOCAL_DEBUG_ENABLED 1
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"
@@ -47,31 +48,31 @@
 #pragma mark Object/Class Lifecycle
 
 - (id)init {
-    self = [super init];
-    if (self) {
-        [self setListTitle:@"PLEX"];
+  self = [super init];
+  if (self) {
+    [self setListTitle:@"PLEX"];
 		
 		NSString *plexIcon = [[NSBundle bundleForClass:[HWPlexDir class]] pathForResource:@"PlexIcon" ofType:@"png"];
 		BRImage *listIcon = [BRImage imageWithPath:plexIcon];
 		[self setListIcon:listIcon horizontalOffset:0.0 kerningFactor:0.15];
-        
+    
 		rootContainer = nil;        
-        [self.list setDatasource:self];
-    }
-    return self;
+    [self.list setDatasource:self];
+  }
+  return self;
 }
 
 - (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar {
 	self = [self init];
 	self.rootContainer = container;
-    self.listTitle = self.rootContainer.name;
-    self.items = [self.rootContainer directories];
-    self.tabBar = aTabBar;
-    if (self.tabBar) {
-        [self.tabBar setAcceptsFocus:NO];
-        [self.tabBar setTabControlDelegate:self];
-        [self addControl:self.tabBar];
-    }
+  self.listTitle = self.rootContainer.name;
+  self.items = [self.rootContainer directories];
+  self.tabBar = aTabBar;
+  if (self.tabBar) {
+    [self.tabBar setAcceptsFocus:NO];
+    [self.tabBar setTabControlDelegate:self];
+    [self addControl:self.tabBar];
+  }
 	return self;
 }
 
@@ -84,8 +85,8 @@
 	DLog(@"deallocing HWPlexDir");
 	[playbackItem release];
 	[rootContainer release];
-    [tabBar release];
-    [items release];
+  [tabBar release];
+  [items release];
 	
 	[super dealloc];
 }
@@ -99,15 +100,15 @@
 }
 
 - (void)wasPopped {
-    [[PlexNavigationController sharedPlexNavigationController] stopPlayingThemeMusicForMediaObject:self.rootContainer.parentObject];
+  [[PlexNavigationController sharedPlexNavigationController] stopPlayingThemeMusicForMediaObject:self.rootContainer.parentObject];
 	[super wasPopped];
 }
 
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
-    
-    //refresh scope bar in case any items have changed
-    [self reselectCurrentTabBarItem];
+  
+  //refresh scope bar in case any items have changed
+  [self reselectCurrentTabBarItem];
 	[super wasExhumed];
 }
 
@@ -118,26 +119,27 @@
 #pragma mark -
 #pragma mark Controller Drawing and Events
 -(void)layoutSubcontrols {
-    [super layoutSubcontrols];
+  [super layoutSubcontrols];
+  
+  if (self.tabBar) {
+    //if there is a tab bar, move the list down to make room for it
+    //thanks to tom for the layout code
+    CGRect listFrame = [self list].frame;
+    listFrame.size.height = 550.0f;
+    listFrame.size.width = listFrame.size.width; //don't change the width
+    listFrame.origin.x = listFrame.origin.x;
+    id l = [self list];
+    [l setFrame:listFrame];
     
-    if (self.tabBar) {
-        //if there is a tab bar, move the list down to make room for it
-        //thanks to tom for the layout code
-        CGRect listFrame = [self list].frame;
-        listFrame.size.height = 550.0f;
-        listFrame.size.width = listFrame.size.width; //don't change the width
-        listFrame.origin.x = listFrame.origin.x;
-        id l = [self list];
-        [l setFrame:listFrame];
-        
-        //tab bar same width as list
-        [self.tabBar setFrame:CGRectMake(listFrame.origin.x, 567.f, listFrame.size.width, 25.f)];
-    }
+    //tab bar same width as list
+    [self.tabBar setFrame:CGRectMake(listFrame.origin.x, 567.f, listFrame.size.width, 25.f)];
+  }
 }
 
 //handle custom event
 -(BOOL)brEventAction:(BREvent *)event {
 	int remoteAction = [event remoteAction];
+  DLog(@"remote action: %d",remoteAction);
 	if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
 	
@@ -152,19 +154,26 @@
 			}
 			break;
 		}
+    case kBREventRemoteActionMenuHold:
+			if([event value] == 1) {
+        DLog(@"holds play, wants subs");
+        long selected = [self getSelection];
+        [self showAudioAndSubStreamChooserForRow:selected];
+      }
+      break;
 		case kBREventRemoteActionSwipeLeft:
 		case kBREventRemoteActionLeft:
-            if([event value] == 1) {
-                [self.tabBar selectPreviousTabItem];
-                return YES;
-            }
+      if([event value] == 1) {
+        [self.tabBar selectPreviousTabItem];
+        return YES;
+      }
 			break;
 		case kBREventRemoteActionSwipeRight:
 		case kBREventRemoteActionRight:
-            if([event value] == 1) {
-                [self.tabBar selectNextTabItem];
-                return YES;
-            }
+      if([event value] == 1) {
+        [self.tabBar selectNextTabItem];
+        return YES;
+      }
 			break;
 		case kBREventRemoteActionPlayPause:
 			DLog(@"play/pause event");
@@ -197,41 +206,41 @@
 #pragma mark -
 #pragma mark BRTabBarControllerDelegate Methods
 - (void)tabControl:(id)control willSelectTabItem:(id)item {
-    //nothing needed
+  //nothing needed
 }
 
 - (void)tabControl:(id)control didSelectTabItem:(id)item {
-    //change scope
-    NSInteger newScopeSelection = [self.tabBar selectedTabItemIndex];
-
-    NSArray *allItems = self.rootContainer.directories;    
-    switch (newScopeSelection) {
-        case ScopeBarCurrentItemsIndex: {
-            self.items = allItems;
-            break;
-        }
-        case ScopeBarUnwatchedItemsIndex: {
-            NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
-            self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
-            break;
-        }
-        case ScopeBarOtherFiltersItemsIndex: {
-            PlexMediaContainer *filters = (PlexMediaContainer *)[item identifier];
-            self.items = filters.directories;
-            break;
-        }
+  //change scope
+  NSInteger newScopeSelection = [self.tabBar selectedTabItemIndex];
+  
+  NSArray *allItems = self.rootContainer.directories;    
+  switch (newScopeSelection) {
+    case ScopeBarCurrentItemsIndex: {
+      self.items = allItems;
+      break;
     }
-    [self.list reload];
+    case ScopeBarUnwatchedItemsIndex: {
+      NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
+      self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
+      break;
+    }
+    case ScopeBarOtherFiltersItemsIndex: {
+      PlexMediaContainer *filters = (PlexMediaContainer *)[item identifier];
+      self.items = filters.directories;
+      break;
+    }
+  }
+  [self.list reload];
 }
 
 - (void)tabControlDidChangeNumberOfTabItems:(id)tabControl {
-    //not possible at this stage
+  //not possible at this stage
 }
 
 - (void)reselectCurrentTabBarItem {
-    //call the delegate methods to kick of a refresh of what items should be listed in the list
-    [self tabControl:self.tabBar willSelectTabItem:[self.tabBar selectedTabItem]];
-    [self tabControl:self.tabBar didSelectTabItem:[self.tabBar selectedTabItem]];
+  //call the delegate methods to kick of a refresh of what items should be listed in the list
+  [self tabControl:self.tabBar willSelectTabItem:[self.tabBar selectedTabItem]];
+  [self tabControl:self.tabBar didSelectTabItem:[self.tabBar selectedTabItem]];
 }
 
 #pragma mark -
@@ -241,7 +250,7 @@
 }
 
 - (float)heightForRow:(long)row {
-    PlexMediaObject *pmo = [self.items objectAtIndex:row];
+  PlexMediaObject *pmo = [self.items objectAtIndex:row];
 	return pmo.heightForMenuItem; 
 }
 
@@ -259,34 +268,34 @@
 }
 
 - (id)previewControlForItem:(long)item {    
-    id preview = nil;
+  id preview = nil;
 	PlexMediaObject* pmo = [self.items objectAtIndex:item];
-    
-    //we force set the hash so two movies with same title don't end up with the same preview
-    [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
-    
+  
+  //we force set the hash so two movies with same title don't end up with the same preview
+  [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
+  
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"media object: %@", pmo);
 #endif
+  
+  if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
+    //cascading
+    NSMutableArray *imageProxies = [NSMutableArray array];
+    PlexMediaContainer *subItemsContainer = [pmo contents];
+    NSArray *subItems = subItemsContainer.directories;
     
-    if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
-        //cascading
-        NSMutableArray *imageProxies = [NSMutableArray array];
-        PlexMediaContainer *subItemsContainer = [pmo contents];
-        NSArray *subItems = subItemsContainer.directories;
-        
-        for (PlexMediaObject *pmo in subItems) {
-            PlexPreviewAsset *previewAsset = [pmo previewAsset];
-            [imageProxies addObject:[previewAsset imageProxy]];
-        }   
-        preview = [[[BRMediaParadeControl alloc] init] autorelease];
-        [preview setImageProxies:imageProxies];
-        
-    } else {
-        
-        //single coverart
-        preview = pmo.previewControl; //already autoreleased
-    }
+    for (PlexMediaObject *pmo in subItems) {
+      PlexPreviewAsset *previewAsset = [pmo previewAsset];
+      [imageProxies addObject:[previewAsset imageProxy]];
+    }   
+    preview = [[[BRMediaParadeControl alloc] init] autorelease];
+    [preview setImageProxies:imageProxies];
+    
+  } else {
+    
+    //single coverart
+    preview = pmo.previewControl; //already autoreleased
+  }
 	return preview;
 }
 
@@ -298,31 +307,49 @@
 
 - (void)itemSelected:(long)selected; {
 	PlexMediaObject* pmo = [self.items objectAtIndex:selected];
-    [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
+  [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
 }
 
 
 
 #pragma mark -
 #pragma mark Actions
-- (void)showModifyViewedStatusViewForRow:(long)row {
-    //get the currently selected row
+
+- (void)showAudioAndSubStreamChooserForRow:(long)row {
+  //get the currently selected row
 	PlexMediaObject* pmo = [self.items objectAtIndex:row];
 	NSString *plexMediaObjectType = [pmo.attributes valueForKey:@"type"];
 	
 	DLog(@"HERE: %@", plexMediaObjectType);
 	
 	if (pmo.hasMedia 
-		|| [@"Video" isEqualToString:pmo.containerType]
-		|| [@"show" isEqualToString:plexMediaObjectType]
-		|| [@"season" isEqualToString:plexMediaObjectType]) {
+      || [@"Video" isEqualToString:pmo.containerType]
+      || [@"show" isEqualToString:plexMediaObjectType]) {
+    
+    PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:pmo];
+    [[self stack] pushController:subCtrl];
+    [subCtrl autorelease];
+  }
+  
+}
+- (void)showModifyViewedStatusViewForRow:(long)row {
+  //get the currently selected row
+	PlexMediaObject* pmo = [self.items objectAtIndex:row];
+	NSString *plexMediaObjectType = [pmo.attributes valueForKey:@"type"];
+	
+	DLog(@"HERE: %@", plexMediaObjectType);
+	
+	if (pmo.hasMedia 
+      || [@"Video" isEqualToString:pmo.containerType]
+      || [@"show" isEqualToString:plexMediaObjectType]
+      || [@"season" isEqualToString:plexMediaObjectType]) {
 		//show dialog box
 		BROptionDialog *optionDialogBox = [[BROptionDialog alloc] init];
 		[optionDialogBox setIdentifier:ModifyViewStatusOptionDialog];
 		
 		[optionDialogBox setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-									  pmo, @"mediaObject",
-									  nil]];
+                                  pmo, @"mediaObject",
+                                  nil]];
 		
 		[optionDialogBox setPrimaryInfoText:@"Modify View Status"];
 		[optionDialogBox setSecondaryInfoText:pmo.name];
@@ -361,15 +388,15 @@
 			//mark item(s) as watched
 			[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as watched: %@", pmo.name);
-            [pmo markSeen];            
-            [self reselectCurrentTabBarItem];
+      [pmo markSeen];            
+      [self reselectCurrentTabBarItem];
 		} else if ([[sender selectedText] hasSuffix:@"Unwatched"]) {
 			//mark item(s) as unwatched
 			[[self stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Marking as unwatched: %@", pmo.name);
 			[pmo markUnseen];
-            [self reselectCurrentTabBarItem];
-            //[self tabControlChangedTo:[self.tabBar selectedTabItemIndex]];
+      [self reselectCurrentTabBarItem];
+      //[self tabControlChangedTo:[self.tabBar selectedTabItemIndex]];
 		} else if ([[sender selectedText] isEqualToString:@"Go back"]) {
 			//go back to movie listing...
 			[[[BRApplicationStackManager singleton] stack] popController];

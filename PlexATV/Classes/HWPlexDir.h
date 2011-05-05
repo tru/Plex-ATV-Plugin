@@ -42,6 +42,7 @@
 - (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar;
 - (void)log:(NSNotificationCenter *)note;
 - (void)showModifyViewedStatusViewForRow:(long)row;
+- (void)showAudioAndSubStreamChooserForRow:(long)row;
 - (void)reselectCurrentTabBarItem;
 
 

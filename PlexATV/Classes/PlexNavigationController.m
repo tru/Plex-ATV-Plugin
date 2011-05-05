@@ -89,8 +89,25 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     DLog(@"media object: [%@]", self.targetMediaObject);
     
     BRMediaPlayer *t =[[BRMediaPlayerManager singleton] activeAudioPlayer];
-    if ([t playerState] != kBRMediaPlayerStatePlaying && [self.targetMediaObject.attributes valueForKey:@"theme"] != nil){
-        NSString *themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.attributes valueForKey:@"theme"]];
+  BOOL hasThemeMusic = NO;
+  NSString *themeUrlAsString;
+  
+  //let's play theme music both in show view but also in season view, since we in grid mode always go to season view directly
+  if ([self.targetMediaObject.attributes valueForKey:@"theme"] != nil) {
+    hasThemeMusic = YES;
+    themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.attributes valueForKey:@"theme"]];
+
+  }
+  else if ([self.targetMediaObject.parentObject.attributes valueForKey:@"theme"] != nil) {
+    hasThemeMusic = YES;
+    themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.parentObject.attributes valueForKey:@"theme"]];
+
+  }
+  else
+    hasThemeMusic = NO;
+  
+  //don't interrupt music that may be playing in the background with theme music
+    if ([t playerState] != kBRMediaPlayerStatePlaying && hasThemeMusic){
         
         NSURL *themeUrl = [NSURL URLWithString:themeUrlAsString];
         DLog(@"themeUrl: %@",themeUrl);
@@ -102,7 +119,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 }
 
 - (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo {    
-    if(self.themeMusicPlayer && [pmo.type isEqualToString:PlexMediaObjectTypeShow]) {
+    if(self.themeMusicPlayer && ([pmo.type isEqualToString:PlexMediaObjectTypeShow] || [pmo.type isEqualToString:PlexMediaObjectTypeSeason])) {
         DLog(@"fade out!!!!!!!");
         AVAsset *asset = [self.themeMusicPlayer.currentItem asset];
         NSArray *keys = [NSArray arrayWithObject:@"tracks"];
