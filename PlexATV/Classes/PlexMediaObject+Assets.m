@@ -36,7 +36,7 @@
 - (float)heightForMenuItem {
 	float height;
 	
-	if (self.hasMedia) {
+	if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
 		height = 70.0f;
 	} else {
 		height = 0.0f;
@@ -47,7 +47,7 @@
 - (BRMenuItem *)menuItem {
     BRMenuItem *menuItem = nil;
     
-	if (self.hasMedia) {
+	if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
 		menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
         
 		if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
