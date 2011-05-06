@@ -104,10 +104,6 @@
 - (id)previewControl {
     id preview = nil;
     
-//    preview = [[BRMetadataPreviewControl alloc] init];
-//    [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
-//    [preview setAsset:self.previewAsset];
-    
     preview = [[BRMetadataPreviewControl alloc] init];
     [preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
     [preview setAsset:self.previewAsset];

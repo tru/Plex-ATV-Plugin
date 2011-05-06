@@ -37,6 +37,7 @@
 #import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
 #import "PlexNavigationController.h"
+#import "PlexThemeMusicPlayer.h"
 
 #define LOCAL_DEBUG_ENABLED 1
 
@@ -98,7 +99,7 @@ PlexMediaProvider* __provider = nil;
 }
 
 - (void)wasPopped {
-    [[PlexNavigationController sharedPlexNavigationController] startPlayingThemeMusicIfAppropiate];
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:pmo];
 	[super wasPopped];
 }
 
@@ -139,7 +140,7 @@ PlexMediaProvider* __provider = nil;
 			[self playbackVideoWithOffset:0]; //just start playback from beginning
 		}
 	}
-    [[PlexNavigationController sharedPlexNavigationController] stopPlayingThemeMusicForMediaObject:nil]; //stop the music dead if it's playing
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil]; //stop the music dead if it's playing
 }
 
 -(void)playbackVideoWithOffset:(int)offset {

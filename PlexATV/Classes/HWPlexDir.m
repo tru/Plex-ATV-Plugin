@@ -34,6 +34,7 @@
 #import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "PlexNavigationController.h"
+#import "PlexThemeMusicPlayer.h"
 #import "PlexAudioSubsController.h"
 
 #define LOCAL_DEBUG_ENABLED 1
@@ -100,7 +101,7 @@
 }
 
 - (void)wasPopped {
-    [[PlexNavigationController sharedPlexNavigationController] stopPlayingThemeMusicForMediaObject:self.rootContainer.parentObject];
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:self.rootContainer.parentObject];
 	[super wasPopped];
 }
 
