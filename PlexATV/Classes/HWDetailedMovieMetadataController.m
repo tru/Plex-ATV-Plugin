@@ -132,6 +132,9 @@ typedef enum {
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
+#if LOCAL_DEBUG_ENABLED
+  DLog();
+#endif
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasPushed];
 }

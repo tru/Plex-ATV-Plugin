@@ -23,6 +23,7 @@
 #import "HWDetailedMovieMetadataController.h"
 #import <SMFramework/SMFControllerPasscodeController.h>
 #import "PlexPlaybackController.h"
+#import "PlexMediaObject+Assets.h"
 
 @implementation PlexNavigationController
 @synthesize waitControl;
@@ -255,9 +256,15 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     
     //play theme music if we're entering a tv show
     [self startPlayingThemeMusicIfAppropiate];
-    
-    // ============ media, initiate playback ============
-    if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType] || [@"Track" isEqualToString:aMediaObject.containerType]){
+  // ========== movie, initiate movie pre-play view ============
+  if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType])
+  {
+    PlexPreviewAsset* pma = aMediaObject.previewAsset;
+    NSArray *test = [NSArray arrayWithObject:pma];
+    [self navigateToDetailedMetadataController:test withSelectedIndex:0];
+  }
+    // ============ sound plugin or other type of sound, initiate playback ============
+    else if ([@"Track" isEqualToString:aMediaObject.containerType]){
         return [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];
 	}
     
