@@ -15,7 +15,8 @@
 @property (retain) PlexMediaObject *targetMediaObject;
 @property (retain) BRController *targetController;
 @property (retain) NSString *promptText;
-@property (retain) AVPlayer *themeMusicPlayer;
+@property (retain) AVQueuePlayer *themeMusicPlayer;
+@property (retain) NSURL *currentlyPlayingThemeUrl;
 
 + (PlexNavigationController *)sharedPlexNavigationController;
 
