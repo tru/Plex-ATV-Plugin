@@ -30,6 +30,7 @@
 @synthesize targetController;
 @synthesize promptText;
 @synthesize themeMusicPlayer;
+@synthesize currentlyPlayingThemeUrl;
 
 PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
@@ -85,67 +86,83 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 #pragma mark -
 #pragma mark Theme music methods
 
-- (void)startPlayingThemeMusicIfAppropiate {    
-    BRMediaPlayer *t =[[BRMediaPlayerManager singleton] activeAudioPlayer];
+- (void)startPlayingThemeMusicIfAppropiate {
     BOOL hasThemeMusic = NO;
     NSString *themeUrlAsString;
     
     //let's play theme music both in show view but also in season view, since we in grid mode always go to season view directly
-    if ([self.targetMediaObject.attributes valueForKey:@"theme"] != nil) {
+    if ([self.targetMediaObject.attributes valueForKey:@"theme"] != nil) { //show
         hasThemeMusic = YES;
         themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.attributes valueForKey:@"theme"]];
         
     }
-    else if ([self.targetMediaObject.parentObject.attributes valueForKey:@"theme"] != nil) {
+    else if ([self.targetMediaObject.parentObject.attributes valueForKey:@"theme"] != nil) { //season
         hasThemeMusic = YES;
         themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.parentObject.attributes valueForKey:@"theme"]];
         
     }
+    else if ([self.targetMediaObject.parentObject.parentObject.attributes valueForKey:@"theme"] != nil) { //episode
+        hasThemeMusic = YES;
+        themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.parentObject.parentObject.attributes valueForKey:@"theme"]];
+        
+    }
     else
         hasThemeMusic = NO;
-    
-    //don't interrupt music that may be playing in the background with theme music
-    if ([t playerState] != kBRMediaPlayerStatePlaying && hasThemeMusic){
-        
+
+    if (hasThemeMusic) {
         NSURL *themeUrl = [NSURL URLWithString:themeUrlAsString];
-        
-        self.themeMusicPlayer = [AVPlayer playerWithURL:themeUrl];
-        [self.themeMusicPlayer pause];
-        [self.themeMusicPlayer play];
+        DLog(@"[%@] vs [%@]", themeUrl, self.currentlyPlayingThemeUrl);
+        if (!self.themeMusicPlayer) {
+            self.currentlyPlayingThemeUrl = themeUrl;
+            self.themeMusicPlayer = [AVQueuePlayer playerWithURL:themeUrl];
+            [self.themeMusicPlayer setActionAtItemEnd:AVPlayerActionAtItemEndAdvance];
+            [self.themeMusicPlayer pause];
+            [self.themeMusicPlayer play];
+        } else if (![self.currentlyPlayingThemeUrl isEqual:themeUrl]) {
+            self.currentlyPlayingThemeUrl = themeUrl;
+            AVPlayerItem *newItem = [AVPlayerItem playerItemWithURL:self.currentlyPlayingThemeUrl];
+            [self.themeMusicPlayer insertItem:newItem afterItem:nil];
+            DLog(@"rate [%f]", [self.themeMusicPlayer rate]);
+            if ([self.themeMusicPlayer rate] == 0) {
+                [self.themeMusicPlayer pause];
+                [self.themeMusicPlayer play];
+            }
+        } else {
+            //url is same, so music must be same, so don't do anything
+        }
     }
 }
 
-- (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo {    
-    if(self.themeMusicPlayer && ([pmo.type isEqualToString:PlexMediaObjectTypeShow] || [pmo.type isEqualToString:PlexMediaObjectTypeSeason])) {
+- (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo {
+    if(self.themeMusicPlayer && ([pmo.type isEqualToString:PlexMediaObjectTypeShow] || pmo == nil)) {
+        self.currentlyPlayingThemeUrl = nil;
         AVAsset *asset = [self.themeMusicPlayer.currentItem asset];
         NSArray *keys = [NSArray arrayWithObject:@"tracks"];
         [asset loadValuesAsynchronouslyForKeys:keys completionHandler:^(void) {
             NSError *error = nil;
             // get the status to see if the asset was loaded
             AVKeyValueStatus trackStatus = [asset statusOfValueForKey:@"tracks" error:&error];
-            CMTime currentTime;
             switch (trackStatus) {
                 case AVKeyValueStatusLoaded: {
                     if(self.themeMusicPlayer) {
                         NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-                        NSMutableArray * allAudioParams = [NSMutableArray array];
+                        NSMutableArray *allAudioParams = [NSMutableArray array];
+                        
+                        float fadeOutSeconds = 1.0f;
                         for (AVAssetTrack *t in tracks) {
                             AVMutableAudioMixInputParameters *params =[AVMutableAudioMixInputParameters audioMixInputParameters];
                             
-                            float fadeOutSeconds = 2.0f;
-                            
-                            currentTime = [self.themeMusicPlayer currentTime];
-                            
-                            [params setVolumeRampFromStartVolume:1.0 toEndVolume:0.0 timeRange:CMTimeRangeMake(currentTime, CMTimeMakeWithSeconds(fadeOutSeconds, 1))];
+                            [params setVolumeRampFromStartVolume:1.0 toEndVolume:0.0 timeRange:CMTimeRangeMake(kCMTimeZero, CMTimeMakeWithSeconds(fadeOutSeconds, 1))];
                             
                             [params setTrackID:[t trackID]];
                             [allAudioParams addObject:params];
                         }
-                        AVMutableAudioMix * zeromix = [AVMutableAudioMix audioMix];
+                        AVMutableAudioMix *zeromix = [AVMutableAudioMix audioMix];
                         [zeromix setInputParameters:allAudioParams];
                         
                         [self.themeMusicPlayer.currentItem setAudioMix:zeromix];
-                        DLog(@"Fading theme music out");
+                        //hack. we want the fade out finishing to pause the content
+                        [self.themeMusicPlayer performSelector:@selector(advanceToNextItem) withObject:nil afterDelay:fadeOutSeconds+0.3];
                     }
                     break;
                 }
