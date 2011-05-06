@@ -213,8 +213,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		//================== add all it's categories to our appliances list ==================
 		//not using machine.request.rootLevel.directories because it might not work,
 		//instead get the two arrays seperately and merge
-		NSMutableArray *allDirectories = [NSMutableArray arrayWithArray:machine.rootLevel.directories];
-		[allDirectories addObjectsFromArray:machine.librarySections.directories];
+		NSMutableArray *allDirectories = [NSMutableArray arrayWithArray:machine.librarySections.directories];
+		//[allDirectories addObjectsFromArray:machine.rootLevel.directories];
 		
 		//for (PlexMediaObject *pmo in allDirectories) {
         int totalItems = [allDirectories count] + 2; //channels + search

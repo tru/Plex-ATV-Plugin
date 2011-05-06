@@ -86,32 +86,29 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 #pragma mark -
 #pragma mark Theme music methods
 
-- (void)startPlayingThemeMusicIfAppropiate {
-    DLog(@"media object: [%@]", self.targetMediaObject);
-    
+- (void)startPlayingThemeMusicIfAppropiate {    
     BRMediaPlayer *t =[[BRMediaPlayerManager singleton] activeAudioPlayer];
-  BOOL hasThemeMusic = NO;
-  NSString *themeUrlAsString;
-  
-  //let's play theme music both in show view but also in season view, since we in grid mode always go to season view directly
-  if ([self.targetMediaObject.attributes valueForKey:@"theme"] != nil) {
-    hasThemeMusic = YES;
-    themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.attributes valueForKey:@"theme"]];
-
-  }
-  else if ([self.targetMediaObject.parentObject.attributes valueForKey:@"theme"] != nil) {
-    hasThemeMusic = YES;
-    themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.parentObject.attributes valueForKey:@"theme"]];
-
-  }
-  else
-    hasThemeMusic = NO;
-  
-  //don't interrupt music that may be playing in the background with theme music
+    BOOL hasThemeMusic = NO;
+    NSString *themeUrlAsString;
+    
+    //let's play theme music both in show view but also in season view, since we in grid mode always go to season view directly
+    if ([self.targetMediaObject.attributes valueForKey:@"theme"] != nil) {
+        hasThemeMusic = YES;
+        themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.attributes valueForKey:@"theme"]];
+        
+    }
+    else if ([self.targetMediaObject.parentObject.attributes valueForKey:@"theme"] != nil) {
+        hasThemeMusic = YES;
+        themeUrlAsString = [self.targetMediaObject.request buildAbsoluteKey: [self.targetMediaObject.parentObject.attributes valueForKey:@"theme"]];
+        
+    }
+    else
+        hasThemeMusic = NO;
+    
+    //don't interrupt music that may be playing in the background with theme music
     if ([t playerState] != kBRMediaPlayerStatePlaying && hasThemeMusic){
         
         NSURL *themeUrl = [NSURL URLWithString:themeUrlAsString];
-        DLog(@"themeUrl: %@",themeUrl);
         
         self.themeMusicPlayer = [AVPlayer playerWithURL:themeUrl];
         [self.themeMusicPlayer pause];
@@ -121,7 +118,6 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
 - (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo {    
     if(self.themeMusicPlayer && ([pmo.type isEqualToString:PlexMediaObjectTypeShow] || [pmo.type isEqualToString:PlexMediaObjectTypeSeason])) {
-        DLog(@"fade out!!!!!!!");
         AVAsset *asset = [self.themeMusicPlayer.currentItem asset];
         NSArray *keys = [NSArray arrayWithObject:@"tracks"];
         [asset loadValuesAsynchronouslyForKeys:keys completionHandler:^(void) {
@@ -141,7 +137,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
                             
                             currentTime = [self.themeMusicPlayer currentTime];
                             
-                            [params setVolumeRampFromStartVolume: 1.0 toEndVolume: 0.0 timeRange: CMTimeRangeMake(currentTime, CMTimeMakeWithSeconds(fadeOutSeconds, 1))];
+                            [params setVolumeRampFromStartVolume:1.0 toEndVolume:0.0 timeRange:CMTimeRangeMake(currentTime, CMTimeMakeWithSeconds(fadeOutSeconds, 1))];
                             
                             [params setTrackID:[t trackID]];
                             [allAudioParams addObject:params];
@@ -150,6 +146,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
                         [zeromix setInputParameters:allAudioParams];
                         
                         [self.themeMusicPlayer.currentItem setAudioMix:zeromix];
+                        DLog(@"Fading theme music out");
                     }
                     break;
                 }
