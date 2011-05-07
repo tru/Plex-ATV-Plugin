@@ -12,7 +12,7 @@
 @end
 
 @interface Plex_SMFMoviePreviewController : SMFMoviePreviewController {
-    
+    BRControl *_summaryControlBackground;
 }
 @property(retain) NSObject<Plex_SMFMoviePreviewControllerDatasource> *datasource;
 

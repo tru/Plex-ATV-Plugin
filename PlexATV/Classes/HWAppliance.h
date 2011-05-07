@@ -20,6 +20,4 @@
 @property(nonatomic, readonly, retain) id topShelfController;
 @property(retain) NSMutableArray *applianceCat;
 
-- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory;
-- (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;
 @end

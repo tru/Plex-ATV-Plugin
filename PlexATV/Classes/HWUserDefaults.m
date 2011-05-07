@@ -7,6 +7,7 @@
 
 #import "HWUserDefaults.h"
 #import <plex-oss/PlexClientCapabilities.h>
+#import <plex-oss/PlexRequest + Security.h>
 #import "Constants.h"
 
 
@@ -35,14 +36,20 @@
 
 - (void)_setDefaults {}
 
-+ (void)setupPlexClientCapabilities {
-  DLog(@"setting up client caps");
++ (void)setupPlexClient {
+  DLog(@"registering ourselves with the PMS");
+  [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8"];
+  
+  DLog(@"setting up client caps");  
   BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableAC3];
   BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableDTS];  
   
+  //reset everything, we'll redo all that we need below
+  [[PlexClientCapabilities sharedPlexClientCapabilities] resetCaps];
+  
   if (wantsAC3) {
     DLog(@"wants AC3");
-    [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
+    [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_7_1Surround];
   } else {
     DLog(@"don't want AC3");
     [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];
@@ -62,7 +69,7 @@
   [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
   [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
   [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
-    
+  
 }
 
 #pragma mark -
@@ -75,10 +82,15 @@
         _preferences = [[SMFPreferences alloc] initWithPersistentDomainName:PreferencesDomain];		
 		[_preferences registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
 										[NSArray array], PreferencesMachinesExcludedFromServerList,
-										@"Low", PreferencesQualitySetting,
-										@"Grid", PreferencesViewTypeSetting,
+										@"Good", PreferencesQualitySetting,
+										@"List", PreferencesViewTypeSetting,
+                                        NO, PreferencesViewDisableFanartInDetailedMetadataView,
 										NO, PreferencesViewEnableSkipFilteringOptionsMenu,
 										NO, PreferencesViewDisablePosterZoomingInListView,
+                                        NO, PreferencesAudioEnableAC3,
+                                        NO, PreferencesAudioEnableDTS,
+                                        0, PreferencesSecurityPasscode,
+                                        NO, PreferencesSettingsEnableLock,
 										nil]];
     }
     return _preferences;

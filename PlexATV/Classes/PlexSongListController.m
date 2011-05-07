@@ -42,7 +42,7 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 
 
-#import "SongListController.h"
+#import "PlexSongListController.h"
 #import "PlexMediaProvider.h"
 #import "PlexSongAsset.h"
 #import "PlexPreviewAsset.h"
@@ -50,8 +50,9 @@
 #import <plex-oss/PlexMedia.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexRequest.h>
+#import "PlexNavigationController.h"
 
-@implementation SongListController
+@implementation PlexSongListController
 
 @synthesize songs;
 @synthesize rootContainer;
@@ -148,12 +149,12 @@
 	if(row == 0) {
 		BRMenuItem * result = [[[BRMenuItem alloc] init] autorelease];
 		[result setText:@"Play all" withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		[result addAccessoryOfType:0];
+		[result addAccessoryOfType:12];
 		return result;
 	} else if (row == 1) {
 		BRMenuItem * result = [[[BRMenuItem alloc] init] autorelease];
 		[result setText:@"Shuffle" withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		[result addAccessoryOfType:0];
+		[result addAccessoryOfType:2];
 		return result;
 	} else {
 		PlexSongAsset *song = [self.songs objectAtIndex:row-2];
@@ -179,9 +180,7 @@
 	} else {
 		PlexMediaObject *mediaObj = [rootContainer.directories objectAtIndex:selected-2];
 		if ([@"album" isEqualToString:mediaObj.type]) {
-			SongListController *songlist = [[SongListController alloc] initWithPlexContainer:[mediaObj contents] title:mediaObj.name];
-			[[[BRApplicationStackManager singleton] stack] pushController:songlist];
-			[songlist autorelease];      
+			[[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:mediaObj];    
 		}
 		else {
 			// Play selected song

@@ -36,6 +36,8 @@
 #import "PlexMediaAssetOld.h"
 #import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
+#import "PlexNavigationController.h"
+#import "PlexThemeMusicPlayer.h"
 
 #define LOCAL_DEBUG_ENABLED 1
 
@@ -43,6 +45,7 @@
 PlexMediaProvider* __provider = nil;
 
 #define ResumeOptionDialog @"ResumeOptionDialog"
+#define StackOptionDialog @"StackOptionDialog"
 
 #define kStartTrackingProgressTime 120.0f
 #define kEndTrackingProgressPercentageCompleted 0.95f
@@ -96,6 +99,7 @@ PlexMediaProvider* __provider = nil;
 }
 
 - (void)wasPopped {
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:pmo];
 	[super wasPopped];
 }
 
@@ -121,7 +125,7 @@ PlexMediaProvider* __provider = nil;
 		DLog(@"viewOffset: %@", [pmo.attributes valueForKey:@"viewOffset"]);
 		
         NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
-
+        
         float totalOffsetInSeconds = [viewOffset intValue] / 1000.0f;
         //if progress is less than start tracking time, don't even bother to ask if video should be resumed.
         if (totalOffsetInSeconds < kStartTrackingProgressTime) {
@@ -130,37 +134,13 @@ PlexMediaProvider* __provider = nil;
         
 		//we have offset, ie. already watched a part of the movie, show a dialog asking if you want to resume or start over
 		if ([viewOffset intValue] > 0) {
-			NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
-			
-			BROptionDialog *option = [[BROptionDialog alloc] init];
-			[option setIdentifier:ResumeOptionDialog];
-			
-			[option setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                 viewOffset, @"viewOffset", 
-                                 pmo, @"mediaObject",
-                                 nil]];
-			[option setPrimaryInfoText:@"You have already watched a part of this video.\nWould you like to continue where you left off, or start from beginning?"];
-			[option setSecondaryInfoText:pmo.name];
-			
-			int offsetInHrs = [viewOffset intValue] / (1000*60*60);
-			int offsetInMins = ([viewOffset intValue] % (1000*60*60)) / (1000*60);
-			int offsetInSecs = (([viewOffset intValue] % (1000*60*60)) % (1000*60)) / 1000;
-			
-			if (offsetInHrs > 0)
-				[option addOptionText:[NSString stringWithFormat:@"Resume from %d hrs %d mins %d secs", offsetInHrs, offsetInMins, offsetInSecs]];
-			else
-				[option addOptionText:[NSString stringWithFormat:@"Resume from %d mins %d secs", offsetInMins, offsetInSecs]];
-			
-			[option addOptionText:@"Play from the beginning"];
-			[option addOptionText:@"Go back"];
-			[option setActionSelector:@selector(optionSelected:) target:self];
-			[[[BRApplicationStackManager singleton] stack] pushController:option];
-			[option release];
+			[self showResumeDialog];
 		}
 		else {
 			[self playbackVideoWithOffset:0]; //just start playback from beginning
 		}
 	}
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil]; //stop the music dead if it's playing
 }
 
 -(void)playbackVideoWithOffset:(int)offset {
@@ -177,23 +157,13 @@ PlexMediaProvider* __provider = nil;
 	if ([qualitySetting isEqualToString:@"Good"]) {
 		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
 	} else 	if ([qualitySetting isEqualToString:@"Best"]) {
-		streamQuality = [PlexStreamingQualityDescriptor quality1080pHigh];
+		streamQuality = [pmo.request bestQuality];
 	} else { //medium (default)
 		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
 	}
 	pmo.request.machine.streamQuality = streamQuality;
 	
-	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);
-	
-	/*
-	 //player get's confused if we're running a transcoder already (tried playing and failed on ATV, transcoder still running)
-	 if ([pmo.request transcoderRunning]) {
-	 [pmo.request stopTranscoder];
-	 [NSThread sleepForTimeInterval:3.0]; //give the PMS chance to kill transcoder, since we're gonna start a new one right away
-	 }
-	 */
-	
-	
+	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
 	//DLog(@"%@", pmo.request.machine.capabilities.qualities);
 	NSURL* mediaURL = [pmo mediaURL];
@@ -202,7 +172,7 @@ PlexMediaProvider* __provider = nil;
 	
 	BOOL didTimeOut = NO;
 #warning what cache policy should we use??
-    [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageNotAllowed];
+    [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageAllowedInMemoryOnly];
 	
 	
 	
@@ -221,7 +191,7 @@ PlexMediaProvider* __provider = nil;
 	
 	BRBaseMediaAsset* pma = nil;
 	if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.1"]){
-		pma = [[PlexMediaAssetOld alloc] initWithURL:mediaURL mediaProvider:__provider mediaObject:pmo];
+		pma = [[PlexMediaAssetOld alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
 	} else {
 		pma = [[PlexMediaAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
 	}
@@ -252,10 +222,6 @@ PlexMediaProvider* __provider = nil;
     
     //we need all the memory we can spare so we don't get killed by the OS
 	[pma release];
-    //[pmo.thumb release];      <== cannot be released cause it will crash when list view initiates playback
-    //[pmo.art release];                                                "
-    //[pmo.banner release];                                             "
-    //[pmo.parentObject release]; <== cannot be released cause it will crash when items view status is changed
     
     //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
@@ -387,6 +353,38 @@ PlexMediaProvider* __provider = nil;
     }
     
 }
+
+#pragma mark -
+#pragma mark BROptionDialog
+- (void)showResumeDialog {
+    NSNumber *viewOffset = [NSNumber numberWithInt:[[pmo.attributes valueForKey:@"viewOffset"] intValue]];
+    
+    BROptionDialog *option = [[BROptionDialog alloc] init];
+    [option setIdentifier:ResumeOptionDialog];
+    
+    [option setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                         viewOffset, @"viewOffset", 
+                         pmo, @"mediaObject",
+                         nil]];
+    [option setPrimaryInfoText:@"You have already watched a part of this video.\nWould you like to continue where you left off, or start from beginning?"];
+    [option setSecondaryInfoText:pmo.name];
+    
+    int offsetInHrs = [viewOffset intValue] / (1000*60*60);
+    int offsetInMins = ([viewOffset intValue] % (1000*60*60)) / (1000*60);
+    int offsetInSecs = (([viewOffset intValue] % (1000*60*60)) % (1000*60)) / 1000;
+    
+    if (offsetInHrs > 0)
+        [option addOptionText:[NSString stringWithFormat:@"Resume from %d hrs %d mins %d secs", offsetInHrs, offsetInMins, offsetInSecs]];
+    else
+        [option addOptionText:[NSString stringWithFormat:@"Resume from %d mins %d secs", offsetInMins, offsetInSecs]];
+    
+    [option addOptionText:@"Play from the beginning"];
+    [option addOptionText:@"Go back"];
+    [option setActionSelector:@selector(optionSelected:) target:self];
+    [[[BRApplicationStackManager singleton] stack] pushController:option];
+    [option release];
+}
+
 
 #pragma mark -
 #pragma mark BROptionDialog handler

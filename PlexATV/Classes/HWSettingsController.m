@@ -17,19 +17,21 @@
 #import "HWServersController.h"
 #import "PlexViewSettingsController.h"
 #import "PlexAudioSettingsController.h"
+#import "PlexSecuritySettingsController.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.7.1 RC2"
+#define PlexPluginVersion @"0.0.8.0.3"
 
-#define ServersIndex 0
-#define QualitySettingIndex 1
-#define ViewSettingsIndex 2
-#define AudioSettingsIndex 3
-#define PluginVersionNumberIndex 4
+#define ServersIndex                0
+#define QualitySettingIndex         1
+#define ViewSettingsIndex           2
+#define AudioSettingsIndex          3
+#define SecuritySettingsIndex       4
+#define PluginVersionNumberIndex    5
 
 
 #pragma mark -
@@ -47,6 +49,10 @@
 
 - (void)dealloc {
 	[super dealloc];	
+}
+
+- (NSString *)description {
+    return @"Plex Settings";
 }
 
 #pragma mark -
@@ -108,6 +114,12 @@
 	SMFMenuItem *audioSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[audioSettingsMenuItem setTitle:@"Audio settings"];
 	[_items addObject:audioSettingsMenuItem];
+    
+    
+    // =========== security settings ===========
+	SMFMenuItem *securitySettingsMenuItem = [SMFMenuItem folderMenuItem];
+	[securitySettingsMenuItem setTitle:@"Security settings"];
+	[_items addObject:securitySettingsMenuItem];
 	
     
 	// =========== version number ===========
@@ -121,15 +133,15 @@
 	
     
 	//this code can be used to find all the accessory types
-    //	for (int i = 0; i<32; i++) {
-    //		BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
-    //		[tempSettingMenuItem addAccessoryOfType:i];
-    //		
-    //		NSString *tempSettingTitle = [[NSString alloc] initWithFormat:@"temp %d", i];
-    //		[tempSettingMenuItem setText:tempSettingTitle withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-    //		[tempSettingTitle release];
-    //		[_items addObject:tempSettingMenuItem];
-    //	}
+//    	for (int i = 0; i<32; i++) {
+//    		BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
+//    		[tempSettingMenuItem addAccessoryOfType:i];
+//    		
+//    		NSString *tempSettingTitle = [[NSString alloc] initWithFormat:@"temp %d", i];
+//    		[tempSettingMenuItem setText:tempSettingTitle withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
+//    		[tempSettingTitle release];
+//    		[_items addObject:tempSettingMenuItem];
+//    	}
 }
 
 #pragma mark -
@@ -160,19 +172,25 @@
 			break;
 		}
 		case ViewSettingsIndex: {
-			// =========== advanced settings ===========
+			// =========== view settings ===========
 			PlexViewSettingsController* menuController = [[PlexViewSettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController autorelease];
+			[menuController release];
 			break;
 		}
         case AudioSettingsIndex: {
 			// =========== audio settings ===========
 			PlexAudioSettingsController* menuController = [[PlexAudioSettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController autorelease];
+			[menuController release];
 			break;
-            
+        }
+        case SecuritySettingsIndex: {
+			// =========== security settings ===========
+			PlexSecuritySettingsController* menuController = [[PlexSecuritySettingsController alloc] init];
+			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+			[menuController release];
+			break;
         }
 		case PluginVersionNumberIndex: {
 			//do nothing
@@ -210,6 +228,12 @@
 			// =========== audio settings ===========
 			[asset setTitle:@"Modify audio output settings"];
 			[asset setSummary:@"Setup the kind of multi-channel audio you want to output"];
+			break;
+		}
+		case SecuritySettingsIndex: {
+			// =========== security settings ===========
+			[asset setTitle:@"Modify security settings"];
+			[asset setSummary:@"Change passcode and activate security measures"];
 			break;
 		}
 		case PluginVersionNumberIndex: {

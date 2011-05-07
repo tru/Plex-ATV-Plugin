@@ -73,7 +73,7 @@ enum
 	
   // types handled by MEITunesMediaProvider
   [types addObject: [BRMediaType movie]];
-  [types addObject: [BRMediaType streamingVideo]];
+  [types addObject: [BRMediaType sedonaMovie]];
   [types addObject: [BRMediaType TVShow]];
   [types addObject: [BRMediaType song]];
 	

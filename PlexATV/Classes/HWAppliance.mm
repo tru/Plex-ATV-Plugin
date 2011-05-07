@@ -1,5 +1,3 @@
-#define LOCAL_DEBUG_ENABLED 0
-
 #import "HWAppliance.h"
 #import "HWPlexDir.h"
 #import "HWBasicMenu.h"
@@ -8,13 +6,13 @@
 #import <plex-oss/PlexRequest + Security.h>
 #import <plex-oss/MachineManager.h>
 #import <plex-oss/PlexMediaContainer.h>
+#import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
-#import "HWMediaGridController.h"
-#import "HWTVShowsController.h"
+#import "PlexNavigationController.h"
 #import "PlexTopShelfController.h"
-#import "PlexPreviewAsset.h"
-#import "PlexChannelsController.h"
+
+#define LOCAL_DEBUG_ENABLED 1
 
 #define SERVER_LIST_ID @"hwServerList"
 #define SETTINGS_ID @"hwSettings"
@@ -31,6 +29,39 @@ NSString * const MachineNameKey = @"PlexMachineName";
 @end
 
 
+
+@implementation BRTopShelfView (specialAdditions)
+- (BRImageControl *)productImage {
+	return MSHookIvar<BRImageControl *>(self, "_productImage");
+}
+@end
+
+
+@interface TopShelfController : NSObject {}
+- (void)selectCategoryWithIdentifier:(id)identifier;
+- (id)topShelfView;
+- (void)refresh;
+@end
+
+@implementation TopShelfController
+- (void)initWithApplianceController:(id)applianceController {}
+- (void)selectCategoryWithIdentifier:(id)identifier {}
+- (void)refresh{}
+
+
+- (BRTopShelfView *)topShelfView {
+	BRTopShelfView *topShelf = [[BRTopShelfView alloc] init];
+	BRImageControl *imageControl = [topShelf productImage];
+	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWUserDefaults class]] pathForResource:@"PlexLogo" ofType:@"png"]];
+	[imageControl setImage:theImage];
+	
+	return [topShelf autorelease];
+}
+@end
+
+
+#pragma mark -
+#pragma mark PlexAppliance
 @implementation PlexAppliance
 @synthesize topShelfController = _topShelfController;
 @synthesize applianceCat = _applianceCategories;
@@ -50,7 +81,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		//instrumentObjcMessageSends(YES);
 		
         //tell PMS what kind of codecs and media we can play
-        [HWUserDefaults setupPlexClientCapabilities];
+        [HWUserDefaults setupPlexClient];
 		
 		DLog(@"==================== plex client starting up ====================");
         
@@ -68,14 +99,15 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 }
 
 - (id)controllerForIdentifier:(id)identifier args:(id)args {
-	id menuController = nil;
-	
+    PlexNavigationController *navigationController = [PlexNavigationController sharedPlexNavigationController];
+    
 	if ([SERVER_LIST_ID isEqualToString:identifier]) {
-		menuController = [[HWBasicMenu alloc] init];
+		[navigationController navigateToServerList];
+        
 	} else if ([SETTINGS_ID isEqualToString:identifier]) {
-		HWSettingsController* hwsc = [[HWSettingsController alloc] init];
-		hwsc.topLevelController = self;
-		menuController = hwsc;
+        [navigationController navigateToSettingsWithTopLevelController:self];
+		return nil;
+        
 	} else {
 		// ====== get the name of the category and identifier of the machine selected ======
 		NSDictionary *compoundIdentifier = (NSDictionary *)identifier;
@@ -88,82 +120,32 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		Machine *machineWhoCategoryBelongsTo = [[MachineManager sharedMachineManager] machineForMachineID:machineId];
 		if (!machineWhoCategoryBelongsTo) return nil;
 		
-		// ====== find the category selected ======		
-		NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
-		NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
-		NSArray *matchingCategories = [categories filteredArrayUsingPredicate:categoryPredicate];
-		if ([matchingCategories count] != 1) {
-			DLog(@"ERROR: incorrect number of category matches to selected appliance with name [%@]", categoryName);
-			return nil;
-		}
-		
-		//HAZAA! we found it! 
-		PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
-		DLog(@"matchingCategory: %@", [matchingCategory type]);
-        
-        //determine the user selected view setting
-        NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-        if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
-            if (matchingCategory.isMovie) {
-                menuController = [self newMoviesController:[matchingCategory contents]];
-            } else if (matchingCategory.isTVShow) {
-                menuController = [self newTVShowsController:[matchingCategory contents]];
-            } else {
-                menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
-            }      
+		// ====== find the category selected ======
+        if ([categoryName isEqualToString:@"Channels"]) {
+//used for debug            
+//            [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
+//            return nil;
+            [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
+            
+        } else if ([categoryName isEqualToString:@"Search"]) {
+            [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
+            
         } else {
-            menuController = [[HWPlexDir alloc] initWithRootContainer:[matchingCategory contents]];
+            NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
+            NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
+            NSArray *matchingCategories = [categories filteredArrayUsingPredicate:categoryPredicate];
+            if ([matchingCategories count] != 1) {
+                DLog(@"ERROR: incorrect number of category matches to selected appliance with name [%@]", categoryName);
+                return nil;
+            }
+            
+            //HAZAA! we found it! 
+            PlexMediaObject* matchingCategory = [matchingCategories objectAtIndex:0];
+            [navigationController navigateToObjectsContents:matchingCategory];
+            return nil;
         }
-        
-	}    
-	return [menuController autorelease];
-}
-
-- (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory {
-	BRController *menuController = nil;
-	PlexMediaObject *allTvShows=nil;
-	if (tvShowCategory.directories > 0) {
-		NSUInteger i, count = [tvShowCategory.directories count];
-		for (i = 0; i < count; i++) {
-			PlexMediaObject * obj = [tvShowCategory.directories objectAtIndex:i];
-			NSString *key = [obj.attributes objectForKey:@"key"];
-			DLog(@"obj_type: %@",key);
-			if ([key isEqualToString:@"all"]) {
-				allTvShows = obj;
-				break;
-			}
-		}
 	}
-	
-	if (allTvShows) {
-		menuController = [[HWTVShowsController alloc] initWithPlexAllTVShows:[allTvShows contents]];
-	}
-	return menuController;
-}
-
-- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory {
-	BRController *menuController = nil;
-	PlexMediaObject *recent=nil;
-	PlexMediaObject *allMovies=nil;
-    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
-	if (movieCategory.directories > 0) {
-		NSUInteger i, count = [movieCategory.directories count];
-		for (i = 0; i < count; i++) {
-			PlexMediaObject * obj = [movieCategory.directories objectAtIndex:i];
-			NSString *key = [obj.attributes objectForKey:@"key"];
-			DLog(@"obj_type: %@",key);
-			if ([key isEqualToString:@"all"])
-				allMovies = obj;
-			else if ([key isEqualToString:@"recentlyAdded"])
-				recent = obj;
-		}
-	}
-	
-	if (recent && allMovies){
-		DLog(@"pushing shelfController");
-		menuController = [[HWMediaGridController alloc] initWithPlexAllMovies:[allMovies contents] andRecentMovies:[recent contents]];
-	}
-	return menuController;
+	return nil;
 }
 
 - (id)applianceCategories {
@@ -180,7 +162,11 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	BRApplianceCategory *appliance;
 	for (int i = 0; i<[self.applianceCat count]; i++) {
 		appliance = [self.applianceCat objectAtIndex:i];
-		[appliance setPreferredOrder:i];
+        if ([appliance.name isEqualToString:@"Search"]) {
+            [appliance setPreferredOrder:0];
+        } else {
+            [appliance setPreferredOrder:i+1]; //+1 so we reserve 0 for search
+        }
 	}
 	//other servers appliance category, set it to the second to last
 	[otherServersApplianceCategory setPreferredOrder:[self.applianceCat count]];
@@ -230,19 +216,23 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		//================== add all it's categories to our appliances list ==================
 		//not using machine.request.rootLevel.directories because it might not work,
 		//instead get the two arrays seperately and merge
-		NSMutableArray *allDirectories = [NSMutableArray arrayWithArray:machine.rootLevel.directories];
-		[allDirectories addObjectsFromArray:machine.librarySections.directories];
+		NSMutableArray *allDirectories = [NSMutableArray arrayWithArray:machine.librarySections.directories];
+		//[allDirectories addObjectsFromArray:machine.rootLevel.directories];
 		
 		//for (PlexMediaObject *pmo in allDirectories) {
-        for (int i=0; i<=[allDirectories count]; i++) {
+        int totalItems = [allDirectories count] + 2; //channels + search
+        for (int i=0; i<totalItems; i++) {
             NSString *categoryName = nil;
+            
             if (i == [allDirectories count]) {
                 //add special channels appliance
                 categoryName = @"Channels";
+            } else if (i == [allDirectories count]+1) {
+                //add special search appliance
+                categoryName = @"Search";
             } else {
                 //add all others
                 PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
-                
                 categoryName = [pmo.name copy];
             }
             
@@ -306,32 +296,30 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		PlexMediaObject *pmo = [mediaObjects objectAtIndex:i];
 		
 		//this code crashes when you get the shelf scrolling vv
-		NSURL* mediaURL = [pmo mediaStreamURL];
-		PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
-		[newAssets addObject:pma];
-		[pma release];
+//		PlexPreviewAsset* pma = pmo.previewAsset;
+//		[newAssets addObject:pma];
 		//this code crashes when you get the shelf scrolling ^^
 		
 		
 		//this code works when you get the shelf scrolling vv
-		//		NSString *thumbURL = nil;
-		//		
-		//		if ([pmo.attributes valueForKey:@"thumb"] != nil){
-		//			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"thumb"]];
-		//		}
-		//		else if ([pmo.attributes valueForKey:@"art"] != nil) {
-		//			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
-		//		}
-		//		
-		//		NSURL* turl = [pmo.request pathForScaledImage:thumbURL ofSize:CGSizeMake(512., 512.)];
-		//		
-		//		SMFBaseAsset *asset = [SMFBaseAsset asset];
-		//		[asset setCoverArt:[BRImage imageWithURL:turl]];
-		//		[asset setTitle:pmo.name];
-		//		[newAssets addObject:asset];
+		NSString *thumbURL = nil;
+		
+		if ([pmo.attributes valueForKey:@"thumb"] != nil){
+			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"thumb"]];
+		}
+		else if ([pmo.attributes valueForKey:@"art"] != nil) {
+			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
+		}
+		
+		NSURL* turl = [pmo.request pathForScaledImage:thumbURL ofSize:CGSizeMake(512., 512.)];
+		
+		SMFBaseAsset *asset = [SMFBaseAsset asset];
+		[asset setCoverArt:[BRImage imageWithURL:turl]];
+		[asset setTitle:pmo.name];
+		[newAssets addObject:asset];
 		//this code works when you get the shelf scrolling ^^
 	}
-	//NSLog(@"converted %d assets: %@", [newAssets count], newAssets);
+	DLog(@"converted %d assets: %@", [newAssets count], newAssets);
 	return newAssets;
 }
 
@@ -416,6 +404,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	} 
 	
 	if (machinesRecentlyAddedWasUpdated) {
+        DLog(@"*****************RECENTLY UPDATED!!!!*****************");
 		//update the shelf
 		if (!_topShelfController.assets) {
 			_topShelfController.assets = [self mediaAssetsForPlexMediaObjects:[[m recentlyAddedMedia] directories]];

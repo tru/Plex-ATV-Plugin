@@ -1,8 +1,8 @@
 //
-//  PlexViewSettingsController.h
+//  PlexSecuritySettingsController.h
 //  atvTwo
 //
-//  Created by ccjensen on 10/01/2011.
+//  Created by ccjensen on 24/04/2011.
 //
 //  Inspired by 
 //
@@ -14,7 +14,7 @@
 //
 
 
-@interface PlexViewSettingsController : SMFMediaMenuController {}
+@interface PlexSecuritySettingsController : SMFMediaMenuController <SMFPasscodeControllerDelegate> {}
 - (void)setupList;
 
 @end

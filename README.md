@@ -1,10 +1,9 @@
 # Plex Apple TV2G Client
 ## CREDIT TO
-Original project author, and libPLEX-OSS library creator: quiqueck
-
-Main project developers: b0bben and ccjensen
-
-Apple TV guru and project consultant: tomcool420
+_Original project author, and libPLEX-OSS library creator:_ quiqueck  
+_Main project developers:_ b0bben and ccjensen  
+_Apple TV guru and project consultant:_ tomcool420  
+_Contributors:_ jcoene
 
 ## PREPARING
 1. You need to install the "beigelist" on your Apple TV (if you installed the Plex-Plugin using apt, it is already there )
@@ -36,6 +35,23 @@ Summary: you will need to download theos, dpkg, gnutar. Create a new symlink to 
 
 Make sure to install the new version on your Apple TV.
 
+_we have got feedback from some of our users that even after following the instructions, they get some errors when running `make clean package`. Here are a few tips:_
+
+
+  * __Your current SYSROOT, "/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk", appears to be missing.__  
+    Edit the following files:  
+    `Plex-ATV-Plugin/_contrib/SMFramework/Makefile`  
+    `Plex-ATV-Plugin/_contrib/SMFramework/eventcatcher/Makefile`  
+    `Plex-ATV-Plugin/_contrib/SMFramework/SMFHelper/Makefile`  
+    Replacing the line with `SDKVERSION=4.2` with `SDKVERSION=4.3` (or whatever version of the iPhone SDK you have installed). The ATV2G Plex plugin team are currently using 4.3.
+
+  * __SMFScreenCapture.m:18:32: error: IOSurface/IOSurface.h: No such file or directory__  
+    Edit the following file:  
+    `SMFramework/SMFScreenCapture.m`  
+    Either comment out (prepend each line with double forward slash), or remove the contents of the file (but don't remove the file!).
+    
+  * __Tweak.xm:247: error: ‘MSHookIvar’ was not declared in this scope__  
+  You need to replace the substrate.h file in `$THEOS/include` with the one from `Plex-ATV-Plugin/_contrib/ATV2Includes`
 
 ### Plex Apple TV Client
 1. Open PlexATV/atvTwo.xcodeproj

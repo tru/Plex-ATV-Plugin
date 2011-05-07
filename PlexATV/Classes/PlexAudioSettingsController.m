@@ -1,5 +1,5 @@
 //
-//  HWAdvancedSettingsController.m
+//  PlexAudioSettingsController.m
 //  atvTwo
 //
 //  Created by bob on 10/01/2011.
@@ -110,7 +110,7 @@
 	}
   
   //re-send the caps to the PMS
-  [HWUserDefaults setupPlexClientCapabilities];
+  [HWUserDefaults setupPlexClient];
 }
 
 

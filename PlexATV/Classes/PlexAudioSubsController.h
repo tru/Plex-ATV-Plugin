@@ -1,11 +1,8 @@
 //
-//  PlexMediaAsset.h
-//  atvTwo
+//  PlexAudioSubsController.h
+//  plex
 //
-//  Created by Frank Bauer on 27.10.10.
-//      Modified by ccjensen
-//
-//
+//  Created by bob on 2011-05-03.
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
@@ -25,24 +22,29 @@
 //  THE SOFTWARE.
 //  
 
+
+
 #import <Foundation/Foundation.h>
-#import <Backrow/Backrow.h>
 
 @class PlexMediaObject;
-@interface PlexPreviewAsset : BRPhotoMediaAsset<BRMediaAsset> {
-	NSURL* url;
-	PlexMediaObject* pmo;
+@interface PlexAudioSubsController: SMFMediaMenuController {
+  PlexMediaObject* playbackItem;
+  PlexMediaObject* detailedItem;
 }
-@property (nonatomic, retain) PlexMediaObject* pmo;
 
-- (id) initWithURL:(NSURL*)url mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)pmo;
-- (NSDate *)dateFromPlexDateString:(NSString *)dateString;
+@property (retain) PlexMediaObject* playbackItem;
+@property (retain) PlexMediaObject* detailedItem;
+@property (retain) NSArray *items;
 
-//other metadata methods
-@property (readonly) BOOL hasClosedCaptioning;
-@property (readonly) BOOL hasDolbyDigitalAudioTrack;
-@property (readonly) NSString *mediaURL;
-@property (readonly) BRImage *starRatingImage;
-@property (readonly) NSArray *writers;
-@property (readonly) NSString *year;
+- (id)initWithMediaObject:(PlexMediaObject*)mediaObject;
+- (void)populateListWithStreams;
+
+//list provider
+- (float)heightForRow:(long)row;
+- (long)itemCount;
+- (id)itemForRow:(long)row;
+- (BOOL)rowSelectable:(long)selectable;
+- (id)titleForRow:(long)row;
+
 @end
+

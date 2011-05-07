@@ -1,5 +1,5 @@
 //
-//  HWAdvancedSettingsController.m
+//  PlexViewSettingsController.m
 //  atvTwo
 //
 //  Created by ccjensen on 10/01/2011.
@@ -20,8 +20,11 @@
 @implementation PlexViewSettingsController
 
 #define ViewTypeSettingIndex 0
+//----------- list -----------
 #define EnableSkipFilteringOptionsMenuIndex 1
 #define DisablePosterZoomingInListViewIndex 2
+//----------- detailed metadata -----------
+#define DisableFanartInDetailedMetadataViewIndex 3
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -31,6 +34,8 @@
 		[self setListTitle:@"Plex View Settings"];
 		
 		[self setupList];
+        [[self list] addDividerAtIndex:1 withLabel:@"List"];
+        [[self list] addDividerAtIndex:3 withLabel:@"Detailed Metadata"];
 	}	
 	return self;
 }
@@ -92,13 +97,23 @@
 	
 	
 	// =========== disable poster zooming in list view ===========
-	SMFMenuItem *enablePosterZoomMenuItem = [SMFMenuItem menuItem];
+	SMFMenuItem *disablePosterZoomMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *enablePosterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView] ? @"Yes" : @"No";
-	NSString *enablePosterZoomTitle = [[NSString alloc] initWithFormat:@"Disable poster zoom:  %@", enablePosterZoom];
-	[enablePosterZoomMenuItem setTitle:enablePosterZoomTitle];
-	[enablePosterZoomTitle release];
-	[_items addObject:enablePosterZoomMenuItem];
+	NSString *disablePosterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView] ? @"Yes" : @"No";
+	NSString *disablePosterZoomTitle = [[NSString alloc] initWithFormat:@"Disable poster zoom:  %@", disablePosterZoom];
+	[disablePosterZoomMenuItem setTitle:disablePosterZoomTitle];
+	[disablePosterZoomTitle release];
+	[_items addObject:disablePosterZoomMenuItem];
+    
+    
+    // =========== disable fanart in detailed metadata view ===========
+	SMFMenuItem *disableFanartInMetadataScreenMenuItem = [SMFMenuItem menuItem];
+	
+	NSString *disableFanartInMetadataScreen = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisableFanartInDetailedMetadataView] ? @"Yes" : @"No";
+	NSString *disableFanartInMetadataScreenTitle = [[NSString alloc] initWithFormat:@"Disable fanart:             %@", disableFanartInMetadataScreen];
+	[disableFanartInMetadataScreenMenuItem setTitle:disableFanartInMetadataScreenTitle];
+	[disableFanartInMetadataScreenTitle release];
+	[_items addObject:disableFanartInMetadataScreenMenuItem];
 }
 
 
@@ -136,6 +151,14 @@
 			[self setupList];
 			[self.list reload];
 			break;
+        }
+		case DisableFanartInDetailedMetadataViewIndex: {
+            // =========== disable fanart in detailed metadata view ===========
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisableFanartInDetailedMetadataView];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewDisableFanartInDetailedMetadataView];			
+			[self setupList];
+			[self.list reload];
+			break;
 		}
 		default:
 			break;
@@ -161,6 +184,12 @@
 		}
 		case DisablePosterZoomingInListViewIndex: {
             // =========== disable poster zooming in list view ===========
+			[asset setTitle:@"Toggles whether to zoom the poster"];
+			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
+			break;
+		}
+		case DisableFanartInDetailedMetadataViewIndex: {
+            // =========== disable fanart in detailed metadata view ===========
 			[asset setTitle:@"Toggles whether to zoom the poster"];
 			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
 			break;
