@@ -41,9 +41,11 @@
 }
 @property (retain) NSArray *assets;
 @property (retain) PlexPreviewAsset *selectedMediaItemPreviewData;
+@property (retain) PlexMediaObject *selectedMediaObject;
 
+- (id)initWithPlexMediaObject:(PlexMediaObject *)aMediaObject;
 - (id)initWithPreviewAssets:(NSArray*)previewAssets withSelectedIndex:(int)selIndex;
-- (id) initWithPlexContainer:(PlexMediaContainer*)aContainer withSelectedIndex:(int)selIndex;
+- (id)initWithPlexContainer:(PlexMediaContainer*)aContainer withSelectedIndex:(int)selIndex;
 + (NSArray *)assetsForMediaObjects:(NSArray *)mediaObjects;
 - (void)changeMetadataViewToShowDataForIndex:(int)index;
 

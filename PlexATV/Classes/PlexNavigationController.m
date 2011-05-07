@@ -178,14 +178,11 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     BRController *controller = nil;
     
     //play theme music if we're entering a tv show
-    [self startPlayingThemeMusicIfAppropiate];
-  // ========== movie, initiate movie pre-play view ============
-  if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType])
-  {
-    PlexPreviewAsset* pma = aMediaObject.previewAsset;
-    NSArray *test = [NSArray arrayWithObject:pma];
-    [self navigateToDetailedMetadataController:test withSelectedIndex:0];
-  }
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
+    // ========== movie, initiate movie pre-play view ============
+    if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {        
+        return [[HWDetailedMovieMetadataController alloc] initWithPlexMediaObject:aMediaObject];
+    }
     // ============ sound plugin or other type of sound, initiate playback ============
     else if ([@"Track" isEqualToString:aMediaObject.containerType]){
         return [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];

@@ -31,6 +31,7 @@
 #import "PlexAudioSubsController.h"
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/PlexMediaObject + VideoDetails.h>
+#import "PlexMediaObject+Assets.h"
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
@@ -51,6 +52,7 @@ typedef enum {
 @implementation HWDetailedMovieMetadataController
 @synthesize assets;
 @synthesize selectedMediaItemPreviewData;
+@synthesize selectedMediaObject;
 
 + (NSArray *)assetsForMediaObjects:(NSArray *)mObjects {
 	NSMutableArray *newAssets = [NSMutableArray arrayWithCapacity:[mObjects count]];
@@ -70,8 +72,34 @@ typedef enum {
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.datasource = self;
+		self.delegate = self;
+        
+        //create the popup
+		listDropShadowControl = [[SMFListDropShadowControl alloc] init];
+		[listDropShadowControl setCDelegate:self];
+		[listDropShadowControl setCDatasource:self];
+    }
+    return self;
+}
+
+- (id)initWithPlexMediaObject:(PlexMediaObject *)aMediaObject {
+    self = [self init];
+    if (self) {
+        self.selectedMediaObject = aMediaObject;
+        DLog(@"init with media object:%@", self.selectedMediaObject);
+        
+        self.selectedMediaItemPreviewData = self.selectedMediaObject.previewAsset;
+    }
+    return self;
+}
+
 - (id)initWithPreviewAssets:(NSArray*)previewAssets withSelectedIndex:(int)selIndex {
-	if ((self = [super init])) {
+    self = [self init];
+	if (self) {
 		self.assets = previewAssets;
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"init with asset count:%d and index:%d", [self.assets count], selIndex);
@@ -83,16 +111,8 @@ typedef enum {
 			currentSelectedIndex = 0;
 			self.selectedMediaItemPreviewData = [self.assets objectAtIndex:currentSelectedIndex];
 		} else {
-      //fail, container has no items
+            //fail, container has no items
 		}
-		
-		self.datasource = self;
-		self.delegate = self;
-    
-    //create the popup
-		listDropShadowControl = [[SMFListDropShadowControl alloc] init];
-		[listDropShadowControl setCDelegate:self];
-		[listDropShadowControl setCDatasource:self];
 		
 	}
 	return self;
