@@ -232,7 +232,7 @@
 		
 	} else if (selected == ServerPropertyPasswordIndex) {
 		isEditingPassword = YES;
-		[self showEnterPasswordDialogBoxWithInitialText:self.userName];
+		[self showEnterPasswordDialogBoxWithInitialText:self.password];
 	
 	} else if (selected == ServerExcludedFromList) {
 		//toggle whether the server is excluded from the server list
@@ -338,7 +338,7 @@
         int passwordLength = [self.machine.password length];
         NSMutableString *obfuscatedPassword = [NSMutableString string];
         for (int i = 0; i<passwordLength; i++) {
-            [obfuscatedPassword appendString:@"·"];
+            [obfuscatedPassword appendString:@"*"];
         }
 		title = [NSString stringWithFormat:@"Password         %@", obfuscatedPassword];
 
