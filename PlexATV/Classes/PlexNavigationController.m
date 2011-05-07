@@ -86,6 +86,19 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 #pragma mark -
 #pragma mark Navigation Methods
 
+- (void)initiatePlaybackOfMediaObject:(PlexMediaObject *)aMediaObject {
+    DLog(@"Navigating to: [Playback of %@]", aMediaObject);
+    self.targetController = nil;
+    self.targetMediaObject = nil;
+    self.promptText = [NSString stringWithFormat:@"Loading playback of \"%@\"...", self.targetMediaObject.name];
+    
+    PlexPlaybackController *playbackController = [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];
+    self.targetController = playbackController;
+    [playbackController release];
+    
+    [[[BRApplicationStackManager singleton] stack] pushController:self];
+}
+
 - (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject {
     DLog(@"Navigating to: [%@]", aMediaObject);
     self.targetController = nil;
@@ -180,7 +193,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     //play theme music if we're entering a tv show
     [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
     // ========== movie, initiate movie pre-play view ============
-    if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {        
+    if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
         return [[HWDetailedMovieMetadataController alloc] initWithPlexMediaObject:aMediaObject];
     }
     // ============ sound plugin or other type of sound, initiate playback ============

@@ -18,6 +18,7 @@
 + (PlexNavigationController *)sharedPlexNavigationController;
 
 //Navigation Methods
+- (void)initiatePlaybackOfMediaObject:(PlexMediaObject *)aMediaObject;
 - (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject;
 - (void)navigateToDetailedMetadataController:(NSArray *)previewAssets withSelectedIndex:(int)selectedIndex;
 - (void)navigateToChannelsForMachine:(Machine *)aMachine;
