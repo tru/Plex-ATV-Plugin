@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
 #import <plex-oss/PlexMediaObject.h>
 
 @interface PlexNavigationController : BRController {}
@@ -15,8 +14,6 @@
 @property (retain) PlexMediaObject *targetMediaObject;
 @property (retain) BRController *targetController;
 @property (retain) NSString *promptText;
-@property (retain) AVQueuePlayer *themeMusicPlayer;
-@property (retain) NSURL *currentlyPlayingThemeUrl;
 
 + (PlexNavigationController *)sharedPlexNavigationController;
 
@@ -27,10 +24,6 @@
 - (void)navigateToSearchForMachine:(Machine *)aMachine;
 - (void)navigateToSettingsWithTopLevelController:(BRBaseAppliance *)topLevelController;
 - (void)navigateToServerList;
-
-//Action Methods
-- (void)startPlayingThemeMusicIfAppropiate;
-- (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo;
 
 //Determine View Type Methods
 - (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject;
