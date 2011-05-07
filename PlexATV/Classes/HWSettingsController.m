@@ -24,14 +24,14 @@
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.0.8.0.2"
+#define PlexPluginVersion @"0.0.8.0.3"
 
-#define ServersIndex 0
-#define QualitySettingIndex 1
-#define ViewSettingsIndex 2
-#define AudioSettingsIndex 3
-#define SecuritySettingsIndex 4
-#define PluginVersionNumberIndex 5
+#define ServersIndex                0
+#define QualitySettingIndex         1
+#define ViewSettingsIndex           2
+#define AudioSettingsIndex          3
+#define SecuritySettingsIndex       4
+#define PluginVersionNumberIndex    5
 
 
 #pragma mark -
