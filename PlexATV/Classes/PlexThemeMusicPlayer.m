@@ -105,4 +105,12 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
     }
 }
 
+- (int)queueSize {
+    return [[self.themeMusicPlayer items] count];
+}
+
+- (void)cancelAllQueuedPlayback {
+    [self.themeMusicPlayer removeAllItems];
+}
+
 @end

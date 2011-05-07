@@ -19,5 +19,7 @@
 
 - (void)startPlayingThemeMusicIfAppropiateForMediaObject:(PlexMediaObject *)mediaObject;
 - (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo;
+- (void)cancelAllQueuedPlayback;
+- (int)queueSize;
 
 @end

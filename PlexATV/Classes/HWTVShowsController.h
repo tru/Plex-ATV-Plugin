@@ -6,17 +6,21 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <SMFramework/SMFBookcaseController.h>
+#import "Plex_SMFBookcaseController.h"
 
-@class PlexMediaContainer;
-@interface HWTVShowsController : SMFBookcaseController <SMFBookcaseControllerDatasource, SMFBookcaseControllerDelegate> {
+@class PlexMediaContainer, PlexMediaObject;
+@interface HWTVShowsController : Plex_SMFBookcaseController <Plex_SMFBookcaseControllerDatasource, Plex_SMFBookcaseControllerDelegate> {
 	PlexMediaContainer *tvShows;
 	NSMutableArray *allTvShowsSeasonsPlexMediaContainer;
     
     BOOL allShelvesLoaded;
+    BOOL shouldPlayInitialThemeSong;
 }
 @property (nonatomic, retain) PlexMediaContainer *seasonsForSelectedTVShow;
+@property (nonatomic, retain) NSTimer *themeMusicTimer;
 
 - (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows;
+
+- (void)playThemeMusicForMediaObjectInTimer:(NSTimer *)theTimer;
 
 @end
