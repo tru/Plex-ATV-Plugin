@@ -8,7 +8,7 @@
 #import "HWTVShowsController.h"
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexMediaObject.h>
-#import "PlexPreviewAsset.h"
+#import "PlexMediaObject+Assets.h"
 #import "PlexNavigationController.h"
 #import "PlexThemeMusicPlayer.h"
 
@@ -94,6 +94,15 @@
 	[super dealloc];
 }
 
+- (void)rebuildBookcase {
+    NSDate *startTime = [NSDate date]; 
+    
+    [super rebuildBookcase];
+    
+    NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow];  
+    DLog(@"Elapsed time: %f", -elapsedTime);
+}
+
 
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
@@ -156,11 +165,8 @@
 #if LOCAL_DEBUG_ENABLED
     DLog(@"index: %d, seasons: %d", index, [seasons count]);
 #endif
-	for (PlexMediaObject *season in seasons) {		
-		NSURL* mediaURL = [season mediaStreamURL];
-		PlexPreviewAsset* ppa = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:season];
-		[store addObject:ppa];
-		[ppa release];
+	for (PlexMediaObject *season in seasons) {
+		[store addObject:season.previewAsset];
 	}
 	
 	SMFControlFactory *controlFactory = [SMFControlFactory posterControlFactory];

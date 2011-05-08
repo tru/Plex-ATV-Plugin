@@ -8,8 +8,7 @@
 #import "PlexChannelsController.h"
 #import "Constants.h"
 #import <plex-oss/PlexRequest.h>
-#import "PlexMediaAsset.h"
-#import "PlexPreviewAsset.h"
+#import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "HWPlexDir.h"
 
@@ -141,12 +140,9 @@
 	DLog(@"media object: %@", pmo);
 #endif	
     
-	NSURL* mediaURL = [pmo mediaStreamURL];
-	PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:pmo];
 	BRMetadataPreviewControl *preview =[[BRMetadataPreviewControl alloc] init];
 	[preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
-	[preview setAsset:pma];
-    [pma release];
+	[preview setAsset:pmo.previewAsset];
 	
 	return [preview autorelease];
 }

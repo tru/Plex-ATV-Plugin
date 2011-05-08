@@ -32,6 +32,7 @@
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/PlexMediaObject + VideoDetails.h>
 #import "PlexMediaObject+Assets.h"
+#import "PlexPreviewAsset.h"
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
@@ -51,24 +52,7 @@ typedef enum {
 
 @implementation HWDetailedMovieMetadataController
 @synthesize assets;
-@synthesize selectedMediaItemPreviewData;
 @synthesize selectedMediaObject;
-
-+ (NSArray *)assetsForMediaObjects:(NSArray *)mObjects {
-	NSMutableArray *newAssets = [NSMutableArray arrayWithCapacity:[mObjects count]];
-	
-	for (PlexMediaObject *mediaObj in mObjects) {		
-		NSURL* mediaURL = [mediaObj mediaStreamURL];
-		PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:mediaObj];
-		[newAssets addObject:pma];
-		[pma release];
-	}
-	
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"converted %d assets", [newAssets count]);
-#endif
-	return newAssets;
-}
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -91,7 +75,6 @@ typedef enum {
     if (self) {
         self.selectedMediaObject = aMediaObject;
         DLog(@"init with media object:%@", self.selectedMediaObject);
-        self.selectedMediaItemPreviewData = self.selectedMediaObject.previewAsset;
     }
     return self;
 }
@@ -105,10 +88,10 @@ typedef enum {
 #endif
 		if ([self.assets count] > selIndex) {
 			currentSelectedIndex = selIndex;
-			self.selectedMediaItemPreviewData = [self.assets objectAtIndex:currentSelectedIndex];
+			self.selectedMediaObject = [self.assets objectAtIndex:currentSelectedIndex];
 		} else if ([self.assets count] > 0) {
 			currentSelectedIndex = 0;
-			self.selectedMediaItemPreviewData = [self.assets objectAtIndex:currentSelectedIndex];
+			self.selectedMediaObject = [self.assets objectAtIndex:currentSelectedIndex];
 		} else {
             //fail, container has no items
 		}
@@ -118,7 +101,7 @@ typedef enum {
 }
 
 - (id)initWithPlexContainer:(PlexMediaContainer*)aContainer withSelectedIndex:(int)selIndex {
-	NSArray *previewAssets = [HWDetailedMovieMetadataController assetsForMediaObjects:aContainer.directories];	
+	NSArray *previewAssets = aContainer.directories;	
 	return [self initWithPreviewAssets:previewAssets withSelectedIndex:selIndex];
 }
 
@@ -127,7 +110,6 @@ typedef enum {
 	DLog(@"deallocing HWDetailedMovieMetadataController");
 #endif
 	self.assets = nil;
-	self.selectedMediaItemPreviewData = nil;
     
     [listDropShadowControl release];
 	[super dealloc];
@@ -139,7 +121,7 @@ typedef enum {
         //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
 		self._shelfControl.focusedIndex = newIndex;
-		self.selectedMediaItemPreviewData = [self.assets objectAtIndex:currentSelectedIndex];
+		self.selectedMediaObject = [self.assets objectAtIndex:currentSelectedIndex];
         //move the shelf if needed to show the new item
         //[self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
         //refresh metadata, but don't touch the shelf
@@ -161,7 +143,6 @@ typedef enum {
 - (void)wasPopped {
     self.datasource = nil;
     self.assets = nil;
-    self.selectedMediaItemPreviewData = nil;
 	[super wasPopped];
 }
 
@@ -243,23 +224,17 @@ typedef enum {
 		DLog(@"button chosen: %@", buttonControl.identifier);
 #endif
         
-        PlexMediaObject *pmo = self.selectedMediaObject;
-        if (!pmo) {
-            pmo = self.selectedMediaItemPreviewData.pmo;
-        }
-        
 		int buttonId = [buttonControl.identifier intValue];
 		switch (buttonId) {
 			case kPlayButton:
 				DLog(@"play movie plz kthxbye");
-				DLog(@"asset: %@", selectedMediaItemPreviewData.title);
-                [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:pmo];
+                [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
 				break;
             case kMoreButton:
                 [listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
                 break;
             case kAudioSubsButton:
-                subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:pmo];
+                subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaObject];
                 [[[BRApplicationStackManager singleton] stack] pushController:subCtrl];
 			default:
 				break;
@@ -301,18 +276,18 @@ typedef enum {
 #pragma mark datasource methods
 -(NSString *)title {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"title: %@", [self.selectedMediaItemPreviewData title]);
+	DLog(@"title: %@", [self.selectedMediaObject.previewAsset title]);
 #endif
-	return [self.selectedMediaItemPreviewData title];
+	return [self.selectedMediaObject.previewAsset title];
 }
 
 -(NSString *)subtitle {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"subtitle_end: %@", [self.selectedMediaItemPreviewData broadcaster]);
+	DLog(@"subtitle_end: %@", [self.selectedMediaObject.previewAsset broadcaster]);
 #endif
     
-    if ([self.selectedMediaItemPreviewData broadcaster])
-        return [self.selectedMediaItemPreviewData broadcaster];
+    if ([self.selectedMediaObject.previewAsset broadcaster])
+        return [self.selectedMediaObject.previewAsset broadcaster];
     else
         return @"";
 }
@@ -321,7 +296,7 @@ typedef enum {
 #if LOCAL_DEBUG_ENABLED
     //DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
 #endif
-	return [self.selectedMediaItemPreviewData mediaSummary];
+	return [self.selectedMediaObject.previewAsset mediaSummary];
 }
 
 -(NSArray *)headers {
@@ -335,26 +310,26 @@ typedef enum {
     // ======= details column ======
 	NSMutableArray *details = [NSMutableArray array];
 	
-	BRGenre *genre = [self.selectedMediaItemPreviewData primaryGenre];
+	BRGenre *genre = [self.selectedMediaObject.previewAsset primaryGenre];
 	[details addObject:[genre displayString]];
 	
-	NSString *released = [NSString stringWithFormat:@"Released %@", [self.selectedMediaItemPreviewData year]];
+	NSString *released = [NSString stringWithFormat:@"Released %@", [self.selectedMediaObject.previewAsset year]];
 	[details addObject:released];
 	
-	NSString *duration = [NSString stringWithFormat:@"%d minutes", [self.selectedMediaItemPreviewData duration]/60];
+	NSString *duration = [NSString stringWithFormat:@"%d minutes", [self.selectedMediaObject.previewAsset duration]/60];
 	[details addObject:duration];
 	
 	NSMutableArray *badges = [NSMutableArray array];
-	if ([self.selectedMediaItemPreviewData isHD])
+	if ([self.selectedMediaObject.previewAsset isHD])
 		[badges addObject:[[BRThemeInfo sharedTheme] hdPosterBadge]];
-	if ([self.selectedMediaItemPreviewData hasDolbyDigitalAudioTrack])
+	if ([self.selectedMediaObject.previewAsset hasDolbyDigitalAudioTrack])
 		[badges addObject:[[BRThemeInfo sharedTheme] dolbyDigitalBadge]];
-	if ([self.selectedMediaItemPreviewData hasClosedCaptioning])
+	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
 		[badges addObject:[[BRThemeInfo sharedTheme] ccBadge]];
 	[details addObject:badges];
 	
-    if ([self.selectedMediaItemPreviewData starRatingImage]) {
-        BRImage *starRating = [self.selectedMediaItemPreviewData starRatingImage];
+    if ([self.selectedMediaObject.previewAsset starRatingImage]) {
+        BRImage *starRating = [self.selectedMediaObject.previewAsset starRatingImage];
         [details addObject:starRating];
 	}
     
@@ -362,13 +337,13 @@ typedef enum {
 	
 	
     // ======= actors column ======
-    if ([self.selectedMediaItemPreviewData cast]) {
-        NSArray *actors = [self.selectedMediaItemPreviewData cast];
+    if ([self.selectedMediaObject.previewAsset cast]) {
+        NSArray *actors = [self.selectedMediaObject.previewAsset cast];
         [table addObject:actors];
 	}
 	
     // ======= director column ======
-	NSMutableArray *directorAndWriters = [NSMutableArray arrayWithArray:[self.selectedMediaItemPreviewData directors]];
+	NSMutableArray *directorAndWriters = [NSMutableArray arrayWithArray:[self.selectedMediaObject.previewAsset directors]];
     if (directorAndWriters == nil)
         [directorAndWriters initWithCapacity:2];
     
@@ -376,14 +351,14 @@ typedef enum {
 	NSAttributedString *subHeadingWriters = [[NSAttributedString alloc]initWithString:@"Writers" attributes:[SMFMoviePreviewController columnHeaderAttributes]];
 	[directorAndWriters addObject:subHeadingWriters];
 	[subHeadingWriters release];
-	[directorAndWriters addObjectsFromArray:[self.selectedMediaItemPreviewData writers]];
+	[directorAndWriters addObjectsFromArray:[self.selectedMediaObject.previewAsset writers]];
 	
 	[table addObject:directorAndWriters];
 	
 	
     // ======= producers column ======
-    if ([self.selectedMediaItemPreviewData producers]) {
-        NSArray *producers = [self.selectedMediaItemPreviewData producers];
+    if ([self.selectedMediaObject.previewAsset producers]) {
+        NSArray *producers = [self.selectedMediaObject.previewAsset producers];
         [table addObject:producers];
 	}
 	
@@ -396,15 +371,15 @@ typedef enum {
 
 -(NSString *)rating {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"rating: %@", [self.selectedMediaItemPreviewData rating]);
+	DLog(@"rating: %@", [self.selectedMediaObject.previewAsset rating]);
 #endif
-	return [self.selectedMediaItemPreviewData rating];
+	return [self.selectedMediaObject.previewAsset rating];
 }
 
 -(BRImage *)coverArt {
 	BRImage *coverArt = nil;
-	if ([self.selectedMediaItemPreviewData hasCoverArt]) {
-		coverArt = [self.selectedMediaItemPreviewData coverArt];
+	if ([self.selectedMediaObject.previewAsset hasCoverArt]) {
+		coverArt = [self.selectedMediaObject.previewAsset coverArt];
 	}
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"coverArt: %@", coverArt);
@@ -416,25 +391,18 @@ typedef enum {
     NSURL* backgroundImageUrl = nil;
     
     NSString *artPath = nil;
-    PlexMediaObject *pmo = nil;
     
-    if (self.selectedMediaObject) {
-        pmo = self.selectedMediaObject;
-        if ([pmo.attributes valueForKey:@"art"]) {
-            //movie
-            artPath = [pmo.attributes valueForKey:@"art"];
-        } else {
-            //tv show
-            artPath = [pmo.mediaContainer.attributes valueForKey:@"art"];
-        }
+    if ([self.selectedMediaObject.attributes valueForKey:@"art"]) {
+        //movie
+        artPath = [self.selectedMediaObject.attributes valueForKey:@"art"];
     } else {
-        pmo = self.selectedMediaItemPreviewData.pmo;
-        artPath = [pmo.attributes valueForKey:@"art"];
+        //tv show
+        artPath = [self.selectedMediaObject.mediaContainer.attributes valueForKey:@"art"];
     }
     
     if (artPath) {
-		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",pmo.request.base, artPath];
-        backgroundImageUrl = [pmo.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
+		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",self.selectedMediaObject.request.base, artPath];
+        backgroundImageUrl = [self.selectedMediaObject.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
 	}
     DLog(@"=============!!!===background image with url %@", backgroundImageUrl);
 	return backgroundImageUrl;
@@ -481,8 +449,8 @@ typedef enum {
 	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
 	
-	for (PlexPreviewAsset *asset in self.assets) {
-		[store addObject:asset];
+	for (PlexMediaObject *pmo in self.assets) {
+		[store addObject:pmo.previewAsset];
 	}
 	
 	BRPosterControlFactory *tcControlFactory = [BRPosterControlFactory factory];
@@ -541,12 +509,12 @@ typedef enum {
 	switch (row) {
 		case MarkAsWatchedOption: {
             DLog(@"marking movie as watched");
-            [selectedMediaItemPreviewData.pmo markSeen];
+            [self.selectedMediaObject markSeen];
 			break;
 		}
         case MarkAsUnwatchedOption: {
             DLog(@"marking movie as un-watched");
-            [selectedMediaItemPreviewData.pmo markUnseen];
+            [self.selectedMediaObject markUnseen];
             break;
         }
 		default:

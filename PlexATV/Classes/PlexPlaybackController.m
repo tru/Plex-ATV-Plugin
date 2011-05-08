@@ -34,7 +34,6 @@
 #import "PlexMediaProvider.h"
 #import "PlexMediaAsset.h"
 #import "PlexMediaAssetOld.h"
-#import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
 #import "PlexNavigationController.h"
 #import "PlexThemeMusicPlayer.h"

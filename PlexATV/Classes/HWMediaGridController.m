@@ -8,7 +8,7 @@
 
 #import "HWMediaGridController.h"
 #import "PlexMediaAsset.h"
-#import "PlexPreviewAsset.h"
+#import "PlexMediaObject+Assets.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import "Plex_SMFControlFactory.h"
@@ -49,13 +49,13 @@ void checkNil(NSObject *ctrl)
 	
     // we'll cut the recent movies down to MAX_RECENT_ITEMS, since recent actually has all movies, only sorted by added date
     //and shelf isn't actually usable with bunch of items
-	NSArray *fullRecentMovies = [self convertContainerToMediaAssets:recentMovies];
+	NSArray *fullRecentMovies = recentMovies.directories;
 	NSRange theRange;  
 	theRange.location = 0;
 	theRange.length = [fullRecentMovies count] > MAX_RECENT_ITEMS ? MAX_RECENT_ITEMS : [fullRecentMovies count];
 	
-	_shelfAssets = [[fullRecentMovies subarrayWithRange:theRange] retain];
-	_gridAssets = [self convertContainerToMediaAssets:allMovies];
+	_shelfMediaObjects = [[fullRecentMovies subarrayWithRange:theRange] retain];
+	_gridMediaObjects = allMovies.directories;
     [fullRecentMovies release];
 	
 	return self;
@@ -65,8 +65,8 @@ void checkNil(NSObject *ctrl)
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"deallocing HWMediaShelfController");
 #endif
-	_shelfAssets = nil;
-	_gridAssets = nil;
+	_shelfMediaObjects = nil;
+	_gridMediaObjects = nil;
     //[_spinner release];
     //[_cursorControl release];
     //[_scroller release];
@@ -75,26 +75,6 @@ void checkNil(NSObject *ctrl)
 	[_panelControl release];
 	
 	[super dealloc];
-}
-
-- (NSArray *)convertContainerToMediaAssets:(PlexMediaContainer *)container {
-	DLog(@"convertContainerToMediaAssets %@", container);
-	NSMutableArray *assets = [[NSMutableArray alloc] initWithCapacity:5];
-	
-	for (int i=0; i < [container.directories count]; i++) {
-		PlexMediaObject *mediaObj = [container.directories objectAtIndex:i];
-		
-		NSURL* mediaURL = [mediaObj mediaStreamURL];
-		PlexPreviewAsset* pma = [[PlexPreviewAsset alloc] initWithURL:mediaURL mediaProvider:nil mediaObject:mediaObj];
-		[assets addObject:pma];
-        [pma release];
-	}
-	
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"converted %d assets", [assets count]);
-#endif
-    
-	return assets;
 }
 
 
@@ -303,11 +283,11 @@ void checkNil(NSObject *ctrl)
 	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
 	
-	for (int i=0;i<[_shelfAssets count];i++)
+	for (int i=0;i<[_shelfMediaObjects count];i++)
 	{
-		PlexPreviewAsset *asset = [_shelfAssets objectAtIndex:i];
+		PlexMediaObject *pmo = [_shelfMediaObjects objectAtIndex:i];
 		//DLog(@"asset_title: %@", [asset title]);
-		[store addObject:asset];
+		[store addObject:pmo.previewAsset];
 		//[asset release];
 	}
 #if LOCAL_DEBUG_ENABLED
@@ -337,11 +317,10 @@ void checkNil(NSObject *ctrl)
 	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType movie]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello2" predicate:_pred mediaTypes:_set];
 	
-	for (int i=0;i<[_gridAssets count];i++)
+	for (int i=0;i<[_gridMediaObjects count];i++)
 	{
-		PlexPreviewAsset *asset = (PlexPreviewAsset*)[_gridAssets objectAtIndex:i];
-		
-		[store addObject:asset];
+		PlexMediaObject *pmo = [_gridMediaObjects objectAtIndex:i];
+		[store addObject:pmo.previewAsset];
 	}
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid - have assets, creating datastore and provider");
@@ -374,34 +353,34 @@ void checkNil(NSObject *ctrl)
 	if (remoteAction==kBREventRemoteActionPlay && action.value==1)
 	{
 		int index;
-		NSArray *assets;
+		NSArray *mediaObjects;
 		
 		if ([_shelfControl isFocused]) {
 			index = [_shelfControl focusedIndex];
-			assets = _shelfAssets;
+			mediaObjects = _shelfMediaObjects;
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"item in shelf selected. assets: %d, index:%d",[assets count], index);
+			DLog(@"item in shelf selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
 		}
 		
 		else if ([_gridControl isFocused]) {
 			index = [_gridControl _indexOfFocusedControl];
-			assets = _gridAssets;
+			mediaObjects = _gridMediaObjects;
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"item in grid selected. assets: %d, index:%d",[assets count], index);
+			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
 			
 		}
 		
-		if (assets) {
+		if (mediaObjects) {
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"brEventaction. have %d assets and index %d, showing movie preview ctrl",[assets count], index);
+			DLog(@"brEventaction. have %d mediaObjects and index %d, showing movie preview ctrl",[mediaObjects count], index);
 #endif      
 			
-            [[PlexNavigationController sharedPlexNavigationController] navigateToDetailedMetadataController:assets withSelectedIndex:index];
+            [[PlexNavigationController sharedPlexNavigationController] navigateToDetailedMetadataController:mediaObjects withSelectedIndex:index];
 		}
 		else {
-			DLog(@"error: no selected asset");
+			DLog(@"error: no selected mediaObject");
 		}
 		
 		

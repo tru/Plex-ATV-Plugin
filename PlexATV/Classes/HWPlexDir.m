@@ -30,7 +30,6 @@
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/Preferences.h>
 #import "PlexMediaProvider.h"
-#import "PlexPreviewAsset.h"
 #import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "PlexNavigationController.h"

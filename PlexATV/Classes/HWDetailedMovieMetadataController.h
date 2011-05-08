@@ -27,7 +27,6 @@
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaStream.h>
-#import "PlexPreviewAsset.h"
 #import "Plex_SMFMoviePreviewController.h"
 
 @interface HWDetailedMovieMetadataController : Plex_SMFMoviePreviewController<Plex_SMFMoviePreviewControllerDatasource, SMFMoviePreviewControllerDelegate, SMFListDropShadowDatasource, SMFListDropShadowDelegate> {
@@ -36,17 +35,14 @@
 	BOOL shelfIsSelected;
 	int currentSelectedIndex;
 	int lastFocusedIndex;
-	PlexPreviewAsset *selectedMediaItemPreviewData;
  	SMFListDropShadowControl *listDropShadowControl; //popup
 }
 @property (retain) NSArray *assets;
-@property (retain) PlexPreviewAsset *selectedMediaItemPreviewData;
 @property (retain) PlexMediaObject *selectedMediaObject;
 
 - (id)initWithPlexMediaObject:(PlexMediaObject *)aMediaObject;
 - (id)initWithPreviewAssets:(NSArray*)previewAssets withSelectedIndex:(int)selIndex;
 - (id)initWithPlexContainer:(PlexMediaContainer*)aContainer withSelectedIndex:(int)selIndex;
-+ (NSArray *)assetsForMediaObjects:(NSArray *)mediaObjects;
 - (void)changeMetadataViewToShowDataForIndex:(int)index;
 
 @end
