@@ -92,6 +92,9 @@ PlexMediaProvider* __provider = nil;
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
+  [self startPlaying];
+  DLog(@"activating plex_playback controller");  
+  
 	[super wasPushed];
 }
 
@@ -110,8 +113,6 @@ PlexMediaProvider* __provider = nil;
 }
 
 - (void)controlWasActivated {
-    DLog(@"activating plex_playback controller");
-    [self startPlaying];
 }
 
 
