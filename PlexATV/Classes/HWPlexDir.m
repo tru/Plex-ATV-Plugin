@@ -72,6 +72,7 @@
         [self.tabBar setAcceptsFocus:NO];
         [self.tabBar setTabControlDelegate:self];
         [self addControl:self.tabBar];
+        [self.tabBar selectTabItemAtIndex:1];
     }
 	return self;
 }
