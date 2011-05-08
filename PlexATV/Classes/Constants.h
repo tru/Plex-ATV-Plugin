@@ -1,15 +1,23 @@
 
 #define PreferencesDomain @"com.plex.client-plugin"
+
+
 #define PreferencesMachinesExcludedFromServerList @"PreferencesMachinesExcludedFromServerList"
-#define PreferencesQualitySetting @"PreferencesQualitySetting"
+
 
 #define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
+#define PreferencesViewDisableThemeMusic @"PreferencesViewDisableThemeMusic"
 #define PreferencesViewEnableSkipFilteringOptionsMenu @"PreferencesViewEnableSkipFilteringOptionsMenu"
 #define PreferencesViewDisablePosterZoomingInListView @"PreferencesViewDisablePosterZoomingInListView"
 #define PreferencesViewDisableFanartInDetailedMetadataView @"PreferencesViewDisableFanartInDetailedMetadataView"
 
-#define PreferencesAudioEnableAC3 @"PreferencesAudioEnableAC3"
-#define PreferencesAudioEnableDTS @"PreferencesAudioEnableDTS"
+
+#define PreferencesPlaybackAudioEnableAC3 @"PreferencesPlaybackAudioEnableAC3"
+#define PreferencesPlaybackAudioEnableDTS @"PreferencesPlaybackAudioEnableDTS"
+
+#define PreferencesPlaybackVideoQuality @"PreferencesPlaybackVideoQuality"
+#define PreferencesPlaybackVideoBitrate @"PreferencesPlaybackVideoBitrate"
+
 
 #define PreferencesSecurityPasscode @"PreferencesSecurityPasscode"
 #define PreferencesSettingsEnableLock @"PreferencesSettingsEnableLock"

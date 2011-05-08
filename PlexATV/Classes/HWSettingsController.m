@@ -16,7 +16,7 @@
 #import "HWSettingsController.h"
 #import "HWServersController.h"
 #import "PlexViewSettingsController.h"
-#import "PlexAudioSettingsController.h"
+#import "PlexPlaybackSettingsController.h"
 #import "PlexSecuritySettingsController.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
@@ -27,11 +27,10 @@
 #define PlexPluginVersion @"0.0.8.0.3"
 
 #define ServersIndex                0
-#define QualitySettingIndex         1
-#define ViewSettingsIndex           2
-#define AudioSettingsIndex          3
-#define SecuritySettingsIndex       4
-#define PluginVersionNumberIndex    5
+#define ViewSettingsIndex           1
+#define PlaybackSettingsIndex       2
+#define SecuritySettingsIndex       3
+#define PluginVersionNumberIndex    4
 
 
 #pragma mark -
@@ -86,22 +85,7 @@
 	// =========== servers ===========
 	SMFMenuItem *serversMenuItem = [SMFMenuItem folderMenuItem];
 	[serversMenuItem setTitle:@"Manage server list"];
-	[_items addObject:serversMenuItem];
-	
-	
-	// =========== quality setting ===========
-	SMFMenuItem *qualitySettingMenuItem = [SMFMenuItem menuItem];
-	
-	NSString *qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesQualitySetting];
-	if (qualitySetting == nil) {
-		[[HWUserDefaults preferences] setObject:@"Better" forKey:PreferencesQualitySetting];
-		qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesQualitySetting];
-	}
-	
-	[qualitySettingMenuItem setTitle:@"Quality Setting"];
-    [qualitySettingMenuItem setRightText:qualitySetting];
-	[_items addObject:qualitySettingMenuItem];
-    
+	[_items addObject:serversMenuItem];    
 	
     // =========== view settings ===========
 	SMFMenuItem *viewSettingsMenuItem = [SMFMenuItem folderMenuItem];
@@ -109,10 +93,10 @@
 	[_items addObject:viewSettingsMenuItem];
     
     
-    // =========== audio settings ===========
-	SMFMenuItem *audioSettingsMenuItem = [SMFMenuItem folderMenuItem];
-	[audioSettingsMenuItem setTitle:@"Audio settings"];
-	[_items addObject:audioSettingsMenuItem];
+    // =========== playback settings ===========
+	SMFMenuItem *playbackSettingsMenuItem = [SMFMenuItem folderMenuItem];
+	[playbackSettingsMenuItem setTitle:@"Playback settings"];
+	[_items addObject:playbackSettingsMenuItem];
     
     
     // =========== security settings ===========
@@ -146,44 +130,24 @@
 - (void)itemSelected:(long)selected {
 	switch (selected) {
 		case ServersIndex: {
-			// =========== remote servers ===========
 			HWServersController* menuController = [[HWServersController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 			[menuController autorelease];
 			break;
 		}
-		case QualitySettingIndex: {
-			// =========== quality setting ===========
-			NSString *qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesQualitySetting];
-			
-			if ([qualitySetting isEqualToString:@"Good"]) {
-				[[HWUserDefaults preferences] setObject:@"Better" forKey:PreferencesQualitySetting];
-			} else if ([qualitySetting isEqualToString:@"Better"]) {
-				[[HWUserDefaults preferences] setObject:@"Best" forKey:PreferencesQualitySetting];
-			} else {
-				[[HWUserDefaults preferences] setObject:@"Good" forKey:PreferencesQualitySetting];
-			}
-			
-			[self setupList];
-			[self.list reload];
-			break;
-		}
 		case ViewSettingsIndex: {
-			// =========== view settings ===========
 			PlexViewSettingsController* menuController = [[PlexViewSettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 			[menuController release];
 			break;
 		}
-        case AudioSettingsIndex: {
-			// =========== audio settings ===========
-			PlexAudioSettingsController* menuController = [[PlexAudioSettingsController alloc] init];
+        case PlaybackSettingsIndex: {
+			PlexPlaybackSettingsController* menuController = [[PlexPlaybackSettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 			[menuController release];
 			break;
         }
         case SecuritySettingsIndex: {
-			// =========== security settings ===========
 			PlexSecuritySettingsController* menuController = [[PlexSecuritySettingsController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
 			[menuController release];
@@ -209,22 +173,16 @@
 			[asset setSummary:@"Add new or modify current servers, their connections and their 'inclusion in main menu' status"];
 			break;
 		}
-		case QualitySettingIndex: {
-			// =========== quality setting ===========
-			[asset setTitle:@"Select the video quality"];
-			[asset setSummary:@"Sets the quality of the streamed video.                                        Good: 720p 1500 kbps, Better: 720p 4000 kbps, Best: 1080p 10Mbps"];
-			break;
-		}
 		case ViewSettingsIndex: {
 			// =========== view settings ===========
 			[asset setTitle:@"Modify view settings"];
 			[asset setSummary:@"Alter UI behavior, views to use, etc."];
 			break;
 		}
-		case AudioSettingsIndex: {
+		case PlaybackSettingsIndex: {
 			// =========== audio settings ===========
-			[asset setTitle:@"Modify audio output settings"];
-			[asset setSummary:@"Setup the kind of multi-channel audio you want to output"];
+			[asset setTitle:@"Modify playback settings"];
+			[asset setSummary:@"Setup the kind of multi-channel audio you want to output, video quality, etc"];
 			break;
 		}
 		case SecuritySettingsIndex: {

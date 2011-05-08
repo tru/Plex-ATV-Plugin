@@ -154,7 +154,7 @@ PlexMediaProvider* __provider = nil;
 	[pmo.attributes setObject:[NSNumber numberWithInt:offset] forKey:@"viewOffset"]; //set where in the video we want to start...
 	
     //determine the user selected quality setting
-	NSString *qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesQualitySetting];
+	NSString *qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesPlaybackVideoQuality];
 	PlexStreamingQualityDescriptor *streamQuality;
 	if ([qualitySetting isEqualToString:@"Good"]) {
 		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];

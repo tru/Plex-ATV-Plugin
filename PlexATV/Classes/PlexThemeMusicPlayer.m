@@ -9,6 +9,8 @@
 #import "Plex_SynthesizeSingleton.h"
 #import <plex-oss/PlexRequest + Security.h>
 #import <plex-oss/PlexMediaObject.h>
+#import "HWUserDefaults.h"
+#import "Constants.h"
 
 @implementation PlexThemeMusicPlayer
 @synthesize themeMusicPlayer;
@@ -19,6 +21,11 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
 
 
 - (void)startPlayingThemeMusicIfAppropiateForMediaObject:(PlexMediaObject *)mediaObject {
+    BOOL themeMusicDisabled = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisableThemeMusic];
+    if (themeMusicDisabled) {
+        return;
+    }
+    
     BOOL hasThemeMusic = NO;
     NSString *themeUrlAsString;
     

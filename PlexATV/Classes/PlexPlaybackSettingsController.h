@@ -14,7 +14,7 @@
 //
 
 
-@interface PlexAudioSettingsController : SMFMediaMenuController {}
+@interface PlexPlaybackSettingsController : SMFMediaMenuController {}
 - (void)setupList;
 
 @end
