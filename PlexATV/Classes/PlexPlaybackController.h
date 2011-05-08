@@ -28,6 +28,8 @@
 @interface PlexPlaybackController : BRController {
   PlexMediaObject *pmo;
   NSTimer* playProgressTimer;
+
+    id ctrl;
 }
  
 -(id)initWithPlexMediaObject:(PlexMediaObject*)mediaObject;

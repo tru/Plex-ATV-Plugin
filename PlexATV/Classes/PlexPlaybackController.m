@@ -92,8 +92,6 @@ PlexMediaProvider* __provider = nil;
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
-	DLog(@"activating plex_playback controller");
-	[self startPlaying];	
 	[super wasPushed];
 }
 
@@ -109,6 +107,11 @@ PlexMediaProvider* __provider = nil;
 
 - (void)wasBuried {
 	[super wasBuried];
+}
+
+- (void)controlWasActivated {
+    DLog(@"activating plex_playback controller");
+    [self startPlaying];
 }
 
 
@@ -199,8 +202,9 @@ PlexMediaProvider* __provider = nil;
 	
 	BRMediaPlayerManager* mgm = [BRMediaPlayerManager singleton];
 	NSError * error = nil;
-	BRMediaPlayer * player = [mgm playerForMediaAsset:pma error: &error];
-	
+    
+   	BRMediaPlayer * player = [mgm playerForMediaAsset:pma error: &error];
+    
 	DLog(@"pma=%@, prov=%@, mgm=%@, play=%@, err=%@", pma, __provider, mgm, player, error);
 	
 	if ( error != nil ){
@@ -213,6 +217,7 @@ PlexMediaProvider* __provider = nil;
     //[mgm presentMediaAsset:pma options:0];
 	[mgm presentPlayer:player options:0];
 	DLog(@"presented player");
+    
     playProgressTimer = [[NSTimer scheduledTimerWithTimeInterval:10.0f 
                                                           target:self 
                                                         selector:@selector(reportProgress:) 
@@ -247,14 +252,27 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"presented audio player");
 }
 
--(void)reportProgress:(NSTimer*)tm {
+-(void)reportProgress:(NSTimer*)tm {    
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
     
 	switch (playa.playerState) {
 		case kBRMediaPlayerStatePlaying: {
 			//report time back to PMS so we can continue in the right spot
 			float current = playa.elapsedTime;
-			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;            
+			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
+            
+//            float percentageDone = (current/total) * 100.0f;
+            //float buffer = percentageDone+5.0f;
+            
+//            id presentedPlayerController = [[BRMediaPlayerManager singleton] _presentedPlayerController];
+            //[presentedPlayerController setValue:buffer forKey:@"_lastBufferingProgress"]; //seems to not help
+//            id transport = [presentedPlayerController valueForKey:@"_transport"];
+//            id layer = [transport valueForKey:@"_layer"];
+//            DLog(@"updating buffer");
+            //[layer setDownloadedRange:NSMakeRange(0, buffer)];
+             
+             
+             
             
             // Only report progress after a certain number of seconds have been watched
             // and the movie is less than a certain percentage left
