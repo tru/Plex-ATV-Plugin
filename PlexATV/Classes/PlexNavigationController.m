@@ -114,7 +114,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     self.targetMediaObject = nil;
     self.promptText = @"Loading \"Detailed Metadata\"...";
     
-    HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithPreviewAssets:previewAssets withSelectedIndex:selectedIndex];
+    HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithMediaObjects:previewAssets withSelectedIndex:selectedIndex];
     self.targetController = previewController;
     [previewController release];
     

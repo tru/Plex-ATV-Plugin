@@ -51,7 +51,7 @@ typedef enum {
 } ActionButton;
 
 @implementation HWDetailedMovieMetadataController
-@synthesize assets;
+@synthesize mediaObjects;
 @synthesize selectedMediaObject;
 
 #pragma mark -
@@ -79,19 +79,19 @@ typedef enum {
     return self;
 }
 
-- (id)initWithPreviewAssets:(NSArray*)previewAssets withSelectedIndex:(int)selIndex {
+- (id)initWithMediaObjects:(NSArray *)someMediaObjects withSelectedIndex:(int)selIndex {
     self = [self init];
 	if (self) {
-		self.assets = previewAssets;
+		self.mediaObjects = someMediaObjects;
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"init with asset count:%d and index:%d", [self.assets count], selIndex);
+		DLog(@"init with asset count:%d and index:%d", [self.mediaObjects count], selIndex);
 #endif
-		if ([self.assets count] > selIndex) {
+		if ([self.mediaObjects count] > selIndex) {
 			currentSelectedIndex = selIndex;
-			self.selectedMediaObject = [self.assets objectAtIndex:currentSelectedIndex];
-		} else if ([self.assets count] > 0) {
+			self.selectedMediaObject = [self.mediaObjects objectAtIndex:currentSelectedIndex];
+		} else if ([self.mediaObjects count] > 0) {
 			currentSelectedIndex = 0;
-			self.selectedMediaObject = [self.assets objectAtIndex:currentSelectedIndex];
+			self.selectedMediaObject = [self.mediaObjects objectAtIndex:currentSelectedIndex];
 		} else {
             //fail, container has no items
 		}
@@ -102,14 +102,14 @@ typedef enum {
 
 - (id)initWithPlexContainer:(PlexMediaContainer*)aContainer withSelectedIndex:(int)selIndex {
 	NSArray *previewAssets = aContainer.directories;	
-	return [self initWithPreviewAssets:previewAssets withSelectedIndex:selIndex];
+	return [self initWithMediaObjects:previewAssets withSelectedIndex:selIndex];
 }
 
 -(void)dealloc {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"deallocing HWDetailedMovieMetadataController");
 #endif
-	self.assets = nil;
+	self.mediaObjects = nil;
     
     [listDropShadowControl release];
 	[super dealloc];
@@ -121,7 +121,7 @@ typedef enum {
         //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
 		self._shelfControl.focusedIndex = newIndex;
-		self.selectedMediaObject = [self.assets objectAtIndex:currentSelectedIndex];
+		self.selectedMediaObject = [self.mediaObjects objectAtIndex:currentSelectedIndex];
         //move the shelf if needed to show the new item
         //[self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
         //refresh metadata, but don't touch the shelf
@@ -142,7 +142,7 @@ typedef enum {
 
 - (void)wasPopped {
     self.datasource = nil;
-    self.assets = nil;
+    self.mediaObjects = nil;
 	[super wasPopped];
 }
 
@@ -172,7 +172,7 @@ typedef enum {
 	int newIndex;
 	if (currentSelectedIndex - 1 < 0) {
         //we have reached the beginning, loop around
-		newIndex = [self.assets count] - 1;
+		newIndex = [self.mediaObjects count] - 1;
 	} else {
         //go to previous one
 		newIndex = currentSelectedIndex - 1;
@@ -195,7 +195,7 @@ typedef enum {
 	
 	[[SMFThemeInfo sharedTheme] playNavigateSound];
 	int newIndex;
-	if (currentSelectedIndex + 1 < [self.assets count]) {
+	if (currentSelectedIndex + 1 < [self.mediaObjects count]) {
         //go to next one
 		newIndex = currentSelectedIndex + 1;
 	} else {
@@ -449,7 +449,7 @@ typedef enum {
 	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
 	
-	for (PlexMediaObject *pmo in self.assets) {
+	for (PlexMediaObject *pmo in self.mediaObjects) {
 		[store addObject:pmo.previewAsset];
 	}
 	
