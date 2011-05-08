@@ -121,9 +121,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		
 		// ====== find the category selected ======
         if ([categoryName isEqualToString:@"Channels"]) {
-//used for debug            
-//            [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
-//            return nil;
             [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
             
         } else if ([categoryName isEqualToString:@"Search"]) {
