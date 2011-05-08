@@ -16,6 +16,7 @@
 #define SETTINGS_CAT [BRApplianceCategory categoryWithName:NSLocalizedString(@"Settings", @"Settings") identifier:SETTINGS_ID preferredOrder:99]
 
 //dictionary keys
+NSString * const CategoryPathKey = @"PlexAppliancePath";
 NSString * const CategoryNameKey = @"PlexApplianceName";
 NSString * const MachineIDKey = @"PlexMachineID";
 NSString * const MachineNameKey = @"PlexMachineName";
@@ -110,6 +111,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		NSDictionary *compoundIdentifier = (NSDictionary *)identifier;
 		
 		NSString *categoryName = [compoundIdentifier objectForKey:CategoryNameKey];
+        NSString *categoryPath = [compoundIdentifier objectForKey:CategoryPathKey];
 		NSString *machineId = [compoundIdentifier objectForKey:MachineIDKey];
 		//NSString *machineName = [compoundIdentifier objectForKey:MachineNameKey];
 		
@@ -128,7 +130,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
             
         } else {
-            NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
+            NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@ AND key == %@", categoryName, categoryPath];
             NSArray *categories = [[machineWhoCategoryBelongsTo.request rootLevel] directories];
             NSArray *matchingCategories = [categories filteredArrayUsingPredicate:categoryPredicate];
             if ([matchingCategories count] != 1) {
@@ -219,18 +221,22 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		//for (PlexMediaObject *pmo in allDirectories) {
         int totalItems = [allDirectories count] + 2; //channels + search
         for (int i=0; i<totalItems; i++) {
+            NSString *categoryPath = nil;
             NSString *categoryName = nil;
             
             if (i == [allDirectories count]) {
                 //add special channels appliance
                 categoryName = @"Channels";
+                categoryPath = @"channels";
             } else if (i == [allDirectories count]+1) {
                 //add special search appliance
                 categoryName = @"Search";
+                categoryPath = @"search";
             } else {
                 //add all others
                 PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
                 categoryName = [pmo.name copy];
+                categoryPath = [pmo.key copy];
             }
             
 #if LOCAL_DEBUG_ENABLED
@@ -242,6 +248,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             [compoundIdentifier setObject:categoryName forKey:CategoryNameKey];
             [compoundIdentifier setObject:machineID forKey:MachineIDKey];
             [compoundIdentifier setObject:machineName forKey:MachineNameKey];
+            [compoundIdentifier setObject:categoryPath forKey:CategoryPathKey];
 			
 			//================== add the appliance ==================
 			
