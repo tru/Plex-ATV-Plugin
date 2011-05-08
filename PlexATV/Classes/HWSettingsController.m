@@ -98,9 +98,8 @@
 		qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesQualitySetting];
 	}
 	
-	NSString *qualitySettingTitle = [[NSString alloc] initWithFormat:@"Quality Setting:   %@", qualitySetting];
-	[qualitySettingMenuItem setTitle:qualitySettingTitle];
-	[qualitySettingTitle release];
+	[qualitySettingMenuItem setTitle:@"Quality Setting"];
+    [qualitySettingMenuItem setRightText:qualitySetting];
 	[_items addObject:qualitySettingMenuItem];
     
 	
@@ -125,11 +124,9 @@
 	// =========== version number ===========
 	SMFMenuItem *pluginVersionNumberMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *pluginVersionNumber = PlexPluginVersion;
-	NSString *pluginVersionNumberTitle = [[NSString alloc] initWithFormat:@"Version:   %@", pluginVersionNumber];
-	[pluginVersionNumberMenuItem setTitle:pluginVersionNumberTitle];
-	[pluginVersionNumberTitle release];
-	[_items addObject:pluginVersionNumberMenuItem];
+	[pluginVersionNumberMenuItem setTitle:@"Version"];
+	[pluginVersionNumberMenuItem setRightText:PlexPluginVersion];
+    [_items addObject:pluginVersionNumberMenuItem];
 	
     
 	//this code can be used to find all the accessory types

@@ -67,20 +67,20 @@
 	// =========== set security passcode ===========
 	SMFMenuItem *securityPasscodeMenuItem = [SMFMenuItem folderMenuItem];
 	
-	NSInteger securityPasscode = [[HWUserDefaults preferences] integerForKey:PreferencesSecurityPasscode];
-	NSString *securityPasscodeTitle = [[NSString alloc] initWithFormat:@"Security Passcode:    %04d", securityPasscode];
-	[securityPasscodeMenuItem setTitle:securityPasscodeTitle];
-	[securityPasscodeTitle release];
+	[securityPasscodeMenuItem setTitle:@"Security Passcode"];
+    NSInteger securityPasscode = [[HWUserDefaults preferences] integerForKey:PreferencesSecurityPasscode];
+    NSString *securityPasscodeString = [[NSString alloc] initWithFormat:@"%04d", securityPasscode];
+    [securityPasscodeMenuItem setRightText:securityPasscodeString];
+    [securityPasscodeString release];
 	[_items addObject:securityPasscodeMenuItem];
 	
 	
 	// =========== enable settings lock ===========
 	SMFMenuItem *settingsLockMenuItem = [SMFMenuItem menuItem];
 	
+	[settingsLockMenuItem setTitle:@"Security Locked"];
 	NSString *settingsLockOptions = [[HWUserDefaults preferences] boolForKey:PreferencesSettingsEnableLock] ? @"Yes" : @"No";
-	NSString *settingsLockOptionsTitle = [[NSString alloc] initWithFormat:@"Security Locked:        %@", settingsLockOptions];
-	[settingsLockMenuItem setTitle:settingsLockOptionsTitle];
-	[settingsLockOptionsTitle release];
+    [settingsLockMenuItem setRightText:settingsLockOptions];
 	[_items addObject:settingsLockMenuItem];
 }
 

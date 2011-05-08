@@ -69,6 +69,7 @@
 
 - (void)showEditConnectionViewForConnection:(MachineConnectionBase *)connection;
 
+- (NSString *)rightTextForRow:(long)row;
 //list provider
 - (float)heightForRow:(long)row;
 - (long)itemCount;

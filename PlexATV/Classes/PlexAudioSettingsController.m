@@ -67,20 +67,18 @@
 	// =========== enable ac3 ===========
 	SMFMenuItem *ac3MenuItem = [SMFMenuItem menuItem];
 	
+	[ac3MenuItem setTitle:@"Dolby™ AC3 capable receiver"];
 	NSString *ac3Options = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableAC3] ? @"Yes" : @"No";
-	NSString *ac3OptionsTitle = [[NSString alloc] initWithFormat:@"Dolby™ AC3 capable receiver: %@", ac3Options];
-	[ac3MenuItem setTitle:ac3OptionsTitle];
-	[ac3OptionsTitle release];
+    [ac3MenuItem setRightText:ac3Options];
 	[_items addObject:ac3MenuItem];
 	
 	
 	// =========== enable dts ===========
 	SMFMenuItem *dtsMenuItem = [SMFMenuItem menuItem];
 	
+   	[dtsMenuItem setTitle:@"DTS™ capable receiver"];
 	NSString *dtsOptions = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableDTS] ? @"Yes" : @"No";
-	NSString *dtsOptionsTitle = [[NSString alloc] initWithFormat:@"DTS™ capable receiver:            %@", dtsOptions];
-	[dtsMenuItem setTitle:dtsOptionsTitle];
-	[dtsOptionsTitle release];
+    [dtsMenuItem setRightText:dtsOptions];
 	[_items addObject:dtsMenuItem];
 }
 

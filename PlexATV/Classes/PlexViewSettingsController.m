@@ -79,9 +79,8 @@
 		viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
 	}
 
-	NSString *viewTypeSettingTitle = [[NSString alloc] initWithFormat:@"Video view:                  %@", viewTypeSetting];
-	[viewTypeSettingMenuItem setTitle:viewTypeSettingTitle];
-	[viewTypeSettingTitle release];
+	[viewTypeSettingMenuItem setTitle:@"Video view"];
+    [viewTypeSettingMenuItem setRightText:viewTypeSetting];
 	[_items addObject:viewTypeSettingMenuItem];
     
     
@@ -89,30 +88,27 @@
 	// =========== "skip filtering options" menu ===========
 	SMFMenuItem *skipFilteringOptionsMenuItem = [SMFMenuItem menuItem];
 	
+	[skipFilteringOptionsMenuItem setTitle:@"Skip filtering menu"];
 	NSString *skipFilteringOptions = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu] ? @"Yes" : @"No";
-	NSString *skipFilteringOptionsTitle = [[NSString alloc] initWithFormat:@"Skip filtering menu:     %@", skipFilteringOptions];
-	[skipFilteringOptionsMenuItem setTitle:skipFilteringOptionsTitle];
-	[skipFilteringOptionsTitle release];
+    [skipFilteringOptionsMenuItem setRightText:skipFilteringOptions];
 	[_items addObject:skipFilteringOptionsMenuItem];
 	
 	
 	// =========== disable poster zooming in list view ===========
 	SMFMenuItem *disablePosterZoomMenuItem = [SMFMenuItem menuItem];
 	
+	[disablePosterZoomMenuItem setTitle:@"Disable poster zoom"];
 	NSString *disablePosterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView] ? @"Yes" : @"No";
-	NSString *disablePosterZoomTitle = [[NSString alloc] initWithFormat:@"Disable poster zoom:  %@", disablePosterZoom];
-	[disablePosterZoomMenuItem setTitle:disablePosterZoomTitle];
-	[disablePosterZoomTitle release];
+    [disablePosterZoomMenuItem setRightText:disablePosterZoom];
 	[_items addObject:disablePosterZoomMenuItem];
     
     
     // =========== disable fanart in detailed metadata view ===========
 	SMFMenuItem *disableFanartInMetadataScreenMenuItem = [SMFMenuItem menuItem];
 	
+	[disableFanartInMetadataScreenMenuItem setTitle:@"Disable fanart"];
 	NSString *disableFanartInMetadataScreen = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisableFanartInDetailedMetadataView] ? @"Yes" : @"No";
-	NSString *disableFanartInMetadataScreenTitle = [[NSString alloc] initWithFormat:@"Disable fanart:             %@", disableFanartInMetadataScreen];
-	[disableFanartInMetadataScreenMenuItem setTitle:disableFanartInMetadataScreenTitle];
-	[disableFanartInMetadataScreenTitle release];
+    [disablePosterZoomMenuItem setRightText:disableFanartInMetadataScreen];
 	[_items addObject:disableFanartInMetadataScreenMenuItem];
 }
 

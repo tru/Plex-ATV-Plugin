@@ -288,11 +288,11 @@
 }
 
 - (id)itemForRow:(long)row {
-	BRMenuItem *menuItem = [[[BRMenuItem alloc] init] autorelease];
+	SMFMenuItem *menuItem = [SMFMenuItem menuItem];
 	int accessoryType;
 	NSString *title = [self titleForRow:row];
+    NSString *rightText = [self rightTextForRow:row];
 	if (row == ServerRefreshSections) {
-		menuItem = [[[BRMenuItem alloc] init] autorelease];
 		if (self.machine.sectionsAreRefreshing) {
 			accessoryType = 6; //spinner icon
 		} else {
@@ -312,7 +312,8 @@
 		accessoryType = 1; //folder
 	}
 	[menuItem addAccessoryOfType:accessoryType];
-	[menuItem setText:title withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
+    [menuItem setTitle:title];
+    [menuItem setRightText:rightText];
 	return menuItem;
 }
 
@@ -320,40 +321,53 @@
 	return TRUE;
 }
 
-- (id)titleForRow:(long)row {
-	NSString *title;
-	if (row == ServerPropertyServerNameIndex) {
+- (NSString *)rightTextForRow:(long)row {
+    NSString *rightText = nil;
+    
+    if (row == ServerPropertyServerNameIndex) {
         //use the user set name; if not available, use the server set name; if not available: UNKNOWN
         if (self.machine.usersServerName && [self.machine.usersServerName length] > 0) {
-			title = [NSString stringWithFormat:@"Servername     %@", self.machine.usersServerName];
+			rightText = self.machine.usersServerName;
 		} else if (self.machine.serverName && [self.machine.serverName length] > 0) {
-			title = [NSString stringWithFormat:@"Servername     %@", self.machine.serverName];
+			rightText = self.machine.serverName;
 		} else {
-			title = [NSString stringWithFormat:@"Servername     %@", @"<Unknown>"]; //if machine has no connections
+			rightText = @"<Unknown>"; //if machine has no connections
 		}
         
-	} else if (row == ServerPropertyUserNameIndex) {
-		title = [NSString stringWithFormat:@"Username        %@", [self.machine.userName length] > 0 ? self.machine.userName : @""];
-	} else if (row == ServerPropertyPasswordIndex) {
+    } else if (row == ServerPropertyUserNameIndex) {
+        rightText = [self.machine.userName length] > 0 ? self.machine.userName : @"";
+        
+    } else if (row == ServerPropertyPasswordIndex) {
         int passwordLength = [self.machine.password length];
         NSMutableString *obfuscatedPassword = [NSMutableString string];
         for (int i = 0; i<passwordLength; i++) {
             [obfuscatedPassword appendString:@"*"];
         }
-		title = [NSString stringWithFormat:@"Password         %@", obfuscatedPassword];
+		rightText = obfuscatedPassword;
+        
+    } else if (row == ServerExcludedFromList) {
+        rightText = [self isExcludedFromServerList] ? @"Excluded" : @"Included";
+    }
+    
+    return rightText;
+}
 
+- (id)titleForRow:(long)row {
+	NSString *title;
+	if (row == ServerPropertyServerNameIndex) {
+        title = @"Servername";
+	} else if (row == ServerPropertyUserNameIndex) {
+		title = @"Username";
+	} else if (row == ServerPropertyPasswordIndex) {
+		title = @"Password";
 	} else if (row == ServerExcludedFromList) {
-		title = [NSString stringWithFormat:@"List Status        %@", [self isExcludedFromServerList] ? @"Excluded" : @"Included"];
-		
+		title = @"List Status";
 	} else if (row == ServerRefreshSections) {
 		title = @"Tell server to refresh all sections";
-		
 	} else if (row == ServerDelete) {
 		title = @"Remove server from list";
-		
 	} else if (row == ListAddNewConnection) {
 		title = @"Add new connection";
-		
 	} else {
 		int adjustedRow = row - ListItemCount;
 		MachineConnectionBase *connection = [self.machine.connections objectAtIndex:adjustedRow];
