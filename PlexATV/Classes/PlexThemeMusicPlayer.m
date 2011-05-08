@@ -22,8 +22,12 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
     BOOL hasThemeMusic = NO;
     NSString *themeUrlAsString;
     
+    if (mediaObject.isMovie) {
+        return;
+    }
+    
     //let's play theme music both in show view but also in season view, since we in grid mode always go to season view directly
-    if ([mediaObject.attributes valueForKey:@"theme"] != nil) { // episode/movie
+    if ([mediaObject.attributes valueForKey:@"theme"] != nil) { // episode
         hasThemeMusic = YES;
         themeUrlAsString = [mediaObject.request buildAbsoluteKey: [mediaObject.attributes valueForKey:@"theme"]];
         
