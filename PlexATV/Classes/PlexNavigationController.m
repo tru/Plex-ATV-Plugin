@@ -191,7 +191,9 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     BRController *controller = nil;
     
     //play theme music if we're entering a tv show
-    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
+    if (aMediaObject.isTVShow || aMediaObject.isSeason || aMediaObject.isEpisode) {
+        [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
+    }
     // ========== movie, initiate movie pre-play view ============
     if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
         return [[HWDetailedMovieMetadataController alloc] initWithPlexMediaObject:aMediaObject];

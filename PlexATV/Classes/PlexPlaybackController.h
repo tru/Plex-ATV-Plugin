@@ -26,12 +26,12 @@
 @class PlexMediaObject;
 
 @interface PlexPlaybackController : BRController {
-  PlexMediaObject *pmo;
-  NSTimer* playProgressTimer;
-
-    id ctrl;
+    PlexMediaObject *pmo;
+    NSTimer* playProgressTimer;
+    BOOL playbackCancelled;
+    BOOL firstLaunch;
 }
- 
+
 -(id)initWithPlexMediaObject:(PlexMediaObject*)mediaObject;
 -(void)startPlaying;
 -(void)playbackVideoWithOffset:(int)offset;
