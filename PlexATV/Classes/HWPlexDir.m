@@ -140,7 +140,9 @@
 //handle custom event
 -(BOOL)brEventAction:(BREvent *)event {
 	int remoteAction = [event remoteAction];
-    DLog(@"remote action: %d",remoteAction);
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"remoteaction [%@]", remoteAction);
+#endif
 	if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
 	
@@ -282,7 +284,10 @@
 #endif
     
     if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
-        //cascading
+        //parade
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"using parade preview for [%@]", pmo);
+#endif
         NSMutableArray *imageProxies = [NSMutableArray array];
         PlexMediaContainer *subItemsContainer = [pmo contents];
         NSArray *subItems = subItemsContainer.directories;
@@ -295,6 +300,9 @@
         [preview setImageProxies:imageProxies];
         
     } else {
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"using standard preview for [%@]", pmo);
+#endif
         
         //single coverart
         preview = pmo.previewControl; //already autoreleased
