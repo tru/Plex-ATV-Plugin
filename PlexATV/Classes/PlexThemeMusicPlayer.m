@@ -22,8 +22,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
 
 
 - (void)startPlayingThemeMusicIfAppropiateForMediaObject:(PlexMediaObject *)mediaObject {
-    BOOL themeMusicDisabled = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisableThemeMusic];
-    if (themeMusicDisabled) {
+    BOOL themeMusicEnabled = [[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicEnabled];
+    if (!themeMusicEnabled) {
         return;
     }
     

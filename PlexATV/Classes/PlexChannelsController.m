@@ -131,20 +131,9 @@
 	return [super brEventAction:event];
 }
 
-- (id)previewControlForItem:(long)item
-{
-    
+- (id)previewControlForItem:(long)item {
 	PlexMediaObject* pmo = [rootContainer.directories objectAtIndex:item];
-    
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"media object: %@", pmo);
-#endif	
-    
-	BRMetadataPreviewControl *preview =[[BRMetadataPreviewControl alloc] init];
-	[preview setShowsMetadataImmediately:[[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView]];
-	[preview setAsset:pmo.previewAsset];
-	
-	return [preview autorelease];
+	return pmo.previewAsset;
 }
 
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"

@@ -36,7 +36,7 @@
 #import "PlexThemeMusicPlayer.h"
 #import "PlexAudioSubsController.h"
 
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"
 
 @implementation HWPlexDir
@@ -77,13 +77,7 @@
 	return self;
 }
 
-- (void)log:(NSNotificationCenter *)note {
-	DLog(@"note = %@", note);
-}
-
--(void)dealloc
-{
-	DLog(@"deallocing HWPlexDir");
+-(void)dealloc {
 	[playbackItem release];
 	[rootContainer release];
     [tabBar release];
@@ -141,7 +135,7 @@
 -(BOOL)brEventAction:(BREvent *)event {
 	int remoteAction = [event remoteAction];
 #if LOCAL_DEBUG_ENABLED
-    DLog(@"remoteaction [%@]", remoteAction);
+    DLog(@"remoteaction [%d]", remoteAction);
 #endif
 	if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
@@ -181,7 +175,6 @@
             }
 			break;
 		case kBREventRemoteActionPlayPause:
-			DLog(@"play/pause event");
 			if([event value] == 1) {
 				[self playPauseActionForRow:[self getSelection]];
             }
@@ -279,10 +272,6 @@
     //we force set the hash so two movies with same title don't end up with the same preview
     [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
     
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"media object: %@", pmo);
-#endif
-    
     if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
         //parade
 #if LOCAL_DEBUG_ENABLED
@@ -338,9 +327,6 @@
     BOOL handled = NO;
     //get the currently selected row
 	PlexMediaObject* pmo = [self.items objectAtIndex:row];
-	NSString *plexMediaObjectType = [pmo.attributes valueForKey:@"type"];
-	
-	DLog(@"HERE: %@", plexMediaObjectType);
 	
 	if (pmo.hasMedia 
         || [@"Video" isEqualToString:pmo.containerType]
@@ -348,7 +334,7 @@
         
         PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:pmo];
         [[self stack] pushController:subCtrl];
-        [subCtrl autorelease];
+        [subCtrl release];
         handled = YES;
     }
     return handled;

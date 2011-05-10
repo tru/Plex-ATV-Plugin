@@ -19,8 +19,8 @@
 
 @implementation PlexSecuritySettingsController
 
-#define SetSecurityPasscode 0
-#define EnableSettingsLock 1
+#define SecurityPasscodeIndex 0
+#define SecuritySettingsLockEnabledIndex 1
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -75,21 +75,19 @@
 	[_items addObject:securityPasscodeMenuItem];
 	
 	
-	// =========== enable settings lock ===========
+	// =========== settings lock ===========
 	SMFMenuItem *settingsLockMenuItem = [SMFMenuItem menuItem];
 	
-	[settingsLockMenuItem setTitle:@"Security Locked"];
-	NSString *settingsLockOptions = [[HWUserDefaults preferences] boolForKey:PreferencesSettingsEnableLock] ? @"Yes" : @"No";
+	[settingsLockMenuItem setTitle:@"Settings Lock"];
+	NSString *settingsLockOptions = [[HWUserDefaults preferences] boolForKey:PreferencesSecuritySettingsLockEnabled] ? @"Enabled" : @"Disabled";
     [settingsLockMenuItem setRightText:settingsLockOptions];
 	[_items addObject:settingsLockMenuItem];
 }
 
-
-#pragma mark -
 #pragma mark List Delegate Methods
 - (void)itemSelected:(long)selected {
 	switch (selected) {
-		case SetSecurityPasscode: {
+		case SecurityPasscodeIndex: {
 			// =========== set security passcode ===========            
             SMFPasscodeController *passcodeController = [SMFPasscodeController passcodeWithTitle:@"Security Passcode" 
                                                                                  withDescription:@"Please Select Plex's Security Passcode"
@@ -101,10 +99,10 @@
             break;
 			break;
 		}
-		case EnableSettingsLock: {
+		case SecuritySettingsLockEnabledIndex: {
 			// =========== enable settings lock ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesSettingsEnableLock];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesSettingsEnableLock];
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesSecuritySettingsLockEnabled];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesSecuritySettingsLockEnabled];
 			[self setupList];
 			[self.list reload];
 			break;
@@ -121,14 +119,14 @@
 -(id)previewControlForItem:(long)item {
 	SMFBaseAsset *asset = [[SMFBaseAsset alloc] init];
 	switch (item) {
-		case SetSecurityPasscode: {
+		case SecurityPasscodeIndex: {
 			// =========== set security passcode ===========
 			[asset setTitle:@"Set a custom security passcode"];
 			[asset setSummary:@"Lets you customize the plex passcode for any locked screens"];
 			break;
 		}
-		case EnableSettingsLock: {	
-			// =========== enable settings lock ===========
+		case SecuritySettingsLockEnabledIndex: {	
+			// =========== settings lock ===========
 			[asset setTitle:@"Toggles the Settings lock"];
 			[asset setSummary:@"Locks the settings menu option using the security passcode"];
 			break;

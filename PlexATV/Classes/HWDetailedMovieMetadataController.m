@@ -23,7 +23,7 @@
 //  THE SOFTWARE.
 //  
 
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 
 #import "HWDetailedMovieMetadataController.h"
 #import "PlexMediaProvider.h"
@@ -74,7 +74,9 @@ typedef enum {
     self = [self init];
     if (self) {
         self.selectedMediaObject = aMediaObject;
+#if LOCAL_DEBUG_ENABLED
         DLog(@"init with media object:%@", self.selectedMediaObject);
+#endif
     }
     return self;
 }
@@ -106,9 +108,6 @@ typedef enum {
 }
 
 -(void)dealloc {
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"deallocing HWDetailedMovieMetadataController");
-#endif
 	self.mediaObjects = nil;
     
     [listDropShadowControl release];
@@ -133,9 +132,6 @@ typedef enum {
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
-#if LOCAL_DEBUG_ENABLED
-    DLog();
-#endif
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasPushed];
 }
@@ -227,7 +223,7 @@ typedef enum {
 		int buttonId = [buttonControl.identifier intValue];
 		switch (buttonId) {
 			case kPlayButton:
-				DLog(@"play movie plz kthxbye");
+				DLog(@"initiate movie playback");
                 [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
 				break;
             case kMoreButton:
@@ -253,9 +249,9 @@ typedef enum {
 -(void)controller:(SMFMoviePreviewController *)c switchedFocusTo:(BRControl *)newControl {
 	if ([newControl isKindOfClass:[BRButtonControl class]]) {		
         //one of the buttons is now focused
-		DLog(@"switchedFocusTo button focused");
-		if (shelfIsSelected)
+		if (shelfIsSelected) {
 			shelfIsSelected = NO; //shelf was focused, and now one of the buttons are.
+        }
 	} else if (newControl == self._shelfControl) {
         //the shelf is now re-focused, load previous focused element
 		shelfIsSelected = YES;
@@ -267,8 +263,9 @@ typedef enum {
     //check if the shelf is currently selected
     //we perform this check because this delegate method is called every time
     //the user focuses a new control in the view
-	if (shelfIsSelected)
+	if (shelfIsSelected) {
 		lastFocusedIndex = index;
+    }
 }
 
 
@@ -283,7 +280,7 @@ typedef enum {
 
 -(NSString *)subtitle {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"subtitle_end: %@", [self.selectedMediaObject.previewAsset broadcaster]);
+	DLog(@"subtitle: %@", [self.selectedMediaObject.previewAsset broadcaster]);
 #endif
     
     if ([self.selectedMediaObject.previewAsset broadcaster])
@@ -294,7 +291,7 @@ typedef enum {
 
 -(NSString *)summary {
 #if LOCAL_DEBUG_ENABLED
-    //DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
+    DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
 #endif
 	return [self.selectedMediaObject.previewAsset mediaSummary];
 }
@@ -404,7 +401,9 @@ typedef enum {
 		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",self.selectedMediaObject.request.base, artPath];
         backgroundImageUrl = [self.selectedMediaObject.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
 	}
-    DLog(@"=============!!!===background image with url %@", backgroundImageUrl);
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"background image url [%@]", backgroundImageUrl);
+#endif
 	return backgroundImageUrl;
 }
 

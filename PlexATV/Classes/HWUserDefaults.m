@@ -79,8 +79,8 @@
     [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8"];
     
     DLog(@"setting up client caps");  
-    BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioEnableAC3];
-    BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioEnableDTS];  
+    BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioAC3Enabled];
+    BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioDTSEnabled];  
     
     //reset everything, we'll redo all that we need below
     [[PlexClientCapabilities sharedPlexClientCapabilities] resetCaps];
@@ -114,16 +114,16 @@
     return [NSDictionary dictionaryWithObjectsAndKeys:
             [NSArray array], PreferencesMachinesExcludedFromServerList,
             @"List", PreferencesViewTypeSetting,
-            NO, PreferencesViewDisableThemeMusic,
-            NO, PreferencesViewDisableFanartInDetailedMetadataView,
-            NO, PreferencesViewEnableSkipFilteringOptionsMenu,
-            NO, PreferencesViewDisablePosterZoomingInListView,
-            NO, PreferencesPlaybackAudioEnableAC3,
-            NO, PreferencesPlaybackAudioEnableDTS,
-            @"Good", PreferencesPlaybackVideoQuality,
-            12.0, PreferencesPlaybackVideoBitrate,
-            0, PreferencesSecurityPasscode,
-            NO, PreferencesSettingsEnableLock,
+            [NSNumber numberWithBool:YES], PreferencesViewThemeMusicEnabled,
+            [NSNumber numberWithBool:NO], PreferencesViewThemeMusicLoopEnabled,
+            [NSNumber numberWithBool:NO], PreferencesViewPreplayFanartEnabled,
+            [NSNumber numberWithBool:NO], PreferencesViewListPosterZoomingEnabled,
+            [NSNumber numberWithBool:NO], PreferencesPlaybackAudioAC3Enabled,
+            [NSNumber numberWithBool:NO], PreferencesPlaybackAudioDTSEnabled,
+            [NSNumber numberWithInt:0], PreferencesPlaybackVideoQualityProfile,
+            [NSNumber numberWithFloat:12.0], PreferencesPlaybackVideoBitrate,
+            [NSNumber numberWithBool:NO], PreferencesSecuritySettingsLockEnabled,
+            [NSNumber numberWithInt:0], PreferencesSecurityPasscode,
             nil];
 }
 

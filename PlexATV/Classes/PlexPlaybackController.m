@@ -156,16 +156,23 @@ PlexMediaProvider* __provider = nil;
 	[pmo.attributes setObject:[NSNumber numberWithInt:offset] forKey:@"viewOffset"]; //set where in the video we want to start...
 	
     //determine the user selected quality setting
-	NSString *qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesPlaybackVideoQuality];
-	PlexStreamingQualityDescriptor *streamQuality;
-	if ([qualitySetting isEqualToString:@"Good"]) {
-		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
-	} else 	if ([qualitySetting isEqualToString:@"Best"]) {
-		streamQuality = [pmo.request bestQuality];
-	} else { //medium (default)
-		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
-	}
-	pmo.request.machine.streamQuality = streamQuality;
+	NSInteger qualityProfile = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
+	
+    PlexStreamingQualityDescriptor *streamQuality;
+    switch (qualityProfile) {
+        case kPlaybackVideoQualityProfileGood:
+            streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
+            break;
+        case kPlaybackVideoQualityProfileBetter:
+            streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
+            break;
+        case kPlaybackVideoQualityProfileBest:
+            streamQuality = [pmo.request bestQuality];
+            break;
+        default:
+            streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi]; //default
+            break;
+    }
 	
 	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
