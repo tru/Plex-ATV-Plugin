@@ -11,7 +11,7 @@
 @class PlexMediaObject;
 
 @interface PlexThemeMusicPlayer : NSObject {}
-@property (retain) AVQueuePlayer *themeMusicPlayer;
+@property (retain) AVPlayer *themeMusicPlayer;
 @property (retain) NSURL *currentlyPlayingThemeUrl;
 
 
@@ -19,8 +19,5 @@
 
 - (void)startPlayingThemeMusicIfAppropiateForMediaObject:(PlexMediaObject *)mediaObject;
 - (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo;
-- (void)stopPlayingThemeMusic;
-- (void)cancelAllQueuedPlayback;
-- (int)queueSize;
 
 @end

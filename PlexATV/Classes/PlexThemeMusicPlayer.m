@@ -46,21 +46,12 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
     if (hasThemeMusic && themeUrlAsString) {
         NSURL *themeUrl = [NSURL URLWithString:themeUrlAsString];
         
-        if (!self.themeMusicPlayer) {
+        if (![themeUrl isEqual:self.currentlyPlayingThemeUrl]) {
             self.currentlyPlayingThemeUrl = themeUrl;
-            self.themeMusicPlayer = [AVQueuePlayer playerWithURL:themeUrl];
-            [self.themeMusicPlayer setActionAtItemEnd:AVPlayerActionAtItemEndAdvance];
+            self.themeMusicPlayer = [AVPlayer playerWithURL:themeUrl];
+            [self.themeMusicPlayer setActionAtItemEnd:AVPlayerActionAtItemEndPause];
             [self.themeMusicPlayer pause];
             [self.themeMusicPlayer play];
-        } else if (![self.currentlyPlayingThemeUrl isEqual:themeUrl]) {
-            self.currentlyPlayingThemeUrl = themeUrl;
-            AVPlayerItem *newItem = [AVPlayerItem playerItemWithURL:self.currentlyPlayingThemeUrl];
-            [self.themeMusicPlayer insertItem:newItem afterItem:nil];
-            DLog(@"rate [%f]", [self.themeMusicPlayer rate]);
-            if ([self.themeMusicPlayer rate] == 0) {
-                [self.themeMusicPlayer pause];
-                [self.themeMusicPlayer play];
-            }
         } else {
             //url is same, so music must be same, so don't do anything
         }
@@ -68,55 +59,10 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
 }
 
 - (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)aMediaObject {
-    if(self.themeMusicPlayer && aMediaObject.isTVShow) {
-        [self stopPlayingThemeMusic];
+    if(self.themeMusicPlayer && (!aMediaObject || aMediaObject.isTVShow)) {
+        [self.themeMusicPlayer pause];
+        self.currentlyPlayingThemeUrl = nil;
     }
-}
-
-- (void)stopPlayingThemeMusic {
-    self.currentlyPlayingThemeUrl = nil;
-    AVAsset *asset = [self.themeMusicPlayer.currentItem asset];
-    NSArray *keys = [NSArray arrayWithObject:@"tracks"];
-    [asset loadValuesAsynchronouslyForKeys:keys completionHandler:^(void) {
-        NSError *error = nil;
-        // get the status to see if the asset was loaded
-        AVKeyValueStatus trackStatus = [asset statusOfValueForKey:@"tracks" error:&error];
-        switch (trackStatus) {
-            case AVKeyValueStatusLoaded: {
-                if(self.themeMusicPlayer) {
-                    NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-                    NSMutableArray *allAudioParams = [NSMutableArray array];
-                    
-                    float fadeOutSeconds = 1.0f;
-                    for (AVAssetTrack *t in tracks) {
-                        AVMutableAudioMixInputParameters *params =[AVMutableAudioMixInputParameters audioMixInputParameters];
-                        
-                        [params setVolumeRampFromStartVolume:1.0 toEndVolume:0.0 timeRange:CMTimeRangeMake(kCMTimeZero, CMTimeMakeWithSeconds(fadeOutSeconds, 1))];
-                        
-                        [params setTrackID:[t trackID]];
-                        [allAudioParams addObject:params];
-                    }
-                    AVMutableAudioMix *zeromix = [AVMutableAudioMix audioMix];
-                    [zeromix setInputParameters:allAudioParams];
-                    
-                    [self.themeMusicPlayer.currentItem setAudioMix:zeromix];
-                    //hack. we want the fade out finishing to pause the content
-                    [self.themeMusicPlayer performSelector:@selector(advanceToNextItem) withObject:nil afterDelay:fadeOutSeconds+0.3];
-                }
-                break;
-            }
-            default:
-                break;
-        }
-    }]; //end block
-}
-
-- (int)queueSize {
-    return [[self.themeMusicPlayer items] count];
-}
-
-- (void)cancelAllQueuedPlayback {
-    [self.themeMusicPlayer removeAllItems];
 }
 
 @end

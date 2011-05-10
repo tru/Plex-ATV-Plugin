@@ -112,8 +112,7 @@
 }
 
 - (void)wasPopped {
-    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusic];
-    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] performSelector:@selector(cancelAllQueuedPlayback) withObject:nil afterDelay:5.0];
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil];
 	[super wasPopped];
 }
 

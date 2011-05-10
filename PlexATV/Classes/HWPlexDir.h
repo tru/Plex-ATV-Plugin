@@ -40,7 +40,6 @@
 @property (retain) NSArray *items;
 
 - (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar;
-- (void)log:(NSNotificationCenter *)note;
 - (void)showModifyViewedStatusViewForRow:(long)row;
 - (BOOL)showAudioAndSubStreamChooserForRow:(long)row;
 - (void)reselectCurrentTabBarItem;

@@ -143,8 +143,7 @@ PlexMediaProvider* __provider = nil;
 			[self playbackVideoWithOffset:0]; //just start playback from beginning
 		}
 	}
-    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusic]; //stop the music dead if it's playing
-    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] performSelector:@selector(cancelAllQueuedPlayback) withObject:nil afterDelay:5.0];
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil];
 }
 
 -(void)playbackVideoWithOffset:(int)offset {

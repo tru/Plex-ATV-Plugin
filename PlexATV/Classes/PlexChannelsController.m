@@ -133,7 +133,7 @@
 
 - (id)previewControlForItem:(long)item {
 	PlexMediaObject* pmo = [rootContainer.directories objectAtIndex:item];
-	return pmo.previewAsset;
+	return pmo.previewControl;
 }
 
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"
