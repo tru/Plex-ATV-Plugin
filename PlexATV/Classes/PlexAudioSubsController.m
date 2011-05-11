@@ -26,7 +26,7 @@
 #import "Constants.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaObject + VideoDetails.h>
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 
 @implementation PlexAudioSubsController
 @synthesize playbackItem;
@@ -87,7 +87,7 @@
 
 -(void)dealloc
 {
-	DLog(@"deallocing PlexAudioSubsController");
+	//DLog(@"deallocing PlexAudioSubsController");
 	[playbackItem release];
     [self.items release];
 	
@@ -116,7 +116,16 @@
 #pragma mark -
 #pragma mark BRMenuListItemProvider Datasource
 - (long)itemCount {
-	return [self.items count];
+    NSArray *subStreams = [detailedItem subtitleStreamsForLanguage:nil haveFallback:NO];
+
+#if LOCAL_DEBUG_ENABLED    
+    DLog(@"substreams: %d", [subStreams count]);
+#endif
+    
+    if ([subStreams count] > 0)
+        return [self.items count] + 1;
+    else
+        return [self.items count];
 }
 
 - (float)heightForRow:(long)row {
@@ -124,13 +133,25 @@
 }
 
 - (id)titleForRow:(long)row {
-	PlexMediaStream *stream = [self.items objectAtIndex:row];
-    return stream.streamDescription;
+    if (row == [self.items count] +1) {
+        return @"Disable subtitles";
+    }
+    else {
+        PlexMediaStream *stream = [self.items objectAtIndex:row];
+        return stream.streamDescription;
+    }
 }
 
 - (id)itemForRow:(long)row {
-	if(row > [self.items count])
-		return nil;
+    if (row > [self.items count]) {
+        return nil;
+    }
+
+	if(row == [self.items count]) {
+        SMFMenuItem * menuItem = [SMFMenuItem menuItem];
+        [menuItem setTitle:@"Disable subtitles"];
+        return menuItem;
+    }
     
     PlexMediaStream *stream = [self.items objectAtIndex:row];
     SMFMenuItem * menuItem = [SMFMenuItem menuItem];
@@ -151,28 +172,37 @@
 }
 
 - (void)itemSelected:(long)selected; {
-	DLog(@"selected: %@",[self.items objectAtIndex:selected]);
-    PlexMediaStream *selectedStream = [self.items objectAtIndex:selected];
-    
-    if (selectedStream.streamType == PlexMediaStreamTypeAudio) {
-        [self.detailedItem setAudioStream:selectedStream];
-    } else if (selectedStream.streamType == PlexMediaStreamTypeSubtitle) {
-        [self.detailedItem setSubtitleStream:selectedStream];
+    if (selected == [self.items count]) {
+        [self.detailedItem setSubtitleStream:nil];
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"disabled subs");
+#endif
     }
-    /*  WHY WON'T THIS WORK? IT IS INTEGER YOU STOOPID THING 
-     switch (selectedStream.streamType) {
-     case PlexMediaStreamTypeAudio:
-     [self.detailedItem setAudioStream:selectedStream];
-     break;
-     case PlexMediaStreamTypeSubtitle:
-     [self.detailedItem setSubtitleStream:selectedStream];
-     break;
-     
-     default:
-     break;
-     }
-     */
-    
+    else {
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"selected: %@",[self.items objectAtIndex:selected]);
+#endif
+        PlexMediaStream *selectedStream = [self.items objectAtIndex:selected];
+        
+        if (selectedStream.streamType == PlexMediaStreamTypeAudio) {
+            [self.detailedItem setAudioStream:selectedStream];
+        } else if (selectedStream.streamType == PlexMediaStreamTypeSubtitle) {
+            [self.detailedItem setSubtitleStream:selectedStream];
+        }
+        /*  WHY WON'T THIS WORK? IT IS INTEGER YOU STOOPID THING 
+         switch (selectedStream.streamType) {
+         case PlexMediaStreamTypeAudio:
+         [self.detailedItem setAudioStream:selectedStream];
+         break;
+         case PlexMediaStreamTypeSubtitle:
+         [self.detailedItem setSubtitleStream:selectedStream];
+         break;
+         
+         default:
+         break;
+         }
+         */
+    }
     
     //repopulate the list
     [self populateListWithStreams];
