@@ -263,6 +263,9 @@ PlexMediaProvider* __provider = nil;
 -(void)reportProgress:(NSTimer*)tm {    
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
     
+#warning here
+    //playa->_aggregateBufferedRange = [NSMakeRange(0, playa.elapsedTime+30);
+    
 	switch (playa.playerState) {
 		case kBRMediaPlayerStatePlaying: {
 			//report time back to PMS so we can continue in the right spot
