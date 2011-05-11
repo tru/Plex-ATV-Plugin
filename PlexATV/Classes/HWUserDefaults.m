@@ -78,6 +78,11 @@
     DLog(@"registering ourselves with the PMS");
     [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8"];
     
+    //tell pms we like direct-stream and we will be sending caps to it
+    [[PlexPrefs defaultPreferences] setAllowDirectStreaming:YES];
+
+    DLog(@"direct-streaming: %@",[[PlexPrefs defaultPreferences] allowDirectStreaming] ? @"YES" : @"NO");
+    
     DLog(@"setting up client caps");  
     BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioAC3Enabled];
     BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioDTSEnabled];  
@@ -108,6 +113,13 @@
     [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
     [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
     
+    
+    /*
+    NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
+    for (Machine *m in machines) {
+        DLog(@"machine caps %@", [[PlexClientCapabilities sharedPlexClientCapabilities] capStringForMachine:m]);
+    }
+    */
 }
 
 + (NSDictionary *)defaultValues {
@@ -120,7 +132,7 @@
             [NSNumber numberWithBool:NO], PreferencesViewListPosterZoomingEnabled,
             [NSNumber numberWithBool:NO], PreferencesPlaybackAudioAC3Enabled,
             [NSNumber numberWithBool:NO], PreferencesPlaybackAudioDTSEnabled,
-            [NSNumber numberWithInt:0], PreferencesPlaybackVideoQualityProfile,
+            [NSNumber numberWithInt:2], PreferencesPlaybackVideoQualityProfile,
             [NSNumber numberWithFloat:12.0], PreferencesPlaybackVideoBitrate,
             [NSNumber numberWithBool:NO], PreferencesSecuritySettingsLockEnabled,
             [NSNumber numberWithInt:0], PreferencesSecurityPasscode,
