@@ -114,7 +114,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     self.targetMediaObject = nil;
     self.promptText = @"Loading \"Detailed Metadata\"...";
     
-    HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithPreviewAssets:previewAssets withSelectedIndex:selectedIndex];
+    HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithMediaObjects:previewAssets withSelectedIndex:selectedIndex];
     self.targetController = previewController;
     [previewController release];
     
@@ -157,7 +157,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     HWSettingsController *settingsController = [[HWSettingsController alloc] init];
     settingsController.topLevelController = topLevelController;
     
-    if ([[HWUserDefaults preferences] boolForKey:PreferencesSettingsEnableLock]) {
+    if ([[HWUserDefaults preferences] boolForKey:PreferencesSecuritySettingsLockEnabled]) {
         NSInteger securityPasscode = [[HWUserDefaults preferences] integerForKey:PreferencesSecurityPasscode];
         SMFControllerPasscodeController *passcodeController = [[SMFControllerPasscodeController alloc] initForController:settingsController withPasscode:securityPasscode];
         [settingsController release];
@@ -191,7 +191,9 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     BRController *controller = nil;
     
     //play theme music if we're entering a tv show
-    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
+    if (aMediaObject.isTVShow || aMediaObject.isSeason || aMediaObject.isEpisode) {
+        [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
+    }
     // ========== movie, initiate movie pre-play view ============
     if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
         return [[HWDetailedMovieMetadataController alloc] initWithPlexMediaObject:aMediaObject];
@@ -332,13 +334,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
 - (PlexMediaContainer *)applySkipFilteringOnContainer:(PlexMediaContainer *)container {
 	PlexMediaContainer *pmc = container;
-	
-	BOOL skipFilteringOptionsMenu = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
-	DLog(@"skipFilteringOption: %@", skipFilteringOptionsMenu ? @"YES" : @"NO");
-	
-#warning skip filtering forced to be on
-    skipFilteringOptionsMenu = YES;
-	if (pmc.sectionRoot && !pmc.requestsMessage && skipFilteringOptionsMenu) { 
+
+	if (pmc.sectionRoot && !pmc.requestsMessage) { 
 		//open "/library/section/x/all or the first item in the list"
 		//bypass the first filter node
 		
@@ -348,13 +345,13 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 		 ATV will use the last filter
 		 */
 		//[PlexPrefs defaultPreferences] filterForSection]
+#warning work here!
 		Machine *currentMachine = container.request.machine;
 		const NSString* filterWeAreLookingFor = [currentMachine filterForSection:pmc.key]; //all, unwatched, recentlyAdded, etc
 		BOOL handled = NO;
 		PlexMediaContainer* newPmc = nil;
 		
 		for(PlexMediaObject* po in pmc.directories){
-			DLog(@"%@: %@ == %@", pmc.key, po.lastKeyComponent, filterWeAreLookingFor);
 			if ([filterWeAreLookingFor isEqualToString:po.lastKeyComponent]) { //po.lastKeyComponent == one of [all, unwatched, recentlyAdded, etc]
 				PlexMediaContainer* potentialNewPmc = [po contents]; //the contents like all the tv shows, movies, etc
 				if (potentialNewPmc.directories.count>0) 
@@ -364,7 +361,6 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 			}
 		}
 		
-		DLog(@"handled: %@", handled ? @"YES" : @"NO");
 		if (handled && newPmc==nil) 
             newPmc = [[pmc.directories objectAtIndex:0] contents]; //if we did find it, but it was empty, use the "default"
         
@@ -384,8 +380,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 		}
 		
 		if (!handled && pmc.directories.count>0) pmc = [[pmc.directories objectAtIndex:0] contents]; //we have failed, just use the "default
+        DLog(@"done filtering: [%@] vs [%@], handled: [%@]", container, pmc, handled ? @"YES" : @"NO");
 	}
-	DLog(@"done filtering");
 	return pmc;
 }
 

@@ -19,12 +19,14 @@
 
 @implementation PlexViewSettingsController
 
-#define ViewTypeSettingIndex 0
+//----------- general -----------
+#define ViewTypeSettingIndex                0
+#define ViewThemeMusicEnabledIndex          1
+#define ViewThemeMusicLoopEnabledIndex      2
 //----------- list -----------
-#define EnableSkipFilteringOptionsMenuIndex 1
-#define DisablePosterZoomingInListViewIndex 2
+#define ViewListPosterZoomingEnabledIndex   3
 //----------- detailed metadata -----------
-#define DisableFanartInDetailedMetadataViewIndex 3
+#define ViewPreplayFanartEnabledIndex       4
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -34,8 +36,9 @@
 		[self setListTitle:@"Plex View Settings"];
 		
 		[self setupList];
-        [[self list] addDividerAtIndex:1 withLabel:@"List"];
-        [[self list] addDividerAtIndex:3 withLabel:@"Detailed Metadata"];
+        [[self list] addDividerAtIndex:0 withLabel:@"General"];
+        [[self list] addDividerAtIndex:3 withLabel:@"List"];
+        [[self list] addDividerAtIndex:4 withLabel:@"Detailed Metadata"];
 	}	
 	return self;
 }
@@ -70,59 +73,59 @@
 - (void)setupList {
 	[_items removeAllObjects];
     
+    // =========== general ===========
   	// =========== view type setting ===========
 	SMFMenuItem *viewTypeSettingMenuItem = [SMFMenuItem menuItem];
 	
 	NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-	if (viewTypeSetting == nil) {
-		[[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
-		viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-	}
-
-	NSString *viewTypeSettingTitle = [[NSString alloc] initWithFormat:@"Video view:                  %@", viewTypeSetting];
-	[viewTypeSettingMenuItem setTitle:viewTypeSettingTitle];
-	[viewTypeSettingTitle release];
+	[viewTypeSettingMenuItem setTitle:@"Video view"];
+    [viewTypeSettingMenuItem setRightText:viewTypeSetting];
 	[_items addObject:viewTypeSettingMenuItem];
     
-    
-    
-	// =========== "skip filtering options" menu ===========
-	SMFMenuItem *skipFilteringOptionsMenuItem = [SMFMenuItem menuItem];
-	
-	NSString *skipFilteringOptions = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu] ? @"Yes" : @"No";
-	NSString *skipFilteringOptionsTitle = [[NSString alloc] initWithFormat:@"Skip filtering menu:     %@", skipFilteringOptions];
-	[skipFilteringOptionsMenuItem setTitle:skipFilteringOptionsTitle];
-	[skipFilteringOptionsTitle release];
-	[_items addObject:skipFilteringOptionsMenuItem];
-	
-	
-	// =========== disable poster zooming in list view ===========
-	SMFMenuItem *disablePosterZoomMenuItem = [SMFMenuItem menuItem];
-	
-	NSString *disablePosterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView] ? @"Yes" : @"No";
-	NSString *disablePosterZoomTitle = [[NSString alloc] initWithFormat:@"Disable poster zoom:  %@", disablePosterZoom];
-	[disablePosterZoomMenuItem setTitle:disablePosterZoomTitle];
-	[disablePosterZoomTitle release];
-	[_items addObject:disablePosterZoomMenuItem];
-    
-    
-    // =========== disable fanart in detailed metadata view ===========
-	SMFMenuItem *disableFanartInMetadataScreenMenuItem = [SMFMenuItem menuItem];
-	
-	NSString *disableFanartInMetadataScreen = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisableFanartInDetailedMetadataView] ? @"Yes" : @"No";
-	NSString *disableFanartInMetadataScreenTitle = [[NSString alloc] initWithFormat:@"Disable fanart:             %@", disableFanartInMetadataScreen];
-	[disableFanartInMetadataScreenMenuItem setTitle:disableFanartInMetadataScreenTitle];
-	[disableFanartInMetadataScreenTitle release];
-	[_items addObject:disableFanartInMetadataScreenMenuItem];
-}
 
+    // =========== theme music enabled ===========
+	SMFMenuItem *themeMusicMenuItem = [SMFMenuItem menuItem];
+	
+	[themeMusicMenuItem setTitle:@"Theme music"];
+	NSString *themeMusic = [[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicEnabled] ? @"Enabled" : @"Disabled";
+    [themeMusicMenuItem setRightText:themeMusic];
+	[_items addObject:themeMusicMenuItem];
+    
+    
+    // =========== theme music looping ===========
+	SMFMenuItem *themeMusicLoopingMenuItem = [SMFMenuItem menuItem];
+	
+	[themeMusicLoopingMenuItem setTitle:@"Theme music looping"];
+	NSString *themeMusicLooping = [[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicLoopEnabled] ? @"Enabled" : @"Disabled";
+    [themeMusicLoopingMenuItem setRightText:themeMusicLooping];
+	[_items addObject:themeMusicLoopingMenuItem];
+    
+    
+    // =========== list ===========	
+	// =========== poster zooming ===========
+	SMFMenuItem *posterZoomMenuItem = [SMFMenuItem menuItem];
+	
+	[posterZoomMenuItem setTitle:@"Poster zoom"];
+	NSString *posterZoom = [[HWUserDefaults preferences] boolForKey:PreferencesViewListPosterZoomingEnabled] ? @"Enabled" : @"Disabled";
+    [posterZoomMenuItem setRightText:posterZoom];
+	[_items addObject:posterZoomMenuItem];
+    
+    
+    // =========== Preplay ===========
+    // =========== fanart ===========
+	SMFMenuItem *fanartMenuItem = [SMFMenuItem menuItem];
+	
+	[fanartMenuItem setTitle:@"Fanart"];
+	NSString *fanart = [[HWUserDefaults preferences] boolForKey:PreferencesViewPreplayFanartEnabled] ? @"Enabled" : @"Disabled";
+    [fanartMenuItem setRightText:fanart];
+	[_items addObject:fanartMenuItem];
+}
 
 #pragma mark -
 #pragma mark List Delegate Methods
 - (void)itemSelected:(long)selected {
 	switch (selected) {
         case ViewTypeSettingIndex: {
-            // =========== view type setting ===========
             NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
             
             if ([viewTypeSetting isEqualToString:@"List"]) {
@@ -136,26 +139,32 @@
             [self.list reload];      
             break;
         }
-		case EnableSkipFilteringOptionsMenuIndex: {
-            // =========== "skip filtering options" menu ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewEnableSkipFilteringOptionsMenu];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewEnableSkipFilteringOptionsMenu];			
-			[self setupList];
-			[self.list reload];
-			break;
-		}
-		case DisablePosterZoomingInListViewIndex: {
-            // =========== disable poster zooming in list view ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisablePosterZoomingInListView];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewDisablePosterZoomingInListView];			
+		case ViewThemeMusicEnabledIndex: {
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicEnabled];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewThemeMusicEnabled];			
 			[self setupList];
 			[self.list reload];
 			break;
         }
-		case DisableFanartInDetailedMetadataViewIndex: {
-            // =========== disable fanart in detailed metadata view ===========
-			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewDisableFanartInDetailedMetadataView];
-			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewDisableFanartInDetailedMetadataView];			
+		case ViewThemeMusicLoopEnabledIndex: {
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicLoopEnabled];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewThemeMusicLoopEnabled];			
+			[self setupList];
+			[self.list reload];
+			break;
+        }
+        //--------------------- seperator ---------------------
+		case ViewListPosterZoomingEnabledIndex: {
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewListPosterZoomingEnabled];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewListPosterZoomingEnabled];			
+			[self setupList];
+			[self.list reload];
+			break;
+        }
+        //--------------------- seperator ---------------------
+		case ViewPreplayFanartEnabledIndex: {
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewPreplayFanartEnabled];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewPreplayFanartEnabled];			
 			[self setupList];
 			[self.list reload];
 			break;
@@ -165,31 +174,31 @@
 	}
 }
 
-
 -(id)previewControlForItem:(long)item
 {
 	SMFBaseAsset *asset = [[SMFBaseAsset alloc] init];
 	switch (item) {
         case ViewTypeSettingIndex: {
-            // =========== view type setting ===========
             [asset setTitle:@"Select the video listing view type"];
             [asset setSummary:@"Sets the type of view for videos, choose between list view or grid view ie. cover art view."];
             break;
         }
-		case EnableSkipFilteringOptionsMenuIndex: {
-            // =========== "skip filtering options" menu ===========
-			[asset setTitle:@"Toggles whether to skip the menu"];
-			[asset setSummary:@"Enables/Disables the skipping of the menus with 'all', 'unwatched', 'newest', etc. (currently experimental)"];
+		case ViewThemeMusicEnabledIndex: {
+			[asset setTitle:@"Toggles whether theme music plays"];
+			[asset setSummary:@"Enables/Disables the playback of theme music upon entering a section that has theme music available"];
 			break;
 		}
-		case DisablePosterZoomingInListViewIndex: {
-            // =========== disable poster zooming in list view ===========
+		case ViewThemeMusicLoopEnabledIndex: {
+			[asset setTitle:@"Toggles whether the theme music loops"];
+			[asset setSummary:@"Enables/Disables the looping of theme music when playback of theme music completes"];
+			break;
+		}
+		case ViewListPosterZoomingEnabledIndex: {
 			[asset setTitle:@"Toggles whether to zoom the poster"];
 			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
 			break;
 		}
-		case DisableFanartInDetailedMetadataViewIndex: {
-            // =========== disable fanart in detailed metadata view ===========
+		case ViewPreplayFanartEnabledIndex: {
 			[asset setTitle:@"Toggles whether to zoom the poster"];
 			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
 			break;

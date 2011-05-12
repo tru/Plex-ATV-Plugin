@@ -14,21 +14,58 @@
 @implementation HWUserDefaults
 #pragma mark -
 #pragma mark PlexPrefs Methods
+-(void)removeValueForKey:(NSString *)key {
+	[[HWUserDefaults preferences] removeObjectForKey:key];
+}
+
+
+- (id)objectForKey:(NSString*)key {
+	return [[HWUserDefaults preferences] objectForKey:key];
+}
+
 - (void)setObject:(id)obj forKey:(NSString*)key {
 	[[HWUserDefaults preferences] setObject:obj forKey:key];
 }
 
-- (id)objectForKey:(NSString*)key {
-	return [[HWUserDefaults preferences] objectForKey:key];
+
+- (NSInteger)integerForKey:(NSString*)key {
+	return [[HWUserDefaults preferences] integerForKey:key];
 }
 
 - (void)setInteger:(NSInteger)v forKey:(NSString*)key {
 	[[HWUserDefaults preferences] setInteger:v forKey:key];
 }
 
-- (NSInteger)integerForKey:(NSString*)key {
-	return [[HWUserDefaults preferences] integerForKey:key];
+
+-(BOOL)boolForKey:(NSString *)key {
+    return [[HWUserDefaults preferences] boolForKey:key];
 }
+
+-(void)setBool:(BOOL)value forKey:(NSString *)key {
+    [[HWUserDefaults preferences] setBool:value forKey:key];
+}
+
+
+-(double)doubleForKey:(NSString *)key {
+    return [[HWUserDefaults preferences] doubleForKey:key];
+}
+
+-(void)setDouble:(double)value forKey:(NSString *)key {
+    [[HWUserDefaults preferences] setDouble:value forKey:key];
+}
+
+
+-(float)floatForKey:(NSString *)key {
+    return [[HWUserDefaults preferences] floatForKey:key];
+}
+
+-(void)setFloat:(float)value forKey:(NSString *)key {
+    [[HWUserDefaults preferences] setFloat:value forKey:key];
+}
+
+
+#pragma mark -
+#pragma mark User Defaults Methods
 
 - (void)syncSettings {
 	[[HWUserDefaults preferences] synchronize];
@@ -36,62 +73,79 @@
 
 - (void)_setDefaults {}
 
+
 + (void)setupPlexClient {
-  DLog(@"registering ourselves with the PMS");
-  [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8"];
-  
-  DLog(@"setting up client caps");  
-  BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableAC3];
-  BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesAudioEnableDTS];  
-  
-  //reset everything, we'll redo all that we need below
-  [[PlexClientCapabilities sharedPlexClientCapabilities] resetCaps];
-  
-  if (wantsAC3) {
-    DLog(@"wants AC3");
-    [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_7_1Surround];
-  } else {
-    DLog(@"don't want AC3");
-    [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];
-  }
-  
-  if (wantsDTS) {
-    DLog(@"wants DTS");
-    [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_DTS bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_7_1Surround];
-  } else {
-    DLog(@"don't want DTS");
-    [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_DTS];
-  }
-  
-  [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AAC bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
-  
-  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_LIVE_STREAMING];
-  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
-  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
-  [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
-  
+    DLog(@"registering ourselves with the PMS");
+    [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8"];
+    
+    //tell pms we like direct-stream and we will be sending caps to it
+    [[PlexPrefs defaultPreferences] setAllowDirectStreaming:YES];
+
+    DLog(@"direct-streaming: %@",[[PlexPrefs defaultPreferences] allowDirectStreaming] ? @"YES" : @"NO");
+    
+    DLog(@"setting up client caps");  
+    BOOL wantsAC3 = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioAC3Enabled];
+    BOOL wantsDTS = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioDTSEnabled];  
+    
+    //reset everything, we'll redo all that we need below
+    [[PlexClientCapabilities sharedPlexClientCapabilities] resetCaps];
+    
+    if (wantsAC3) {
+        DLog(@"wants AC3");
+        [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AC3 bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_7_1Surround];
+    } else {
+        DLog(@"don't want AC3");
+        [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_AC3];
+    }
+    
+    if (wantsDTS) {
+        DLog(@"wants DTS");
+        [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_DTS bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_7_1Surround];
+    } else {
+        DLog(@"don't want DTS");
+        [[PlexClientCapabilities sharedPlexClientCapabilities] removeAudioCodec:PlexClientDecoderName_DTS];
+    }
+    
+    [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AAC bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
+    
+    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_LIVE_STREAMING];
+    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
+    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
+    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
+    
+    
+    /*
+    NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
+    for (Machine *m in machines) {
+        DLog(@"machine caps %@", [[PlexClientCapabilities sharedPlexClientCapabilities] capStringForMachine:m]);
+    }
+    */
 }
 
-#pragma mark -
-#pragma mark User Defaults Methods
++ (NSDictionary *)defaultValues {
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSArray array], PreferencesMachinesExcludedFromServerList,
+            @"List", PreferencesViewTypeSetting,
+            [NSNumber numberWithBool:YES], PreferencesViewThemeMusicEnabled,
+            [NSNumber numberWithBool:NO], PreferencesViewThemeMusicLoopEnabled,
+            [NSNumber numberWithBool:NO], PreferencesViewPreplayFanartEnabled,
+            [NSNumber numberWithBool:NO], PreferencesViewListPosterZoomingEnabled,
+            [NSNumber numberWithBool:NO], PreferencesPlaybackAudioAC3Enabled,
+            [NSNumber numberWithBool:NO], PreferencesPlaybackAudioDTSEnabled,
+            [NSNumber numberWithInt:2], PreferencesPlaybackVideoQualityProfile,
+            [NSNumber numberWithFloat:12.0], PreferencesPlaybackVideoBitrate,
+            [NSNumber numberWithBool:NO], PreferencesSecuritySettingsLockEnabled,
+            [NSNumber numberWithInt:0], PreferencesSecurityPasscode,
+            nil];
+}
 
 + (SMFPreferences *)preferences {
 	static SMFPreferences *_preferences = nil;
     if(!_preferences) {
 		//setup user preferences
         _preferences = [[SMFPreferences alloc] initWithPersistentDomainName:PreferencesDomain];		
-		[_preferences registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-										[NSArray array], PreferencesMachinesExcludedFromServerList,
-										@"Good", PreferencesQualitySetting,
-										@"List", PreferencesViewTypeSetting,
-                                        NO, PreferencesViewDisableFanartInDetailedMetadataView,
-										NO, PreferencesViewEnableSkipFilteringOptionsMenu,
-										NO, PreferencesViewDisablePosterZoomingInListView,
-                                        NO, PreferencesAudioEnableAC3,
-                                        NO, PreferencesAudioEnableDTS,
-                                        0, PreferencesSecurityPasscode,
-                                        NO, PreferencesSettingsEnableLock,
-										nil]];
+		[_preferences registerDefaults:[HWUserDefaults defaultValues]];
+        
     }
     return _preferences;
 }

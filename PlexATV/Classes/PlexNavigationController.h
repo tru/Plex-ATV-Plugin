@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <plex-oss/PlexMediaObject.h>
+#import <plex-oss/PlexMediaContainer.h>
 
 @interface PlexNavigationController : BRController {}
 

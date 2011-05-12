@@ -25,8 +25,8 @@
 -(void)layoutSubcontrols {
     [super layoutSubcontrols];
     
-    //if fanart is not disabled
-    if (![[HWUserDefaults preferences] boolForKey:PreferencesViewDisableFanartInDetailedMetadataView]) {
+    BOOL fanartEnabled = [[HWUserDefaults preferences] boolForKey:PreferencesViewPreplayFanartEnabled];
+    if (fanartEnabled) {
         //background image
         NSURL *artworkUrl = [self.datasource backgroundImageUrl];
         

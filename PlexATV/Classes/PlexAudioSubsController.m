@@ -26,7 +26,7 @@
 #import "Constants.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaObject + VideoDetails.h>
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 
 @implementation PlexAudioSubsController
 @synthesize playbackItem;
@@ -37,47 +37,48 @@
 #pragma mark Object/Class Lifecycle
 
 - (id)init {
-  self = [super init];
-  if (self) {
-    [self setListTitle:@"PLEX"];
-		
+    self = [super init];
+    if (self) {
+        [self setUseCenteredLayout:YES];
+        [self setListTitle:@"Audio & Subtitles"];
+        
 		NSString *plexIcon = [[NSBundle bundleForClass:[PlexAudioSubsController class]] pathForResource:@"PlexIcon" ofType:@"png"];
 		BRImage *listIcon = [BRImage imageWithPath:plexIcon];
 		[self setListIcon:listIcon horizontalOffset:0.0 kerningFactor:0.15];
 		playbackItem = nil;        
-    [self.list setDatasource:self];
-  }
-  return self;
+        [self.list setDatasource:self];
+    }
+    return self;
 }
 
 - (id)initWithMediaObject:(PlexMediaObject*)mediaObject {
 	self = [self init];
-	self.playbackItem = mediaObject;
-  
-  self.listTitle = @"Audio & Video";
-  [self populateListWithStreams];
-  
+    if (self) {
+        self.playbackItem = mediaObject;
+        [self populateListWithStreams];
+        
 #if LOCAL_DEBUG_ENABLED
-  DLog(@"Audio Streams: %@", [detailedItem audioStreamsForLanguage:nil haveFallback:NO]);
-  DLog(@"Sub Streams: %@", [detailedItem subtitleStreamsForLanguage:nil haveFallback:NO]);
-  
-  DLog(@"init done");
+        DLog(@"Audio Streams: %@", [detailedItem audioStreamsForLanguage:nil haveFallback:NO]);
+        DLog(@"Sub Streams: %@", [detailedItem subtitleStreamsForLanguage:nil haveFallback:NO]);
+        
+        DLog(@"init done");
 #endif
+    }
 	return self;
 }
 
 - (void)populateListWithStreams {
-  NSMutableArray *streams = [[NSMutableArray alloc] initWithCapacity:4];
-  
-  self.detailedItem = [self.playbackItem loadVideoDetails];
-  
-  [[self list] addDividerAtIndex:0 withLabel:@"Audio tracks"];
-  [streams addObjectsFromArray:[detailedItem audioStreamsForLanguage:nil haveFallback:NO]];
-  [[self list] addDividerAtIndex:[streams count] withLabel:@"Subtitles"];
-  [streams addObjectsFromArray:[detailedItem subtitleStreamsForLanguage:nil haveFallback:NO]];
-  
-  self.items = [NSArray arrayWithArray:streams];
-  [streams release];
+    NSMutableArray *streams = [[NSMutableArray alloc] initWithCapacity:4];
+    
+    self.detailedItem = [self.playbackItem loadVideoDetails];
+    
+    [[self list] addDividerAtIndex:0 withLabel:@"Audio tracks"];
+    [streams addObjectsFromArray:[detailedItem audioStreamsForLanguage:nil haveFallback:NO]];
+    [[self list] addDividerAtIndex:[streams count] withLabel:@"Subtitles"];
+    [streams addObjectsFromArray:[detailedItem subtitleStreamsForLanguage:nil haveFallback:NO]];
+    
+    self.items = [NSArray arrayWithArray:streams];
+    [streams release];
 }
 
 - (void)log:(NSNotificationCenter *)note {
@@ -86,9 +87,9 @@
 
 -(void)dealloc
 {
-	DLog(@"deallocing PlexAudioSubsController");
+	//DLog(@"deallocing PlexAudioSubsController");
 	[playbackItem release];
-  [self.items release];
+    [self.items release];
 	
 	[super dealloc];
 }
@@ -115,56 +116,53 @@
 #pragma mark -
 #pragma mark BRMenuListItemProvider Datasource
 - (long)itemCount {
-	return [self.items count];
+    NSArray *subStreams = [detailedItem subtitleStreamsForLanguage:nil haveFallback:NO];
+
+#if LOCAL_DEBUG_ENABLED    
+    DLog(@"substreams: %d", [subStreams count]);
+#endif
+    
+    if ([subStreams count] > 0)
+        return [self.items count] + 1;
+    else
+        return [self.items count];
 }
 
-
-- (float)heightForRow:(long)row {	
-  float height;
-  /* 
-   PlexMediaObject *pmo = [self.items objectAtIndex:row];
-   if (pmo.hasMedia || [@"Video" isEqualToString:pmo.containerType]) {
-   height = 70.0f;
-   } else {
-   height = 0.0f;
-   }
-   */
-  return 0.0f;
+- (float)heightForRow:(long)row {
+    return 0.0f;
 }
-
 
 - (id)titleForRow:(long)row {
-	PlexMediaStream *stream = [self.items objectAtIndex:row];
-  return stream.streamDescription;
+    if (row == [self.items count] +1) {
+        return @"Disable subtitles";
+    }
+    else {
+        PlexMediaStream *stream = [self.items objectAtIndex:row];
+        return stream.streamDescription;
+    }
 }
 
 - (id)itemForRow:(long)row {
-	if(row > [self.items count])
-		return nil;
-  
-  PlexMediaStream *stream = [self.items objectAtIndex:row];
-  BRMenuItem * menuItem = [[BRMenuItem alloc] init];
-  
-  NSString *streamInfo = [NSString stringWithFormat:@"%@ (%@)",stream.language,stream.streamDescription];
+    if (row > [self.items count]) {
+        return nil;
+    }
 
-  //format the text
-  if ([stream.streamDescription length] != 0)
-    [menuItem setText:streamInfo withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-  else
-    [menuItem setText:stream.language withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];  
-
-  //show which is selected by using the checkmark icon
-  if (stream.selected)
-    [menuItem addAccessoryOfType:17];
-  else
-    [menuItem addAccessoryOfType:0];
-  return [menuItem autorelease];
-  
-}
-
-
-- (id)previewControlForItem:(long)item {    
-  return nil;
+	if(row == [self.items count]) {
+        SMFMenuItem * menuItem = [SMFMenuItem menuItem];
+        [menuItem setTitle:@"Disable subtitles"];
+        return menuItem;
+    }
+    
+    PlexMediaStream *stream = [self.items objectAtIndex:row];
+    SMFMenuItem * menuItem = [SMFMenuItem menuItem];
+    
+    [menuItem setTitle:stream.language];
+    [menuItem setRightText:stream.streamDescription];
+    
+    //show which is selected by using the checkmark icon
+    [menuItem setSelectedImage:stream.selected];
+    return menuItem;
+    
 }
 
 #pragma mark -
@@ -174,35 +172,44 @@
 }
 
 - (void)itemSelected:(long)selected; {
-	DLog(@"selected: %@",[self.items objectAtIndex:selected]);
-  PlexMediaStream *selectedStream = [self.items objectAtIndex:selected];
-  
-  if (selectedStream.streamType == PlexMediaStreamTypeAudio) {
-    [self.detailedItem setAudioStream:selectedStream];
-  } else if (selectedStream.streamType == PlexMediaStreamTypeSubtitle) {
-    [self.detailedItem setSubtitleStream:selectedStream];
-  }
-  /*  WHY THE FUCK WON'T THIS WORK? IT IS INTEGER YOU STOOPID THING 
-   switch (selectedStream.streamType) {
-   case PlexMediaStreamTypeAudio:
-   [self.detailedItem setAudioStream:selectedStream];
-   break;
-   case PlexMediaStreamTypeSubtitle:
-   [self.detailedItem setSubtitleStream:selectedStream];
-   break;
-   
-   default:
-   break;
-   }
-   */
-  
-  
-  //repopulate the list
-  [self populateListWithStreams];
-  
-  //refresh the gui
-  [self.list reload];
-  
+    if (selected == [self.items count]) {
+        [self.detailedItem setSubtitleStream:nil];
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"disabled subs");
+#endif
+    }
+    else {
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"selected: %@",[self.items objectAtIndex:selected]);
+#endif
+        PlexMediaStream *selectedStream = [self.items objectAtIndex:selected];
+        
+        if (selectedStream.streamType == PlexMediaStreamTypeAudio) {
+            [self.detailedItem setAudioStream:selectedStream];
+        } else if (selectedStream.streamType == PlexMediaStreamTypeSubtitle) {
+            [self.detailedItem setSubtitleStream:selectedStream];
+        }
+        /*  WHY WON'T THIS WORK? IT IS INTEGER YOU STOOPID THING 
+         switch (selectedStream.streamType) {
+         case PlexMediaStreamTypeAudio:
+         [self.detailedItem setAudioStream:selectedStream];
+         break;
+         case PlexMediaStreamTypeSubtitle:
+         [self.detailedItem setSubtitleStream:selectedStream];
+         break;
+         
+         default:
+         break;
+         }
+         */
+    }
+    
+    //repopulate the list
+    [self populateListWithStreams];
+    
+    //refresh the gui
+    [self.list reload];
+    
 }
 
 

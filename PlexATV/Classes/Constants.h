@@ -1,18 +1,23 @@
 
 #define PreferencesDomain @"com.plex.client-plugin"
+
+
 #define PreferencesMachinesExcludedFromServerList @"PreferencesMachinesExcludedFromServerList"
-#define PreferencesQualitySetting @"PreferencesQualitySetting"
 
 #define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
-#define PreferencesViewEnableSkipFilteringOptionsMenu @"PreferencesViewEnableSkipFilteringOptionsMenu"
-#define PreferencesViewDisablePosterZoomingInListView @"PreferencesViewDisablePosterZoomingInListView"
-#define PreferencesViewDisableFanartInDetailedMetadataView @"PreferencesViewDisableFanartInDetailedMetadataView"
+#define PreferencesViewThemeMusicEnabled @"PreferencesViewThemeMusicEnabled"
+#define PreferencesViewThemeMusicLoopEnabled @"PreferencesViewThemeMusicLoopEnabled"
+#define PreferencesViewListPosterZoomingEnabled @"PreferencesViewListPosterZoomingEnabled"
+#define PreferencesViewPreplayFanartEnabled @"PreferencesViewPreplayFanartEnabled"
 
-#define PreferencesAudioEnableAC3 @"PreferencesAudioEnableAC3"
-#define PreferencesAudioEnableDTS @"PreferencesAudioEnableDTS"
+#define PreferencesPlaybackAudioAC3Enabled @"PreferencesPlaybackAudioAC3Enabled"
+#define PreferencesPlaybackAudioDTSEnabled @"PreferencesPlaybackAudioDTSEnabled"
+#define PreferencesPlaybackVideoQualityProfile @"PreferencesPlaybackVideoQualityProfile"
+#define PreferencesPlaybackVideoBitrate @"PreferencesPlaybackVideoBitrate"
 
+#define PreferencesSecuritySettingsLockEnabled @"PreferencesSecuritySettingsLockEnabled"
 #define PreferencesSecurityPasscode @"PreferencesSecurityPasscode"
-#define PreferencesSettingsEnableLock @"PreferencesSettingsEnableLock"
+
 
 
 #define ScopeBarCurrentItemsIdentifier @"current"
@@ -22,6 +27,15 @@
 #define ScopeBarOtherFiltersItemsIdentifier @"otherfilters"
 #define ScopeBarOtherFiltersItemsIndex 2
 
+
+typedef enum {
+	kPlaybackVideoQualityProfileGood = 0,
+    kPlaybackVideoQualityProfileBetter = 1,
+    kPlaybackVideoQualityProfileBest = 2,
+    FINAL_kPlaybackVideoQualityProfileBest_COUNT = 3,
+} PlaybackVideoQualityProfile;
+
+#define kPlaybackVideoBitrateMax 12.0
 
 typedef enum {
 	kBRMediaPlayerStateStopped = 0,

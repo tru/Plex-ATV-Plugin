@@ -27,7 +27,7 @@
 #import <Foundation/Foundation.h>
 
 @class PlexMediaObject;
-@interface PlexAudioSubsController: SMFMediaMenuController {
+@interface PlexAudioSubsController: SMFMenuController {
   PlexMediaObject* playbackItem;
   PlexMediaObject* detailedItem;
 }

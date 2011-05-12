@@ -34,7 +34,6 @@
 #import "PlexMediaProvider.h"
 #import "PlexMediaAsset.h"
 #import "PlexMediaAssetOld.h"
-#import "PlexPreviewAsset.h"
 #import "PlexSongAsset.h"
 #import "PlexNavigationController.h"
 #import "PlexThemeMusicPlayer.h"
@@ -93,8 +92,9 @@ PlexMediaProvider* __provider = nil;
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
-	DLog(@"activating plex_playback controller");
-	[self startPlaying];	
+  [self startPlaying];
+  DLog(@"activating plex_playback controller");  
+  
 	[super wasPushed];
 }
 
@@ -110,6 +110,9 @@ PlexMediaProvider* __provider = nil;
 
 - (void)wasBuried {
 	[super wasBuried];
+}
+
+- (void)controlWasActivated {
 }
 
 
@@ -140,7 +143,7 @@ PlexMediaProvider* __provider = nil;
 			[self playbackVideoWithOffset:0]; //just start playback from beginning
 		}
 	}
-    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil]; //stop the music dead if it's playing
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil];
 }
 
 -(void)playbackVideoWithOffset:(int)offset {
@@ -152,16 +155,23 @@ PlexMediaProvider* __provider = nil;
 	[pmo.attributes setObject:[NSNumber numberWithInt:offset] forKey:@"viewOffset"]; //set where in the video we want to start...
 	
     //determine the user selected quality setting
-	NSString *qualitySetting = [[HWUserDefaults preferences] objectForKey:PreferencesQualitySetting];
-	PlexStreamingQualityDescriptor *streamQuality;
-	if ([qualitySetting isEqualToString:@"Good"]) {
-		streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
-	} else 	if ([qualitySetting isEqualToString:@"Best"]) {
-		streamQuality = [pmo.request bestQuality];
-	} else { //medium (default)
-		streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
-	}
-	pmo.request.machine.streamQuality = streamQuality;
+	NSInteger qualityProfile = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
+	
+    PlexStreamingQualityDescriptor *streamQuality;
+    switch (qualityProfile) {
+        case kPlaybackVideoQualityProfileGood:
+            streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
+            break;
+        case kPlaybackVideoQualityProfileBetter:
+            streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
+            break;
+        case kPlaybackVideoQualityProfileBest:
+            streamQuality = [pmo.request bestQuality];
+            break;
+        default:
+            streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi]; //default
+            break;
+    }
 	
 	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
@@ -200,8 +210,9 @@ PlexMediaProvider* __provider = nil;
 	
 	BRMediaPlayerManager* mgm = [BRMediaPlayerManager singleton];
 	NSError * error = nil;
-	BRMediaPlayer * player = [mgm playerForMediaAsset:pma error: &error];
-	
+    
+   	BRMediaPlayer * player = [mgm playerForMediaAsset:pma error: &error];
+    
 	DLog(@"pma=%@, prov=%@, mgm=%@, play=%@, err=%@", pma, __provider, mgm, player, error);
 	
 	if ( error != nil ){
@@ -214,6 +225,7 @@ PlexMediaProvider* __provider = nil;
     //[mgm presentMediaAsset:pma options:0];
 	[mgm presentPlayer:player options:0];
 	DLog(@"presented player");
+    
     playProgressTimer = [[NSTimer scheduledTimerWithTimeInterval:10.0f 
                                                           target:self 
                                                         selector:@selector(reportProgress:) 
@@ -248,14 +260,30 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"presented audio player");
 }
 
--(void)reportProgress:(NSTimer*)tm {
+-(void)reportProgress:(NSTimer*)tm {    
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
+    
+#warning here
+    //playa->_aggregateBufferedRange = [NSMakeRange(0, playa.elapsedTime+30);
     
 	switch (playa.playerState) {
 		case kBRMediaPlayerStatePlaying: {
 			//report time back to PMS so we can continue in the right spot
 			float current = playa.elapsedTime;
-			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;            
+			float total = [[[pmo mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
+            
+//            float percentageDone = (current/total) * 100.0f;
+            //float buffer = percentageDone+5.0f;
+            
+//            id presentedPlayerController = [[BRMediaPlayerManager singleton] _presentedPlayerController];
+            //[presentedPlayerController setValue:buffer forKey:@"_lastBufferingProgress"]; //seems to not help
+//            id transport = [presentedPlayerController valueForKey:@"_transport"];
+//            id layer = [transport valueForKey:@"_layer"];
+//            DLog(@"updating buffer");
+            //[layer setDownloadedRange:NSMakeRange(0, buffer)];
+             
+             
+             
             
             // Only report progress after a certain number of seconds have been watched
             // and the movie is less than a certain percentage left

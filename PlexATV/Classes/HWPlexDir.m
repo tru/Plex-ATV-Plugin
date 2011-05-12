@@ -30,14 +30,13 @@
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/Preferences.h>
 #import "PlexMediaProvider.h"
-#import "PlexPreviewAsset.h"
 #import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "PlexNavigationController.h"
 #import "PlexThemeMusicPlayer.h"
 #import "PlexAudioSubsController.h"
 
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"
 
 @implementation HWPlexDir
@@ -73,17 +72,12 @@
         [self.tabBar setAcceptsFocus:NO];
         [self.tabBar setTabControlDelegate:self];
         [self addControl:self.tabBar];
+        [self.tabBar selectTabItemAtIndex:1];
     }
 	return self;
 }
 
-- (void)log:(NSNotificationCenter *)note {
-	DLog(@"note = %@", note);
-}
-
--(void)dealloc
-{
-	DLog(@"deallocing HWPlexDir");
+-(void)dealloc {
 	[playbackItem release];
 	[rootContainer release];
     [tabBar release];
@@ -140,7 +134,9 @@
 //handle custom event
 -(BOOL)brEventAction:(BREvent *)event {
 	int remoteAction = [event remoteAction];
-    DLog(@"remote action: %d",remoteAction);
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"remoteaction [%d]", remoteAction);
+#endif
 	if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
 	
@@ -157,9 +153,11 @@
 		}
         case kBREventRemoteActionMenuHold:
 			if([event value] == 1) {
-                DLog(@"holds play, wants subs");
                 long selected = [self getSelection];
-                [self showAudioAndSubStreamChooserForRow:selected];
+                BOOL handled = [self showAudioAndSubStreamChooserForRow:selected];
+                if (handled) {
+                    return handled;
+                }
             }
             break;
 		case kBREventRemoteActionSwipeLeft:
@@ -177,7 +175,6 @@
             }
 			break;
 		case kBREventRemoteActionPlayPause:
-			DLog(@"play/pause event");
 			if([event value] == 1) {
 				[self playPauseActionForRow:[self getSelection]];
             }
@@ -275,12 +272,11 @@
     //we force set the hash so two movies with same title don't end up with the same preview
     [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
     
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"media object: %@", pmo);
-#endif
-    
     if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
-        //cascading
+        //parade
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"using parade preview for [%@]", pmo);
+#endif
         NSMutableArray *imageProxies = [NSMutableArray array];
         PlexMediaContainer *subItemsContainer = [pmo contents];
         NSArray *subItems = subItemsContainer.directories;
@@ -293,6 +289,9 @@
         [preview setImageProxies:imageProxies];
         
     } else {
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"using standard preview for [%@]", pmo);
+#endif
         
         //single coverart
         preview = pmo.previewControl; //already autoreleased
@@ -311,28 +310,36 @@
     [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
 }
 
-
+-(void)playPauseActionForRow:(long)row {
+    PlexMediaObject* pmo = [self.items objectAtIndex:row];
+    if (pmo.hasMedia) {
+        //play media
+        [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:pmo];
+    } else {
+        //not media, pretend it was a selection
+        [self.list.datasource itemSelected:row];
+    }
+}
 
 #pragma mark -
 #pragma mark Actions
-
-- (void)showAudioAndSubStreamChooserForRow:(long)row {
+- (BOOL)showAudioAndSubStreamChooserForRow:(long)row {
+    BOOL handled = NO;
     //get the currently selected row
 	PlexMediaObject* pmo = [self.items objectAtIndex:row];
-	NSString *plexMediaObjectType = [pmo.attributes valueForKey:@"type"];
-	
-	DLog(@"HERE: %@", plexMediaObjectType);
 	
 	if (pmo.hasMedia 
         || [@"Video" isEqualToString:pmo.containerType]
-        || [@"show" isEqualToString:plexMediaObjectType]) {
+        || [PlexMediaObjectTypeShow isEqualToString:pmo.type]) {
         
         PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:pmo];
         [[self stack] pushController:subCtrl];
-        [subCtrl autorelease];
+        [subCtrl release];
+        handled = YES;
     }
-    
+    return handled;
 }
+
 - (void)showModifyViewedStatusViewForRow:(long)row {
     //get the currently selected row
 	PlexMediaObject* pmo = [self.items objectAtIndex:row];

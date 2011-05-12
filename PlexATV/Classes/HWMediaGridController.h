@@ -11,8 +11,8 @@
 @class PlexMediaContainer;
 
 @interface HWMediaGridController : BRController {
-  NSArray	*_shelfAssets;
-  NSArray	*_gridAssets;
+  NSArray	*_shelfMediaObjects;
+  NSArray	*_gridMediaObjects;
   BRGridControl*          _gridControl;
   BRMediaShelfControl*    _shelfControl;
   BRWaitSpinnerControl *  _spinner;
@@ -25,6 +25,5 @@
 -(id)getProviderForShelf;
   //our own stuff
 - (id)initWithPlexAllMovies:(PlexMediaContainer *)allMovies andRecentMovies:(PlexMediaContainer *)recentMovies;
-- (NSArray *)convertContainerToMediaAssets:(PlexMediaContainer *)container;
 
 @end

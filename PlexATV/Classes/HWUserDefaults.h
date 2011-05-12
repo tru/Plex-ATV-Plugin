@@ -11,13 +11,31 @@
 
 + (SMFPreferences *)preferences;
 + (void)setupPlexClient;
++ (NSDictionary *)defaultValues;
 
 //plex prefs methods
--(void)setObject:(id)obj forKey:(NSString*)key;
--(id)objectForKey:(NSString*)key;
--(void)setInteger:(NSInteger)v forKey:(NSString*)key;
--(NSInteger)integerForKey:(NSString*)key;
 -(void)syncSettings;
+
 -(void)_setDefaults;
+
+-(void)removeValueForKey:(NSString *)key;
+
+-(id)objectForKey:(NSString *)key;
+-(void)setObject:(id)value forKey:(NSString *)key;
+
+- (id)objectForKey:(NSString*)key;
+- (void)setObject:(id)obj forKey:(NSString*)key;
+
+- (NSInteger)integerForKey:(NSString*)key;
+- (void)setInteger:(NSInteger)v forKey:(NSString*)key;
+
+-(BOOL)boolForKey:(NSString *)key;
+-(void)setBool:(BOOL)value forKey:(NSString *)key;
+
+-(double)doubleForKey:(NSString *)key;
+-(void)setDouble:(double)value forKey:(NSString *)key;
+
+-(float)floatForKey:(NSString *)key;
+-(void)setFloat:(float)value forKey:(NSString *)key;
 
 @end
