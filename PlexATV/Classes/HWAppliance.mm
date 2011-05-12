@@ -179,8 +179,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			continue;
 		}
         
-        if (!self.topShelfController.mediaContainer) {
+        if (!self.topShelfController.mediaContainer) {            
             self.topShelfController.mediaContainer = [machine recentlyAddedMedia];
+//            self.topShelfController.mediaContainer = [machine.request query:@"/library/sections/8/blah" callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
             [self.topShelfController refresh];
 		}
 		

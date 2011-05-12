@@ -59,8 +59,6 @@
         shelfView.dataSource = self;
         shelfView.delegate = self;
     }
-    
-	//[self refresh];
 	return topShelfView;
 }
 
