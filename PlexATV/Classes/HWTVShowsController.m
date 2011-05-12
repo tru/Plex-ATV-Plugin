@@ -24,7 +24,7 @@
 @synthesize seasonsForSelectedTVShow;
 @synthesize themeMusicTimer;
 
-#warning this is a hack to make sure all the shelfs are loaded correctly
+// this is a hack to make sure all the shelfs are loaded correctly
 -(BOOL)brEventAction:(BREvent *)action {
     if (!allShelvesLoaded) {
         NSArray *shelves = [self valueForKey:@"_shelfControls"];

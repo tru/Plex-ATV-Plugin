@@ -479,7 +479,7 @@
 		} else if (isEditingUserName) {
 			isEditingUserName = NO;
 			[self.machine setUsername:textEntered andPassword:self.machine.password];
-            #warning this change should perhaps re-test the connection? ^^
+            //FIXME: this change should perhaps re-test the connection? ^^
 			
 		} else if (isEditingPassword) {
 			isEditingPassword = NO;

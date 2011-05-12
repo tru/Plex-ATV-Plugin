@@ -39,7 +39,7 @@
             backgroundImageControl.frame = [BRWindow interfaceFrame];
             backgroundImageControl.opacity = 0.5f;
             
-#warning why is it not stretching?!
+            //FIXME: why is it not stretching?!
             [backgroundImageControl setContentMode:UIViewContentModeScaleAspectFill];
             
             [self insertControl:backgroundImageControl atIndex:0];

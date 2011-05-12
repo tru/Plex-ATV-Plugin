@@ -345,7 +345,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 		 ATV will use the last filter
 		 */
 		//[PlexPrefs defaultPreferences] filterForSection]
-#warning work here!
+        //TODO: store filtering selection
 		Machine *currentMachine = container.request.machine;
 		const NSString* filterWeAreLookingFor = [currentMachine filterForSection:pmc.key]; //all, unwatched, recentlyAdded, etc
 		BOOL handled = NO;

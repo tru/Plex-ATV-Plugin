@@ -181,7 +181,7 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"Starting Playback of %@", mediaURL);
 	
 	BOOL didTimeOut = NO;
-#warning what cache policy should we use??
+    //TODO: what cache policy should we use??
     [pmo.request dataForURL:mediaURL authenticateStreaming:YES timeout:0 didTimeout:&didTimeOut cachePolicy:NSURLCacheStorageAllowedInMemoryOnly];
 	
 	
@@ -263,7 +263,7 @@ PlexMediaProvider* __provider = nil;
 -(void)reportProgress:(NSTimer*)tm {    
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
     
-#warning here
+    //TODO: keep investigating updating buffer progress
     //playa->_aggregateBufferedRange = [NSMakeRange(0, playa.elapsedTime+30);
     
 	switch (playa.playerState) {

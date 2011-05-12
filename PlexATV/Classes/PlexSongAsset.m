@@ -39,7 +39,7 @@
 	if (self != nil) {
 		pmo = [o retain];
 
-#warning Frank, why is this needed? it's nil otherwise
+    //TODO: Frank, why is this needed? it's nil otherwise
     [pmo.mediaContainer retain]; 
     
 		url = [u retain];
