@@ -51,13 +51,13 @@
 		01A0F597127228BC007A60B5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A0F596127228BC007A60B5 /* Foundation.framework */; };
 		01A0F59D127228CC007A60B5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A0F59C127228CC007A60B5 /* libz.dylib */; };
 		66E5AEB11303562D00FD8EA9 /* HWServersController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E5AEB01303562D00FD8EA9 /* HWServersController.m */; };
-		7259D3F91347F3C600E878C7 /* PlexTopShelfController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */; };
 		7205CCE4135A7E7C001EFC55 /* PlexChannelsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7205CCE3135A7E7C001EFC55 /* PlexChannelsController.m */; };
 		720EC0811370F017009AA4F9 /* PlexMediaObject+Assets.m in Sources */ = {isa = PBXBuildFile; fileRef = 720EC0801370F017009AA4F9 /* PlexMediaObject+Assets.m */; };
 		72118C27136B800400A8F74B /* PlexSearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72118C26136B800300A8F74B /* PlexSearchController.m */; };
 		7217FABE134AC90800408E48 /* Plex_SMFMoviePreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7217FABD134AC90800408E48 /* Plex_SMFMoviePreviewController.m */; };
 		721D91E7135C9D060067DE9E /* PlexNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 721D91E6135C9D060067DE9E /* PlexNavigationController.m */; };
 		7247BC7F1374C34B00170427 /* Plex_SMFBookcaseController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */; };
+		7259D3F91347F3C600E878C7 /* PlexTopShelfController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */; };
 		7273929912FA891E008B4C86 /* HWServerDetailsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7273929812FA891E008B4C86 /* HWServerDetailsController.m */; };
 		727A3F4912F78FB100994193 /* PlexViewSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 727A3F4812F78FB100994193 /* PlexViewSettingsController.m */; };
 		727D80921374B4CB00FBE23E /* PlexThemeMusicPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 727D80911374B4CA00FBE23E /* PlexThemeMusicPlayer.m */; };
@@ -125,8 +125,6 @@
 		66629E45130C854800EDC92D /* plex_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plex_Prefix.pch; sourceTree = "<group>"; };
 		66E5AEAF1303562D00FD8EA9 /* HWServersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWServersController.h; path = Classes/HWServersController.h; sourceTree = "<group>"; };
 		66E5AEB01303562D00FD8EA9 /* HWServersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWServersController.m; path = Classes/HWServersController.m; sourceTree = "<group>"; };
-		7259D3F71347F3C600E878C7 /* PlexTopShelfController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlexTopShelfController.h; sourceTree = "<group>"; };
-		7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlexTopShelfController.mm; sourceTree = "<group>"; };
 		7205CCE2135A7E7C001EFC55 /* PlexChannelsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexChannelsController.h; path = Classes/PlexChannelsController.h; sourceTree = "<group>"; };
 		7205CCE3135A7E7C001EFC55 /* PlexChannelsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexChannelsController.m; path = Classes/PlexChannelsController.m; sourceTree = "<group>"; };
 		720EC07F1370F017009AA4F9 /* PlexMediaObject+Assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PlexMediaObject+Assets.h"; path = "Classes/PlexMediaObject+Assets.h"; sourceTree = "<group>"; };
@@ -140,6 +138,8 @@
 		721D91E6135C9D060067DE9E /* PlexNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexNavigationController.m; path = Classes/PlexNavigationController.m; sourceTree = "<group>"; };
 		7247BC7D1374C34B00170427 /* Plex_SMFBookcaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Plex_SMFBookcaseController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = Plex_SMFBookcaseController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		7259D3F71347F3C600E878C7 /* PlexTopShelfController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlexTopShelfController.h; sourceTree = "<group>"; };
+		7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlexTopShelfController.mm; sourceTree = "<group>"; };
 		7273929712FA891E008B4C86 /* HWServerDetailsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWServerDetailsController.h; path = Classes/HWServerDetailsController.h; sourceTree = "<group>"; };
 		7273929812FA891E008B4C86 /* HWServerDetailsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWServerDetailsController.m; path = Classes/HWServerDetailsController.m; sourceTree = "<group>"; };
 		727A3F4712F78FB100994193 /* PlexViewSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexViewSettingsController.h; path = Classes/PlexViewSettingsController.h; sourceTree = "<group>"; };
@@ -181,7 +181,7 @@
 		C4ADAFAB12D46CA9002DA507 /* PlexMediaContainer + SkinResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PlexMediaContainer + SkinResources.h"; path = "Classes/PlexMediaContainer + SkinResources.h"; sourceTree = "<group>"; };
 		C4ADAFAC12D46CA9002DA507 /* PlexMediaProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexMediaProvider.h; path = Classes/PlexMediaProvider.h; sourceTree = "<group>"; };
 		C4ADAFAD12D46CA9002DA507 /* PlexMediaProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexMediaProvider.m; path = Classes/PlexMediaProvider.m; sourceTree = "<group>"; };
-		C4BB1CE4133BD2F70065A785 /* PlexPlaybackSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; name = PlexPlaybackSettingsController.h; path = Classes/PlexPlaybackSettingsController.h; sourceTree = "<group>"; };
+		C4BB1CE4133BD2F70065A785 /* PlexPlaybackSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexPlaybackSettingsController.h; path = Classes/PlexPlaybackSettingsController.h; sourceTree = "<group>"; };
 		C4BB1CE5133BD2F90065A785 /* PlexPlaybackSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexPlaybackSettingsController.m; path = Classes/PlexPlaybackSettingsController.m; sourceTree = "<group>"; };
 		C4CA22BA134FB4D1006135E6 /* Plex_SMFControlFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plex_SMFControlFactory.h; path = Classes/Plex_SMFControlFactory.h; sourceTree = "<group>"; };
 		C4CA22BB134FB4D1006135E6 /* Plex_SMFControlFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Plex_SMFControlFactory.m; path = Classes/Plex_SMFControlFactory.m; sourceTree = "<group>"; };
@@ -379,6 +379,8 @@
 				C4D558A412D66BE900877755 /* PlexSongListController.m */,
 				C4ADAFA712D46CA9002DA507 /* HWPlexDir.h */,
 				C4ADAFA812D46CA9002DA507 /* HWPlexDir.m */,
+				7259D3F71347F3C600E878C7 /* PlexTopShelfController.h */,
+				7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */,
 				015D31B812E114CE001A32C1 /* HWAppliance.h */,
 				875A824A126FFF1F00ECADC2 /* HWAppliance.mm */,
 				7205CCE2135A7E7C001EFC55 /* PlexChannelsController.h */,
@@ -397,8 +399,6 @@
 				72C421B11319E27700B90041 /* HWTVShowsController.m */,
 				C48D9552137090E900715D8E /* PlexAudioSubsController.h */,
 				C48D9553137090E900715D8E /* PlexAudioSubsController.m */,
-				7259D3F71347F3C600E878C7 /* PlexTopShelfController.h */,
-				7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";

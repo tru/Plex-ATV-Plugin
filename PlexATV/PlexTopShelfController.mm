@@ -15,7 +15,7 @@
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexMediaObject.h>
 #import "PlexMediaObject+Assets.h"
-
+#import "PlexNavigationController.h"
 
 #pragma mark -
 #pragma mark BRTopShelfView Category
@@ -106,8 +106,11 @@
     return 0.05000000074505806;
 }
 
--(id)mediaShelf:(BRMediaShelfView *)view itemAtIndexPath:(NSIndexPath *)path {    
-    PlexMediaObject *pmo = [self.mediaContainer.directories objectAtIndex:[path indexAtPosition:1]];
+-(id)mediaShelf:(BRMediaShelfView *)view itemAtIndexPath:(NSIndexPath *)indexPath {
+    //int section = [indexPath indexAtPosition:0];
+    int row = [indexPath indexAtPosition:1];
+    
+    PlexMediaObject *pmo = [self.mediaContainer.directories objectAtIndex:row];
     PlexPreviewAsset *asset = pmo.previewAsset;
 	NSString *title = nil;
     
@@ -139,14 +142,34 @@
 #pragma mark BRMediaShelf Delegate Methods
 - (void)mediaShelf:(id)shelf didSelectItemAtIndexPath:(id)indexPath {
     DLog(@"select event");
+    //int section = [indexPath indexAtPosition:0];
+    int row = [indexPath indexAtPosition:1];
+    
+    PlexMediaObject* pmo = [self.mediaContainer.directories objectAtIndex:row];
+    [[SMFThemeInfo sharedTheme] playSelectSound];
+    [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
 }
 
 - (void)mediaShelf:(id)shelf didPlayItemAtIndexPath:(id)indexPath {
     DLog(@"play event");
+    //int section = [indexPath indexAtPosition:0];
+    int row = [indexPath indexAtPosition:1];
+    
+    PlexMediaObject* pmo = [self.mediaContainer.directories objectAtIndex:row];
+    if (pmo.hasMedia) {
+        //play media
+        [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:pmo];
+    } else {
+        //not media, pretend it was a selection
+        [self mediaShelf:shelf didSelectItemAtIndexPath:indexPath];
+    }
 }
 
+//methods below are never called
 - (void)mediaShelf:(id)shelf didFocusItemAtIndexPath:(id)indexPath {
 	DLog(@"didFocusItemAtIndexPath never called");
+    //int section = [indexPath indexAtPosition:0];
+    //int row = [indexPath indexAtPosition:1];
 }
 
 - (BOOL)handleObjectSelection:(id)selection userInfo:(id)info {
