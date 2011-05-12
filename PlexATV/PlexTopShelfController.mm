@@ -12,12 +12,16 @@
 #import "HWAppliance.h"
 #import "BackRowExtras.h"
 #import "PlexPreviewAsset.h"
+#import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexMediaObject.h>
+#import "PlexMediaObject+Assets.h"
 
+
+#pragma mark -
+#pragma mark BRTopShelfView Category
 @interface BRTopShelfView (specialAdditions)
 - (BRImageControl *)productImage;
 @end
-
 
 @implementation BRTopShelfView (specialAdditions)
 - (BRImageControl *)productImage {
@@ -25,66 +29,43 @@
 }
 @end
 
+
+
+#pragma mark -
+#pragma mark PlexTopShelfController Implementation
 @implementation PlexTopShelfController
-@synthesize assets;
+@synthesize mediaContainer;
 
-- (void)initWithApplianceController:(id)applianceController {}
 
-- (BRTopShelfView *)topShelfView {
-	topShelfView = [[BRTopShelfView alloc] init];
-	
-	imageControl = [topShelfView productImage];
-	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[PlexTopShelfController class]] pathForResource:@"PlexLogo" ofType:@"png"]];
-	[imageControl setImage:theImage];
-	
-    shelfView = MSHookIvar<BRMediaShelfView*>(topShelfView, "_shelf");
-	shelfView.scrollable = YES;
-    shelfView.dataSource=self;
-    shelfView.delegate=self;
-    
-	[self refresh];
-	return topShelfView;
-}
-
+#pragma mark -
+#pragma mark Object/Class Lifecycle
 - (void)dealloc {
 	[topShelfView release];
-	[shelfView release];
-	[imageControl release];
-	self.assets = nil;
+	self.mediaContainer = nil;
 	
 	[super dealloc];
 }
 
-#pragma mark -
-#pragma mark Delegate Methods
--(long)numberOfSectionsInMediaShelf:(BRMediaShelfView *)view {
-    return 1;
-}
-
--(id)mediaShelf:(BRMediaShelfView *)view titleForSectionAtIndex:(long)section {
-    BRTextControl *title = [[[BRTextControl alloc] init] autorelease];
-	[title setText:@"Recently Added" withAttributes:[[BRThemeInfo sharedTheme] metadataTitleAttributes]];
-	return title;
-}
-
--(long)mediaShelf:(BRMediaShelfView *)view numberOfColumnsInSection:(long)section {
-    return [self.assets count];
-}
-
--(float)horizontalGapForMediaShelf:(BRMediaShelfView *)view {
-    return 30.f;
-}
-
--(float)coverflowMarginForMediaShelf:(BRMediaShelfView *)view {
-    return 0.05000000074505806;
-}
-
-- (void)mediaShelf:(id)shelf didFocusItemAtIndexPath:(id)indexPath {
-    NSLog(@"self: %@,path %@",shelf,indexPath);
+- (BRTopShelfView *)topShelfView {
+    if (!topShelfView) {
+        topShelfView = [[BRTopShelfView alloc] init];
+        
+        BRImageControl *imageControl = [topShelfView productImage];
+        BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[PlexTopShelfController class]] pathForResource:@"PlexLogo" ofType:@"png"]];
+        [imageControl setImage:theImage];
+        
+        shelfView = MSHookIvar<BRMediaShelfView*>(topShelfView, "_shelf");
+        shelfView.scrollable = YES;
+        shelfView.dataSource = self;
+        shelfView.delegate = self;
+    }
+    
+	//[self refresh];
+	return topShelfView;
 }
 
 -(void)refresh {
-    if ([self.assets count] > 0) {
+    if ([self.mediaContainer.directories count] > 0) {
 		[topShelfView setState:1];
 		[shelfView reloadData];
 	} else {
@@ -92,23 +73,42 @@
 	}
 }
 
-- (BOOL)handleObjectSelection:(id)selection userInfo:(id)info {
-    NSLog(@"handleObjectSelection");
-    return NO;
+
+#pragma mark -
+#pragma mark BRMediaShelf Datasource Methods
+-(long)numberOfFlatColumnsInMediaShelf:(BRMediaShelfView *)view {
+    return 7;
+}
+
+-(long)numberOfSectionsInMediaShelf:(BRMediaShelfView *)view {
+    return 2;
 }
 
 -(id)mediaShelf:(BRMediaShelfView *)view sectionHeaderForSection:(long)section {
     return nil;
 }
 
--(long)numberOfFlatColumnsInMediaShelf:(BRMediaShelfView *)view {
-    return 6;
+-(id)mediaShelf:(BRMediaShelfView *)view titleForSectionAtIndex:(long)section {
+    BRTextControl *title = [[BRTextControl alloc] init];
+    [title setText:@"Recently Added" withAttributes:[[BRThemeInfo sharedTheme] metadataTitleAttributes]];
+	return [title autorelease];
 }
 
--(id)mediaShelf:(BRMediaShelfView *)view itemAtIndexPath:(NSIndexPath *)path {
-	NSLog(@"index: %d,count %d",[path indexAtPosition:1],[self.assets count]);
-    PlexPreviewAsset *asset = [self.assets objectAtIndex:[path indexAtPosition:1]];
-	//NSLog(@"asset coverart: %@",[asset coverArt]);
+-(long)mediaShelf:(BRMediaShelfView *)view numberOfColumnsInSection:(long)section {
+    return 10;//[self.mediaContainer.directories count];
+}
+
+-(float)horizontalGapForMediaShelf:(BRMediaShelfView *)view {
+    return 30.0f;
+}
+
+-(float)coverflowMarginForMediaShelf:(BRMediaShelfView *)view {
+    return 0.05000000074505806;
+}
+
+-(id)mediaShelf:(BRMediaShelfView *)view itemAtIndexPath:(NSIndexPath *)path {    
+    PlexMediaObject *pmo = [self.mediaContainer.directories objectAtIndex:[path indexAtPosition:1]];
+    PlexPreviewAsset *asset = pmo.previewAsset;
 	NSString *title = nil;
     
 	if ([asset.pmo isSeason]) {
@@ -117,13 +117,45 @@
 		title = [asset title];
 	}
     
-	
-    id poster = [BRPosterControl posterButtonWithImage:[asset coverArt] title:title];
-	NSLog(@"poster %@",poster);
+    BRPosterControl *poster = [[BRPosterControl alloc] init];
+    poster.posterStyle = 1;
+    poster.cropAspectRatio = 0.66470599174499512;
+    
+    poster.imageProxy = [asset imageProxy];
+    poster.defaultImage = [asset defaultImage];
+    poster.reflectionAmount = 0.10000000149011612;
+    poster.reflectionBaseline = 0.072999998927116394;
+    
+    poster.titleVerticalOffset = 0.039999999105930328;
+    [poster setNonAttributedTitleWithCrossfade:title];
+    
+    //poster.image = [asset coverArt];
+    
     return poster;
 }
 
-- (void)selectCategoryWithIdentifier:(id)identifier {
-	NSLog(@"selected with identifier %d", identifier);
+
+#pragma mark -
+#pragma mark BRMediaShelf Delegate Methods
+- (void)mediaShelf:(id)shelf didSelectItemAtIndexPath:(id)indexPath {
+    DLog(@"select event");
 }
+
+- (void)mediaShelf:(id)shelf didPlayItemAtIndexPath:(id)indexPath {
+    DLog(@"play event");
+}
+
+- (void)mediaShelf:(id)shelf didFocusItemAtIndexPath:(id)indexPath {
+	DLog(@"didFocusItemAtIndexPath never called");
+}
+
+- (BOOL)handleObjectSelection:(id)selection userInfo:(id)info {
+	DLog(@"handleObjectSelection never called");
+    return NO;
+}
+
+- (void)selectCategoryWithIdentifier:(id)identifier {
+	DLog(@"selectCategoryWithIdentifier never called");
+}
+
 @end

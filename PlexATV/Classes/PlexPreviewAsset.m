@@ -252,7 +252,7 @@
 	
 	NSURL* turl = [pmo.request pathForScaledImage:thumbURL ofSize:CGSizeMake(512, 512)];
 	BRURLImageProxy *imageProxy = [BRURLImageProxy proxyWithURL:turl];
-  //[imageProxy setDefaultImage:[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage]];
+    //[imageProxy setDefaultImage:[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage]];
     //DLog(@"imageProxy_defaultImage: %@",[imageProxy defaultImage]);
 	return imageProxy;
 }
@@ -543,6 +543,10 @@
 
 #pragma mark -
 #pragma mark Additional Metadata Methods
+- (BRImage *)defaultImage {
+    return [[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage] autorelease];
+}
+
 - (BOOL)hasClosedCaptioning {
 	return YES;
 }

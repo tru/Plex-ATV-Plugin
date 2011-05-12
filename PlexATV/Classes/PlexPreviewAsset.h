@@ -39,6 +39,7 @@
 - (NSDate *)dateFromPlexDateString:(NSString *)dateString;
 
 //other metadata methods
+@property (readonly) BRImage *defaultImage;
 @property (readonly) BOOL hasClosedCaptioning;
 @property (readonly) BOOL hasDolbyDigitalAudioTrack;
 @property (readonly) NSString *mediaURL;

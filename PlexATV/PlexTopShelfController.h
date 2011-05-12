@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+@class PlexMediaContainer;
 
 @interface PlexTopShelfController : NSObject {
 	BRTopShelfView *topShelfView;
-	BRImageControl *imageControl;
-	NSArray *assets;
     BRMediaShelfView *shelfView;
 }
-@property (retain) NSArray *assets;
+@property (retain) PlexMediaContainer *mediaContainer;
+
 - (void)selectCategoryWithIdentifier:(id)identifier;
 - (id)topShelfView;
 - (void)refresh;

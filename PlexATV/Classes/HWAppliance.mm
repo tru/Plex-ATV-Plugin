@@ -29,43 +29,8 @@ NSString * const MachineNameKey = @"PlexMachineName";
 @end
 
 
-
-@implementation BRTopShelfView (specialAdditions)
-- (BRImageControl *)productImage {
-	return MSHookIvar<BRImageControl *>(self, "_productImage");
-}
-@end
-
-
-@interface TopShelfController : NSObject {}
-- (void)selectCategoryWithIdentifier:(id)identifier;
-- (id)topShelfView;
-- (void)refresh;
-@end
-
-@implementation TopShelfController
-- (void)initWithApplianceController:(id)applianceController {}
-- (void)selectCategoryWithIdentifier:(id)identifier {}
-- (void)refresh{}
-
-
-- (BRTopShelfView *)topShelfView {
-	BRTopShelfView *topShelf = [[BRTopShelfView alloc] init];
-	BRImageControl *imageControl = [topShelf productImage];
-	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWUserDefaults class]] pathForResource:@"PlexLogo" ofType:@"png"]];
-	[imageControl setImage:theImage];
-	
-	return [topShelf autorelease];
-}
-@end
-
-
-#pragma mark -
-#pragma mark PlexAppliance
 @implementation PlexAppliance
-@synthesize topShelfController = _topShelfController;
-@synthesize applianceCat = _applianceCategories;
-//@synthesize machines = _machines;
+@synthesize topShelfController, currentApplianceCategories, otherServersApplianceCategory, settingsApplianceCategory;
 
 NSString * const CompoundIdentifierDelimiter = @"|||";
 
@@ -85,12 +50,12 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		
 		DLog(@"==================== plex client starting up ====================");
         
-		_topShelfController = [[PlexTopShelfController alloc] init];
-		_applianceCategories = [[NSMutableArray alloc] init];
+		self.topShelfController = [[PlexTopShelfController alloc] init];
+		self.currentApplianceCategories = [[NSMutableArray alloc] init];
 		//_machines = [[NSMutableArray alloc] init];
 		
-		otherServersApplianceCategory = [SERVER_LIST_CAT retain];
-		settingsApplianceCategory = [SETTINGS_CAT retain];
+		self.otherServersApplianceCategory = [SERVER_LIST_CAT retain];
+		self.settingsApplianceCategory = [SETTINGS_CAT retain];
 		
 		[[ProxyMachineDelegate shared] registerDelegate:self];
 		[[MachineManager sharedMachineManager] startAutoDetection];
@@ -152,7 +117,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	//sort the array alphabetically
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
 	NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-	[self.applianceCat sortUsingDescriptors:sortDescriptors];
+	[self.currentApplianceCategories sortUsingDescriptors:sortDescriptors];
 	[sortDescriptor release];
 	[sortDescriptors release];
 	
@@ -160,8 +125,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	//this is done and saved to the mutuable array, so should be pretty fast as only the recently added
 	//items (which are appended to the end of the array) will need to be moved.
 	BRApplianceCategory *appliance;
-	for (int i = 0; i<[self.applianceCat count]; i++) {
-		appliance = [self.applianceCat objectAtIndex:i];
+	for (int i = 0; i<[self.currentApplianceCategories count]; i++) {
+		appliance = [self.currentApplianceCategories objectAtIndex:i];
         if ([appliance.name isEqualToString:@"Search"]) {
             [appliance setPreferredOrder:0];
         } else {
@@ -169,12 +134,12 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         }
 	}
 	//other servers appliance category, set it to the second to last
-	[otherServersApplianceCategory setPreferredOrder:[self.applianceCat count]];
+	[self.otherServersApplianceCategory setPreferredOrder:[self.currentApplianceCategories count]];
 	//settings appliance category, set it to the end of the list
-	[settingsApplianceCategory setPreferredOrder:[self.applianceCat count]+1];
+	[self.settingsApplianceCategory setPreferredOrder:[self.currentApplianceCategories count]+1];
 	
 	//we need to add in the "special appliances"
-	NSMutableArray *allApplianceCategories = [NSMutableArray arrayWithArray:self.applianceCat];
+	NSMutableArray *allApplianceCategories = [NSMutableArray arrayWithArray:self.currentApplianceCategories];
 	[allApplianceCategories addObject:otherServersApplianceCategory];
 	[allApplianceCategories addObject:settingsApplianceCategory];
 	return allApplianceCategories;
@@ -190,7 +155,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 - (id)applianceKey { return @"Plex"; }
 
 - (void)reloadCategories {
-	[self.applianceCat removeAllObjects];
+	[self.currentApplianceCategories removeAllObjects];
 	
 	NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
 	NSArray *machinesExcludedFromServerList = [[HWUserDefaults preferences] objectForKey:PreferencesMachinesExcludedFromServerList];
@@ -211,6 +176,11 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			DLog(@"Cannot connect to machine [%@], skipping", machine);
 #endif
 			continue;
+		}
+        
+        if (!self.topShelfController.mediaContainer) {
+            self.topShelfController.mediaContainer = [machine recentlyAddedMedia];
+            [self.topShelfController refresh];
 		}
 		
 		//================== add all it's categories to our appliances list ==================
@@ -250,15 +220,15 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			
 			//the appliance order will be the highest number (ie it will be put at the end of the menu.
 			//this will be readjusted when the array is sorted in the (id)applianceCategories
-			float applianceOrder = [self.applianceCat count];
+			float applianceOrder = [self.currentApplianceCategories count];
 			
 			BRApplianceCategory *appliance = [BRApplianceCategory categoryWithName:categoryName identifier:compoundIdentifier preferredOrder:applianceOrder];
-			[self.applianceCat addObject:appliance];
+			[self.currentApplianceCategories addObject:appliance];
 			
 			// find any duplicate names of the one currently being added.
 			// if found, append machine name to them all
 			NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@", categoryName];
-			NSArray *duplicateNameCategories = [self.applianceCat filteredArrayUsingPredicate:categoryPredicate];
+			NSArray *duplicateNameCategories = [self.currentApplianceCategories filteredArrayUsingPredicate:categoryPredicate];
 			if ([duplicateNameCategories count] > 1) {
 				//================== found duplicate category names ==================
 #if LOCAL_DEBUG_ENABLED
@@ -288,86 +258,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	
 	[super reloadCategories];
 }
-
-- (NSArray *)mediaAssetsForPlexMediaObjects:(NSArray *)mediaObjects {
-	NSMutableArray *newAssets = [NSMutableArray array];
-	
-	for(int i=0;i<([mediaObjects count]<20?[mediaObjects count]:20);i++) {
-		PlexMediaObject *pmo = [mediaObjects objectAtIndex:i];
-		
-		//this code crashes when you get the shelf scrolling vv
-//		PlexPreviewAsset* pma = pmo.previewAsset;
-//		[newAssets addObject:pma];
-		//this code crashes when you get the shelf scrolling ^^
-		
-		
-		//this code works when you get the shelf scrolling vv
-		NSString *thumbURL = nil;
-		
-		if ([pmo.attributes valueForKey:@"thumb"] != nil){
-			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"thumb"]];
-		}
-		else if ([pmo.attributes valueForKey:@"art"] != nil) {
-			thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
-		}
-		
-		NSURL* turl = [pmo.request pathForScaledImage:thumbURL ofSize:CGSizeMake(512., 512.)];
-		
-		SMFBaseAsset *asset = [SMFBaseAsset asset];
-		[asset setCoverArt:[BRImage imageWithURL:turl]];
-		[asset setTitle:pmo.name];
-		[newAssets addObject:asset];
-		//this code works when you get the shelf scrolling ^^
-	}
-	DLog(@"converted %d assets: %@", [newAssets count], newAssets);
-	return newAssets;
-}
-
-//#pragma mark -
-//#pragma mark Machine Delegate Methods
-//-(void)machineWasRemoved:(Machine*)m{
-//#if LOCAL_DEBUG_ENABLED
-//	DLog(@"MachineManager: Removed machine %@", m);
-//#endif
-//	if ([self.machines containsObject:m]) {
-//		[self.machines removeObject:m];
-//		[self reloadCategories];
-//	}
-//}
-//
-//-(void)machineWasAdded:(Machine*)m {   
-//#if LOCAL_DEBUG_ENABLED
-//	DLog(@"MachineManager: Added machine %@", m);
-//#endif
-//	BOOL machineIsOnlineAndConnectable = m.isComplete;
-//	
-//	if (machineIsOnlineAndConnectable && ![self.machines containsObject:m]) {
-//		[self.machines addObject:m];
-//	}
-//	[self reloadCategories];
-//}
-//
-//- (void)machineWasChanged:(Machine *)m {}
-//
-//-(void)machine:(Machine *)m updatedInfo:(ConnectionInfoType)updateMask {
-//#if LOCAL_DEBUG_ENABLED
-//	DLog(@"MachineManager: Updated Info with update mask %d from machine %@", updateMask, m);
-//#endif
-//	BOOL machinesCategoryListWasUpdated = (updateMask & (ConnectionInfoTypeRootLevel | ConnectionInfoTypeLibrarySections)) != 0;
-//	BOOL machineHasEitherGoneOnlineOrOffline = (updateMask & ConnectionInfoTypeCanConnect) != 0;
-//	
-//	if (machinesCategoryListWasUpdated) {
-//		[self reloadCategories];
-//	} else if (machineHasEitherGoneOnlineOrOffline) {
-//		if (m.canConnect && ![self.machines containsObject:m]) {
-//			[self.machines addObject:m];
-//			[self reloadCategories];
-//		} else if ([self.machines containsObject:m]) {
-//			[self.machines removeObject:m];
-//			[self reloadCategories];
-//		}
-//	}
-//}
 
 #pragma mark -
 #pragma mark Machine Delegate Methods
@@ -406,9 +296,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	if (machinesRecentlyAddedWasUpdated) {
         DLog(@"*****************RECENTLY UPDATED!!!!*****************");
 		//update the shelf
-		if (!_topShelfController.assets) {
-			_topShelfController.assets = [self mediaAssetsForPlexMediaObjects:[[m recentlyAddedMedia] directories]];
-			[_topShelfController refresh];
+		if (!self.topShelfController.mediaContainer) {
+            self.topShelfController.mediaContainer = [m recentlyAddedMedia];
+            [self.topShelfController refresh];
 		}
 	}
 }
