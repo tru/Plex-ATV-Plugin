@@ -178,7 +178,7 @@
 		C4ADAFAB12D46CA9002DA507 /* PlexMediaContainer + SkinResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PlexMediaContainer + SkinResources.h"; path = "Classes/PlexMediaContainer + SkinResources.h"; sourceTree = "<group>"; };
 		C4ADAFAC12D46CA9002DA507 /* PlexMediaProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexMediaProvider.h; path = Classes/PlexMediaProvider.h; sourceTree = "<group>"; };
 		C4ADAFAD12D46CA9002DA507 /* PlexMediaProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexMediaProvider.m; path = Classes/PlexMediaProvider.m; sourceTree = "<group>"; };
-		C4BB1CE4133BD2F70065A785 /* PlexPlaybackSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; name = PlexPlaybackSettingsController.h; path = Classes/PlexPlaybackSettingsController.h; sourceTree = "<group>"; };
+		C4BB1CE4133BD2F70065A785 /* PlexPlaybackSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexPlaybackSettingsController.h; path = Classes/PlexPlaybackSettingsController.h; sourceTree = "<group>"; };
 		C4BB1CE5133BD2F90065A785 /* PlexPlaybackSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexPlaybackSettingsController.m; path = Classes/PlexPlaybackSettingsController.m; sourceTree = "<group>"; };
 		C4CA22BA134FB4D1006135E6 /* Plex_SMFControlFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plex_SMFControlFactory.h; path = Classes/Plex_SMFControlFactory.h; sourceTree = "<group>"; };
 		C4CA22BB134FB4D1006135E6 /* Plex_SMFControlFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Plex_SMFControlFactory.m; path = Classes/Plex_SMFControlFactory.m; sourceTree = "<group>"; };
@@ -425,6 +425,7 @@
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
+				727FA3A7137BA6C600949450 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -479,6 +480,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		727FA3A7137BA6C600949450 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "KEYWORDS=\"TODO:|FIXME:|\\?\\?\\?:|\\!\\!\\!:\"\nfind \"${SRCROOT}\" \\( -name \"*.h\" -or -name \"*.m\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($KEYWORDS).*\\$\" | perl -p -e \"s/($KEYWORDS)/ warning: \\$1/\"";
+		};
 		72B85E551331BD8B00FCD4AE /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
