@@ -214,7 +214,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     
     // ============ tv or movie view ============    
     NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
+    if ([viewTypeSetting isEqualToString:@"Grid"]) {
         
         if (aMediaObject.isMovie) {
             controller = [self newMoviesController:contents];
