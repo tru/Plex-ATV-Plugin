@@ -4,7 +4,9 @@
 
 #define PreferencesMachinesExcludedFromServerList @"PreferencesMachinesExcludedFromServerList"
 
-#define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
+#define PreferencesViewTypeForTvShows @"PreferencesViewTypeForTvShows"
+#define PreferencesViewTypeForMovies @"PreferencesViewTypeForMovies"
+
 #define PreferencesViewThemeMusicEnabled @"PreferencesViewThemeMusicEnabled"
 #define PreferencesViewThemeMusicLoopEnabled @"PreferencesViewThemeMusicLoopEnabled"
 #define PreferencesViewListPosterZoomingEnabled @"PreferencesViewListPosterZoomingEnabled"
@@ -25,6 +27,14 @@
 #define ScopeBarUnwatchedItemsIndex 1
 #define ScopeBarOtherFiltersItemsIdentifier @"otherfilters"
 #define ScopeBarOtherFiltersItemsIndex 2
+
+
+typedef enum {
+	kATVPlexViewTypeList = 0,
+	kATVPlexViewTypeGrid,
+	kATVPlexViewTypeBookcase,
+    FINAL_kATVPlexViewTypeBookcase_MAX
+} ATVPlexViewTypes;
 
 
 typedef enum {

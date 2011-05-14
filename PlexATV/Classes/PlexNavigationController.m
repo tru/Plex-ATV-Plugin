@@ -199,27 +199,44 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
         return [[PlexSongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
     }
     
-    // ============ tv or movie view ============    
-    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if ([viewTypeSetting isEqualToString:@"Grid"]) {
-        
-        if (aMediaObject.isMovie) {
-            controller = [self newGridController:contents withShelfKeyString:@"recentlyAdded"];
-            
-        } else if (aMediaObject.isTVShow) {
-            controller = [self newGridController:contents withShelfKeyString:@"recentlyViewedShows"];
-            //controller = [self newTVShowsController:contents];
-        }
-    } 
+    // ============ tv or movie view ============
+    NSInteger requestedViewType = 0;
+    if (aMediaObject.isMovie) {
+        requestedViewType = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForMovies];
+    } else {
+        requestedViewType = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForTvShows];
+    }
     
     BRTabControl *tabBar = nil;
-    //only filter and create tab bar if we are navigating plex's built in stuff
-    if ([contents.identifier isEqualToString:@"com.plexapp.plugins.library"]) {
-        contents = [self applySkipFilteringOnContainer:contents];
-        tabBar = [self newTabBarForContents:contents];
+    switch (requestedViewType) {
+        case kATVPlexViewTypeList: {
+            //only filter and create tab bar if we are navigating plex's built in stuff
+            if ([contents.identifier isEqualToString:@"com.plexapp.plugins.library"]) {
+                contents = [self applySkipFilteringOnContainer:contents];
+                tabBar = [self newTabBarForContents:contents];
+            }
+            
+            controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
+            break;
+        }
+        case kATVPlexViewTypeGrid: {
+            if (aMediaObject.isMovie) {
+                controller = [self newGridController:contents withShelfKeyString:@"recentlyAdded"];
+            } else {
+                controller = [self newGridController:contents withShelfKeyString:@"recentlyViewedShows"];
+            }
+            break;
+        }
+        case kATVPlexViewTypeBookcase: {
+            controller = [self newTVShowsController:contents];
+            break;
+        }
+        default:
+            break;
     }
     
     if (!controller) {
+        //if all else fails, use list view
         controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
     }
     return controller;

@@ -143,7 +143,8 @@
 + (NSDictionary *)defaultValues {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             [NSArray array], PreferencesMachinesExcludedFromServerList,
-            @"List", PreferencesViewTypeSetting,
+            [NSNumber numberWithInt:0], PreferencesViewTypeForMovies,
+            [NSNumber numberWithInt:0], PreferencesViewTypeForTvShows,
             [NSNumber numberWithBool:YES], PreferencesViewThemeMusicEnabled,
             [NSNumber numberWithBool:NO], PreferencesViewThemeMusicLoopEnabled,
             [NSNumber numberWithBool:YES], PreferencesViewPreplayFanartEnabled,

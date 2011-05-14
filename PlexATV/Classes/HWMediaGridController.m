@@ -330,8 +330,6 @@ void checkNil(NSObject *ctrl)
 	
     BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
-    
-    
     [store release];
     
 #if LOCAL_DEBUG_ENABLED
