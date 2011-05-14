@@ -108,6 +108,20 @@
     [preview setShowsMetadataImmediately:![[HWUserDefaults preferences] boolForKey:PreferencesViewListPosterZoomingEnabled]];
     [preview setAsset:self.previewAsset];
     
+    //    SMFMediaPreview *preview = [SMFMediaPreview mediaPreview];
+    //    
+    //    SMFBaseAsset *a = [SMFBaseAsset asset];
+    //    
+    //    [a setCustomKeys:[NSArray arrayWithObjects:@"Key",@"Value",@"Class",nil]
+    //          forObjects:[NSArray arrayWithObjects:
+    //                      @"key value",
+    //                      @"value value",
+    //                      @"class value",
+    //                      nil]];
+    //    [a setTitle:@"title"];
+    //    [a setCoverArt:[[BRThemeInfo sharedTheme]appleTVIcon]];
+    //    [preview setAsset:a];
+    
     return preview;
 }
 
