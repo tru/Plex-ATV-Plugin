@@ -157,7 +157,7 @@ PlexMediaProvider* __provider = nil;
     //determine the user selected quality setting
 //#error why is the descriptor never used? where does the quality get set if not here?
     NSInteger qualityProfileNumber = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
-    PlexStreamingQualityDescriptor *streamQuality = [[HWUserDefaults PlexStreamingQualities] objectAtIndex:qualityProfileNumber];
+    PlexStreamingQualityDescriptor *streamQuality = [[HWUserDefaults plexStreamingQualities] objectAtIndex:qualityProfileNumber];
 	
 	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);
