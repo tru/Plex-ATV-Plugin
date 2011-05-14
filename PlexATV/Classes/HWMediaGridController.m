@@ -63,11 +63,13 @@ void checkNil(NSObject *ctrl)
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"deallocing HWMediaShelfController");
 #endif
+    self.shelfMediaContainer = nil;
+    self.gridMediaContainer = nil;
 	self.shelfMediaObjects = nil;
 	self.gridMediaObjects = nil;
-    //[_spinner release];
-    //[_cursorControl release];
-    //[_scroller release];
+    [_spinner release];
+    [_cursorControl release];
+    [_scroller release];
 	[_gridControl release];
 	[_shelfControl release];
 	[_panelControl release];
@@ -257,7 +259,6 @@ void checkNil(NSObject *ctrl)
 	[_panelControl layoutSubcontrols];
 	
 	[self addControl:_cursorControl];
-	[_cursorControl release];
 	
 	[_scroller setFrame:masterFrame];
 	[_scroller setFollowsFocus:YES];
