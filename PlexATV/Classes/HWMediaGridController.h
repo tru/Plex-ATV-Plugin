@@ -11,19 +11,23 @@
 @class PlexMediaContainer;
 
 @interface HWMediaGridController : BRController {
-  NSArray	*_shelfMediaObjects;
-  NSArray	*_gridMediaObjects;
-  BRGridControl*          _gridControl;
-  BRMediaShelfControl*    _shelfControl;
-  BRWaitSpinnerControl *  _spinner;
-  BRCursorControl *       _cursorControl;
-  BRScrollControl *       _scroller;
-  BRPanelControl *        _panelControl;
+    BRGridControl*          _gridControl;
+    BRMediaShelfControl*    _shelfControl;
+    BRWaitSpinnerControl *  _spinner;
+    BRCursorControl *       _cursorControl;
+    BRScrollControl *       _scroller;
+    BRPanelControl *        _panelControl;
 }
+
+@property (retain) PlexMediaContainer *shelfMediaContainer;
+@property (retain) PlexMediaContainer *gridMediaContainer;
+@property (retain) NSArray *shelfMediaObjects;
+@property (retain) NSArray *gridMediaObjects;
+
 -(void)drawSelf;
 - (id)getProviderForGrid;
 -(id)getProviderForShelf;
-  //our own stuff
+//our own stuff
 - (id)initWithPlexAllMovies:(PlexMediaContainer *)allMovies andRecentMovies:(PlexMediaContainer *)recentMovies;
 
 @end

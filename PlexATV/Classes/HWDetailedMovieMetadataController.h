@@ -35,12 +35,10 @@
 	int lastFocusedIndex;
  	SMFListDropShadowControl *listDropShadowControl; //popup
 }
-@property (retain) NSArray *mediaObjects;
+@property (retain) PlexMediaContainer *relatedMediaContainer;
 @property (retain) PlexMediaObject *selectedMediaObject;
 
 - (id)initWithPlexMediaObject:(PlexMediaObject *)aMediaObject;
-- (id)initWithMediaObjects:(NSArray *)someMediaObjects withSelectedIndex:(int)selIndex;
-- (id)initWithPlexContainer:(PlexMediaContainer*)aContainer withSelectedIndex:(int)selIndex;
 - (void)changeMetadataViewToShowDataForIndex:(int)index;
 
 @end

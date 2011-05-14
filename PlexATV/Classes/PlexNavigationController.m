@@ -108,19 +108,6 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     [[[BRApplicationStackManager singleton] stack] pushController:self];
 }
 
-- (void)navigateToDetailedMetadataController:(NSArray *)previewAssets withSelectedIndex:(int)selectedIndex {
-    DLog(@"Navigating to: [Detailed Metadata]");
-    self.targetController = nil;
-    self.targetMediaObject = nil;
-    self.promptText = @"Loading \"Detailed Metadata\"...";
-    
-    HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithMediaObjects:previewAssets withSelectedIndex:selectedIndex];
-    self.targetController = previewController;
-    [previewController release];
-    
-    [[[BRApplicationStackManager singleton] stack] pushController:self];
-}
-
 - (void)navigateToSearchForMachine:(Machine *)aMachine {
     DLog(@"Navigating to: [Search], for machine: [%@]", aMachine.userName);
     self.targetController = nil;
