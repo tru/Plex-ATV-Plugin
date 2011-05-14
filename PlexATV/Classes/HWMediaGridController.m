@@ -161,7 +161,7 @@ void checkNil(NSObject *ctrl)
 	div1.drawsLine = YES;
 	[div1 setStartOffsetText:0];
 	[div1 setAlignmentFactor:0.5f];
-	[div1 setLabel:@"Recently added"];
+	[div1 setLabel:self.shelfMediaContainer.name];
 	
 	
 	/*
@@ -201,7 +201,8 @@ void checkNil(NSObject *ctrl)
 	div2.drawsLine = YES;
 	[div2 setStartOffsetText:0];
 	[div2 setAlignmentFactor:0.5f];
-	[div2 setLabel:@"All movies"];
+    NSString *gridLabel = [NSString stringWithFormat:@"All %@", self.gridMediaContainer.name];
+	[div2 setLabel:gridLabel];
 	
 	CGRect dividerFrame;
 	dividerFrame.origin.x = 0;
@@ -229,8 +230,6 @@ void checkNil(NSObject *ctrl)
 	
 	CGRect gridBoxFrame;
 	gridBoxFrame.origin.x = 0;
-    //gridBoxFrame.origin.y = dividerFrame.size.height+5.f;
-    //[_gridControl setFrame:gridFrame];
 	
 	BRBoxControl *gridBox = [[BRBoxControl alloc] init];
 	[gridBox setAcceptsFocus:YES];
@@ -285,9 +284,7 @@ void checkNil(NSObject *ctrl)
 	for (int i=0;i<[self.shelfMediaObjects count];i++)
 	{
 		PlexMediaObject *pmo = [self.shelfMediaObjects objectAtIndex:i];
-		//DLog(@"asset_title: %@", [asset title]);
 		[store addObject:pmo.previewAsset];
-		//[asset release];
 	}
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForShelf - have assets, creating datastore and provider");

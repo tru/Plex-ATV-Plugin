@@ -32,7 +32,7 @@
 
 //Container Manipulation Methods
 - (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;
-- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory;
+- (BRController *)newGridController:(PlexMediaContainer *)movieCategory withShelfKeyString:(NSString *)shelfKey;
 - (PlexMediaContainer *)applySkipFilteringOnContainer:(PlexMediaContainer *)container;
 
 @end

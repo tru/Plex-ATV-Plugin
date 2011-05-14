@@ -204,10 +204,11 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     if ([viewTypeSetting isEqualToString:@"Grid"]) {
         
         if (aMediaObject.isMovie) {
-            controller = [self newMoviesController:contents];
+            controller = [self newGridController:contents withShelfKeyString:@"recentlyAdded"];
             
         } else if (aMediaObject.isTVShow) {
-            controller = [self newTVShowsController:contents];
+            controller = [self newGridController:contents withShelfKeyString:@"recentlyViewedShows"];
+            //controller = [self newTVShowsController:contents];
         }
     } 
     
@@ -294,11 +295,11 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 	return menuController;
 }
 
-- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory {
+- (BRController *)newGridController:(PlexMediaContainer *)movieCategory withShelfKeyString:(NSString *)shelfKey {
 	BRController *menuController = nil;
 	PlexMediaObject *recent=nil;
 	PlexMediaObject *allMovies=nil;
-    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
+    DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
 	if (movieCategory.directories > 0) {
 		NSUInteger i, count = [movieCategory.directories count];
 		for (i = 0; i < count; i++) {
@@ -307,7 +308,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 			DLog(@"obj_type: %@",key);
 			if ([key isEqualToString:@"all"])
 				allMovies = obj;
-			else if ([key isEqualToString:@"recentlyAdded"])
+			else if ([key isEqualToString:shelfKey])
 				recent = obj;
 		}
 	}
