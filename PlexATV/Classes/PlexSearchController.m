@@ -271,15 +271,44 @@
 	return [super brEventAction:action];
 }
 
+
 #pragma mark -
-#pragma mark datasource
-- (NSString *)headerTitleForSearchController:(PlexSearchController *)searchController {
-    return @"Search";
+#pragma mark Search Methods
+
+#define kSearchTermKey @"kSearchTermKey"
+#define kSearchRequestKey @"kSearchRequestKey"
+#define kSearchResultsKey @"kSearchResultsKey"
+- (void)finishedSearch:(NSDictionary *)data {
+    [self.textEntry stopSpinning];
+    
+    self.currentSearchMediaContainer = [data objectForKey:kSearchResultsKey];
+    self.items = self.currentSearchMediaContainer.directories;
+    [self refresh];
+    
+    //free the passed data
+    [data release];
 }
 
-- (BRImage *)headerIconForSearchController:(PlexSearchController *)searchController {
-    NSString *headerIcon = [[NSBundle bundleForClass:[PlexSearchController class]] pathForResource:@"PlexTextLogo" ofType:@"png"];
-	return [BRImage imageWithPath:headerIcon];
+- (void)performSearch:(NSMutableDictionary *)data {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSString *searchTerm = [data objectForKey:kSearchTermKey];
+    PlexRequest *searchRequest = [data objectForKey:kSearchRequestKey];
+    
+    PlexMediaContainer *searchResult = [searchRequest search:searchTerm];
+    [data setObject:searchResult forKey:kSearchResultsKey];
+    [self performSelectorOnMainThread:@selector(finishedSearch:) withObject:data waitUntilDone:YES];
+    [pool drain];
+}
+
+- (void)startSearch {
+    //start spinner
+    [self.textEntry startSpinning];
+    
+    PlexRequest* searchRequest = self.machine.request;
+    
+    //is freed after the search finished
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:self.currentSearchTerm, kSearchTermKey, searchRequest, kSearchRequestKey, nil];
+    [self performSelectorInBackground:@selector(performSearch:) withObject:data];
 }
 
 
@@ -291,16 +320,23 @@
     self.currentSearchTerm = textField.stringValue;
     
     //perform new search
-    [self.textEntry startSpinning];
-    self.currentSearchMediaContainer = [self.machine.request search:self.currentSearchTerm];
-    //[self.textEntry performSelector:@selector(stopSpinning) withObject:nil afterDelay:10.0];
-    self.items = self.currentSearchMediaContainer.directories;
-    
-    [self refresh];
+    [self startSearch];
 }
 
 - (void)textDidEndEditing:(id)text {
     //nothing needed
+}
+
+
+#pragma mark -
+#pragma mark PlexSearchController Datasource Methods
+- (NSString *)headerTitleForSearchController:(PlexSearchController *)searchController {
+    return @"Search";
+}
+
+- (BRImage *)headerIconForSearchController:(PlexSearchController *)searchController {
+    NSString *headerIcon = [[NSBundle bundleForClass:[PlexSearchController class]] pathForResource:@"PlexTextLogo" ofType:@"png"];
+	return [BRImage imageWithPath:headerIcon];
 }
 
 
@@ -326,20 +362,6 @@
     if ([self.textEntry isHidden]) {
         PlexMediaObject *pmo = [self.items objectAtIndex:item];
         preview = pmo.previewControl;
-        
-        //    SMFMediaPreview *preview = [SMFMediaPreview mediaPreview];
-        //    
-        //    SMFBaseAsset *a = [SMFBaseAsset asset];
-        //    
-        //    [a setCustomKeys:[NSArray arrayWithObjects:@"Key",@"Value",@"Class",nil]
-        //          forObjects:[NSArray arrayWithObjects:
-        //                      @"key value",
-        //                      @"value value",
-        //                      @"class value",
-        //                      nil]];
-        //    [a setTitle:@"title"];
-        //    [a setCoverArt:[[BRThemeInfo sharedTheme]appleTVIcon]];
-        //    [preview setAsset:a];
     }
     return preview;
 }

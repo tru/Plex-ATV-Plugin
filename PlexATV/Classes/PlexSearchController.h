@@ -42,7 +42,10 @@
 - (int)getSelection;
 - (void)playPauseActionForRow:(long)row;
 
-
+//search
+- (void)finishedSearch:(NSDictionary *)data;
+- (void)performSearch:(NSMutableDictionary *)data;
+- (void)startSearch;
 
 //custom
 @property (retain) Machine *machine;
