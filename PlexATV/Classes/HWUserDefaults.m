@@ -7,6 +7,7 @@
 
 #import "HWUserDefaults.h"
 #import <plex-oss/PlexClientCapabilities.h>
+#import <plex-oss/PlexStreamingQuality.h>
 #import <plex-oss/PlexRequest + Security.h>
 #import "Constants.h"
 
@@ -122,6 +123,23 @@
     */
 }
 
++ (NSArray *)plexStreamingQualities {
+    return [NSArray arrayWithObjects:
+            [PlexStreamingQualityDescriptor quality3GLow], 
+            [PlexStreamingQualityDescriptor quality3GMed], 
+            [PlexStreamingQualityDescriptor quality3GHigh], 
+            [PlexStreamingQualityDescriptor qualityWiFiLow], 
+            [PlexStreamingQualityDescriptor qualityWiFiMed], 
+            [PlexStreamingQualityDescriptor qualityiPhoneWiFi], 
+            [PlexStreamingQualityDescriptor qualityiPadWiFi], 
+            [PlexStreamingQualityDescriptor quality720pLow], 
+            [PlexStreamingQualityDescriptor quality720pHigh], 
+            [PlexStreamingQualityDescriptor quality1080pLow], 
+            [PlexStreamingQualityDescriptor quality1080pMed], 
+            [PlexStreamingQualityDescriptor quality1080pHigh], 
+            nil];
+}
+
 + (NSDictionary *)defaultValues {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             [NSArray array], PreferencesMachinesExcludedFromServerList,
@@ -132,8 +150,7 @@
             [NSNumber numberWithBool:YES], PreferencesViewListPosterZoomingEnabled,
             [NSNumber numberWithBool:NO], PreferencesPlaybackAudioAC3Enabled,
             [NSNumber numberWithBool:NO], PreferencesPlaybackAudioDTSEnabled,
-            [NSNumber numberWithInt:2], PreferencesPlaybackVideoQualityProfile,
-            [NSNumber numberWithFloat:12.0], PreferencesPlaybackVideoBitrate,
+            [NSNumber numberWithInt:9], PreferencesPlaybackVideoQualityProfile,
             [NSNumber numberWithBool:NO], PreferencesSecuritySettingsLockEnabled,
             [NSNumber numberWithInt:0], PreferencesSecurityPasscode,
             nil];

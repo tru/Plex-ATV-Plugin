@@ -12,6 +12,7 @@
 + (SMFPreferences *)preferences;
 + (void)setupPlexClient;
 + (NSDictionary *)defaultValues;
++ (NSArray *)plexStreamingQualities;
 
 //plex prefs methods
 -(void)syncSettings;
