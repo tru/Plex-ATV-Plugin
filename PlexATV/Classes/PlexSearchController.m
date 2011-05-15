@@ -17,7 +17,7 @@
 #import "PlexMediaObject+Assets.h"
 
 @implementation PlexSearchController
-@synthesize datasource, header, totalResults, textEntry, arrow, arrowOn, arrowOff, previewContainer, currentSearchTerm, items;
+@synthesize totalResults, textEntry, previewContainer, currentSearchTerm, items;
 @synthesize machine, currentSearchMediaContainer;
 
 
@@ -28,8 +28,12 @@
     self = [super init];
     if (self) {
         self.items = nil;
-        self.arrowOn = [BRImage imageWithPath:[[NSBundle bundleForClass:[BRThemeInfo class]]pathForResource:@"Arrow_ON" ofType:@"png"]];
-        self.arrowOff = [BRImage imageWithPath:[[NSBundle bundleForClass:[BRThemeInfo class]]pathForResource:@"Arrow_OFF" ofType:@"png"]];
+        [self.list setDatasource:self];
+        
+        [self setListTitle:@"Search"];
+		NSString *plexIcon = [[NSBundle bundleForClass:[self class]] pathForResource:@"PlexIcon" ofType:@"png"];
+		BRImage *listIcon = [BRImage imageWithPath:plexIcon];
+		[self setListIcon:listIcon horizontalOffset:0.0 kerningFactor:0.15];
     }
     return self;
 }
@@ -38,21 +42,14 @@
     self = [self init];
     if (self) {
         self.machine = aMachine;
-        [self.list setDatasource:self];
-        self.datasource = self;
         self.currentSearchMediaContainer = nil;
     }
     return self;
 }
 
 -(void)dealloc {    
-    self.datasource = nil;
-    self.header = nil;
     self.totalResults = nil;
     self.textEntry = nil;
-    self.arrow = nil;
-    self.arrowOn = nil;
-    self.arrowOff = nil;
     self.previewContainer = nil;
     self.currentSearchTerm = nil;
     self.items = nil;
@@ -94,7 +91,6 @@
 - (void)hideSearchInterface:(BOOL)hide {
     [self.textEntry setHidden:hide];
     [self.totalResults setHidden:hide];
-    [self.arrow setHidden:hide];
     
     if (hide) {
         //preview is going to be shown, we better make sure it is up-to-date
@@ -109,10 +105,8 @@
     int listCount = [self.items count];
     if (listCount > 0) {
         [self.list setAcceptsFocus:YES];
-        [self.arrow setImage:self.arrowOn];        
     } else {
         [self.list setAcceptsFocus:NO];
-        [self.arrow setImage:self.arrowOff];
     }
     
     NSString *results = @"";
@@ -130,18 +124,29 @@
 #pragma mark Controller Drawing and Events
 - (void)layoutSubcontrols {
     [super layoutSubcontrols];
-    
-    CGRect masterFrame = [BRWindow interfaceFrame];
+
+    //CGRect masterFrame = [BRWindow interfaceFrame];
 	
     //============================ TEXT ENTRY ============================
     if (!self.textEntry) {
-        BRTextEntryControl *aTextEntry = [[BRTextEntryControl alloc] initWithTextEntryStyle:2];
-        aTextEntry.frame = CGRectMake(108, 
-                                      70, 
-                                      460, 
-                                      499);
-        [self addControl:aTextEntry];
+        BRTextEntryControl *aTextEntry;
+        if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.3"]) {
+            aTextEntry = [[BRTextEntryControl alloc] initWithTextEntryStyle:9];
+            aTextEntry.frame = CGRectMake(140, 
+                                      53, 
+                                      400, 
+                                      534);
+            aTextEntry.canWrapHorizontally = NO;
+        } else {
+            aTextEntry = [[BRTextEntryControl alloc] initWithTextEntryStyle:2];
+            aTextEntry.frame = CGRectMake(108, 
+                                          70, 
+                                          460, 
+                                          499);
+        }
         self.textEntry = aTextEntry;
+        
+        [self addControl:aTextEntry];
         self.textEntry.textField.delegate = self;
         [aTextEntry release];
         [self setFocusedControl:self.textEntry];
@@ -153,54 +158,35 @@
         BRTextControl *aTextControl = [[BRTextControl alloc] init];
         CGFloat width = 148.0f; //room for 7 digit result
         CGFloat height = 24.0f;
-        aTextControl.frame = CGRectMake(CGRectGetMaxX(self.textEntry.frame)-width, 
-                                        CGRectGetMaxY(self.textEntry.frame), 
+        if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.3"]) {
+        aTextControl.frame = CGRectMake(392, 
+                                        612, 
                                         width, 
                                         height);
+        } else {
+            aTextControl.frame = CGRectMake(CGRectGetMaxX(self.textEntry.frame)-width, 
+                                            CGRectGetMaxY(self.textEntry.frame), 
+                                            width, 
+                                            height);
+        }
+        
         [self addControl:aTextControl];
         self.totalResults = aTextControl;
         [aTextControl release];
     }
     
     
-    //============================ ARROW IMAGE ============================
-    if (!self.arrow) {
-        BRImageControl *anArrow = [[BRImageControl alloc] init];
-        anArrow.frame = CGRectMake(CGRectGetMaxX(self.textEntry.frame)+6, 
-                                   CGRectGetMidY(self.textEntry.frame)-55, 
-                                   46, 
-                                   46);
-        [self addControl:anArrow];
-        self.arrow = anArrow;
-        [anArrow release];
-        [self.arrow setImage:self.arrowOff];
-    }    
-    
-	//============================ HEADER TITLE ============================
-	if (!self.header) {
-        BRHeaderControl *headerControl = [[BRHeaderControl alloc] init];
-        [headerControl setTitle:[self.datasource headerTitleForSearchController:self] withAttributes:[[BRThemeInfo sharedTheme] menuTitleTextAttributes]];
+    //============================ LINE IMAGE ============================
         
-        //============================ HEADER ICON =========================    
-        if ([self.datasource respondsToSelector:@selector(headerIconForSearchController:)]) {
-            BRImage *headerIcon = [self.datasource headerIconForSearchController:self];
-            [headerControl setIcon:headerIcon position:2 edgeSpace:64];
-        }    
-        
-        headerControl.frame = CGRectMake(0, CGRectGetMaxY(masterFrame)-95, CGRectGetWidth(masterFrame), 51);
-        [self addControl:headerControl];
-        self.header = headerControl;
-        [headerControl release];
-    }
-    
     
     //======================== MODIFY CURRENT CONTROLS ========================
     
     //============================ LIST ============================
-    self.list.frame = CGRectMake(CGRectGetMaxX(self.arrow.frame)-16, 
-                                 CGRectGetMinY(self.textEntry.frame)-13, 
+    self.list.frame = CGRectMake(600, 
+                                 22, 
                                  640, 
-                                 540);
+                                 612);
+
     
     //============================ PREVIEW ============================
     if (!self.previewContainer) {
@@ -232,6 +218,8 @@
             BRControl *new = [self focusedControl];
             if (new==self.textEntry && old!=self.textEntry) {
                 [self hideSearchInterface:NO];
+                //TODO: should be improved, we want to focus clear action button
+                [self.textEntry setFocusToGlyphNamed:@"r"];
             }
             return r;
         }
@@ -247,9 +235,11 @@
             return r;
         }
         case kBREventRemoteActionPlayPause:
-            if([action value] == 1)
-                [self playPauseActionForRow:[self getSelection]];
-            return YES;
+            if (self.list.focused) {
+                if([action value] == 1)
+                    [self playPauseActionForRow:[self getSelection]];
+                return YES;
+            }
             break;
 		case kBREventRemoteActionUp:
 		case kBREventRemoteActionHoldUp:
@@ -326,19 +316,6 @@
 - (void)textDidEndEditing:(id)text {
     //nothing needed
 }
-
-
-#pragma mark -
-#pragma mark PlexSearchController Datasource Methods
-- (NSString *)headerTitleForSearchController:(PlexSearchController *)searchController {
-    return @"Search";
-}
-
-- (BRImage *)headerIconForSearchController:(PlexSearchController *)searchController {
-    NSString *headerIcon = [[NSBundle bundleForClass:[PlexSearchController class]] pathForResource:@"PlexTextLogo" ofType:@"png"];
-	return [BRImage imageWithPath:headerIcon];
-}
-
 
 #pragma mark -
 #pragma mark List Provider Methods
