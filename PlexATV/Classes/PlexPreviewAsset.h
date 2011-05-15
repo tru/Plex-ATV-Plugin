@@ -29,7 +29,9 @@
 #import <Backrow/Backrow.h>
 
 @class PlexMediaObject;
-@interface PlexPreviewAsset : BRXMLMediaAsset<BRMediaAsset> {
+
+//needs to be a subclass of photo media asset to enable supercharged grid
+@interface PlexPreviewAsset : BRPhotoMediaAsset<BRMediaAsset> {
 	NSURL* url;
 	PlexMediaObject* pmo;
 }
