@@ -48,16 +48,8 @@
             
             //shadings behind controls
             BRControl *control = [[BRControl alloc] init];
-            control.backgroundColor = [[UIColor blackColor] CGColor];
-            
-            float minX = 60.0f;
-            float maxX = 1240.0f;
-            
-            float minY = 15.0f;
-            float maxY = 700.0f;
-            
-            control.frame = CGRectMake(minX, minY, maxX-minX, maxY-minY);
-            [[control layer] setCornerRadius:5.0f];
+            control.backgroundColor = [[UIColor blackColor] CGColor];            
+            control.frame = self.frame;
             
             control.opacity = 0.5f;
             [self insertControl:control atIndex:1];
