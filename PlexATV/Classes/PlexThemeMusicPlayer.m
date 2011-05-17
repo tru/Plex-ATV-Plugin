@@ -49,8 +49,12 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
         if (![themeUrl isEqual:self.currentlyPlayingThemeUrl]) {
             self.currentlyPlayingThemeUrl = themeUrl;
             self.themeMusicPlayer = [AVPlayer playerWithURL:themeUrl];
-            [self.themeMusicPlayer setActionAtItemEnd:AVPlayerActionAtItemEndPause];
+            [self.themeMusicPlayer setActionAtItemEnd:AVPlayerActionAtItemEndNone];
             [self.themeMusicPlayer pause];
+            if ([[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicLoopEnabled]) {
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:)
+                                                             name:AVPlayerItemDidPlayToEndTimeNotification object:[self.themeMusicPlayer currentItem]];
+            }
             [self.themeMusicPlayer play];
         } else {
             //url is same, so music must be same, so don't do anything
@@ -58,9 +62,16 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
     }
 }
 
+//used to loop the music if enabled
+- (void)playerItemDidReachEnd:(NSNotification *)notification {
+    AVPlayerItem *p = [notification object];
+    [p seekToTime:kCMTimeZero]; //start song over again
+} 
+
 - (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)aMediaObject {
     if(self.themeMusicPlayer && (!aMediaObject || aMediaObject.isTVShow)) {
         [self.themeMusicPlayer pause];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
         self.currentlyPlayingThemeUrl = nil;
     }
 }
