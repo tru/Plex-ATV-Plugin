@@ -9,11 +9,11 @@
 
 @protocol Plex_SMFMoviePreviewControllerDatasource <SMFMoviePreviewControllerDatasource>
 - (NSURL *)backgroundImageUrl;
+- (NSArray *)flags;
 @end
 
-@interface Plex_SMFMoviePreviewController : SMFMoviePreviewController {
-    BRControl *_summaryControlBackground;
-}
-@property(retain) NSObject<Plex_SMFMoviePreviewControllerDatasource> *datasource;
+@interface Plex_SMFMoviePreviewController : SMFMoviePreviewController {}
+@property (retain) NSObject<Plex_SMFMoviePreviewControllerDatasource> *datasource;
+@property (retain) NSArray *flags;
 
 @end

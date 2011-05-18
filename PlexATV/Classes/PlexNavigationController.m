@@ -21,7 +21,7 @@
 #import "PlexSongListController.h"
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
-#import "HWDetailedMovieMetadataController.h"
+#import "PlexPreplayController.h"
 #import <SMFramework/SMFControllerPasscodeController.h>
 #import "PlexPlaybackController.h"
 #import "PlexMediaObject+Assets.h"
@@ -183,7 +183,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     }
     // ========== movie, initiate movie pre-play view ============
     if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
-        return [[HWDetailedMovieMetadataController alloc] initWithPlexMediaObject:aMediaObject];
+        return [[PlexPreplayController alloc] initWithPlexMediaObject:aMediaObject];
     }
     // ============ sound plugin or other type of sound, initiate playback ============
     else if ([@"Track" isEqualToString:aMediaObject.containerType]){

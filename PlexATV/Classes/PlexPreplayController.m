@@ -25,12 +25,14 @@
 
 #define LOCAL_DEBUG_ENABLED 0
 
-#import "HWDetailedMovieMetadataController.h"
+#import "PlexPreplayController.h"
 #import "PlexMediaProvider.h"
 #import "PlexNavigationController.h"
 #import "PlexAudioSubsController.h"
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/PlexMediaObject + VideoDetails.h>
+#import <plex-oss/PlexImage.h>
+#import <plex-oss/PlexMedia.h>
 #import "PlexMediaObject+Assets.h"
 #import "PlexPreviewAsset.h"
 
@@ -50,7 +52,7 @@ typedef enum {
 	kMoreButton
 } ActionButton;
 
-@implementation HWDetailedMovieMetadataController
+@implementation PlexPreplayController
 @synthesize relatedMediaContainer;
 @synthesize selectedMediaObject;
 
@@ -73,12 +75,8 @@ typedef enum {
 - (id)initWithPlexMediaObject:(PlexMediaObject *)aMediaObject {
     self = [self init];
     if (self) {
-DLog(@"initwithplexmediaobject in preplay called");
-DLog(@"1: [%@]", aMediaObject);
         self.selectedMediaObject = aMediaObject;
-DLog(@"2: [%@]", self.selectedMediaObject.mediaContainer);
         self.relatedMediaContainer = self.selectedMediaObject.mediaContainer;
-DLog(@"3: [%@]", self.relatedMediaContainer.directories);
         currentSelectedIndex = [self.relatedMediaContainer.directories indexOfObject:self.selectedMediaObject];
 #if LOCAL_DEBUG_ENABLED
         DLog(@"init with media object:%@", self.selectedMediaObject);
@@ -275,11 +273,11 @@ DLog(@"3: [%@]", self.relatedMediaContainer.directories);
 #if LOCAL_DEBUG_ENABLED
     DLog(@"summary: %@", [self.selectedMediaObject.previewAsset mediaSummary]);
 #endif
-	return [self.selectedMediaObject.previewAsset mediaSummary];
+    return [self.selectedMediaObject.previewAsset mediaSummary];
 }
 
 -(NSArray *)headers {
-	return [NSArray arrayWithObjects:@"Details",@"Actors",@"Director",@"Producers",nil];
+	return [NSArray arrayWithObjects:@"Details",@"Actors",@"Directors",@"Writers",nil];
 }
 
 -(NSArray *)columns {
@@ -297,20 +295,6 @@ DLog(@"3: [%@]", self.relatedMediaContainer.directories);
 	
 	NSString *duration = [NSString stringWithFormat:@"%d minutes", [self.selectedMediaObject.previewAsset duration]/60];
 	[details addObject:duration];
-	
-	NSMutableArray *badges = [NSMutableArray array];
-	if ([self.selectedMediaObject.previewAsset isHD])
-		[badges addObject:[[BRThemeInfo sharedTheme] hdPosterBadge]];
-	if ([self.selectedMediaObject.previewAsset hasDolbyDigitalAudioTrack])
-		[badges addObject:[[BRThemeInfo sharedTheme] dolbyDigitalBadge]];
-	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
-		[badges addObject:[[BRThemeInfo sharedTheme] ccBadge]];
-	[details addObject:badges];
-	
-    if ([self.selectedMediaObject.previewAsset starRatingImage]) {
-        BRImage *starRating = [self.selectedMediaObject.previewAsset starRatingImage];
-        [details addObject:starRating];
-	}
     
 	[table addObject:details];
 	
@@ -321,24 +305,16 @@ DLog(@"3: [%@]", self.relatedMediaContainer.directories);
         [table addObject:actors];
 	}
 	
-    // ======= director column ======
-	NSMutableArray *directorAndWriters = [NSMutableArray arrayWithArray:[self.selectedMediaObject.previewAsset directors]];
-    if (directorAndWriters == nil)
-        [directorAndWriters initWithCapacity:2];
+    // ======= directors column ======
+    if ([self.selectedMediaObject.previewAsset directors]) {
+        NSArray *directors = [self.selectedMediaObject.previewAsset directors];
+        [table addObject:directors];
+	}
     
-	[directorAndWriters addObject:@" "];
-	NSAttributedString *subHeadingWriters = [[NSAttributedString alloc]initWithString:@"Writers" attributes:[SMFMoviePreviewController columnHeaderAttributes]];
-	[directorAndWriters addObject:subHeadingWriters];
-	[subHeadingWriters release];
-	[directorAndWriters addObjectsFromArray:[self.selectedMediaObject.previewAsset writers]];
-	
-	[table addObject:directorAndWriters];
-	
-	
-    // ======= producers column ======
-    if ([self.selectedMediaObject.previewAsset producers]) {
-        NSArray *producers = [self.selectedMediaObject.previewAsset producers];
-        [table addObject:producers];
+    // ======= writers column ======
+    if ([self.selectedMediaObject.previewAsset writers]) {
+        NSArray *writers = [self.selectedMediaObject.previewAsset writers];
+        [table addObject:writers];
 	}
 	
     // ======= done building table ======
@@ -346,6 +322,34 @@ DLog(@"3: [%@]", self.relatedMediaContainer.directories);
 	DLog(@"table: %@", table);
 #endif
 	return table;
+}
+
+- (NSArray *)flags {
+    NSMutableArray *flags = [NSMutableArray array];
+    
+    if ([self.selectedMediaObject.previewAsset starRatingImage])
+        [flags addObject:[self.selectedMediaObject.previewAsset starRatingImage]];
+    
+    NSDictionary *mediaAttributes = self.selectedMediaObject.mediaResource.attributes;
+
+    NSArray *flagAttributes = [NSArray arrayWithObjects:PlexFlagTypeContentVideoResolution, PlexFlagTypeContentVideoCodec, PlexFlagTypeContentAudioCodec, PlexFlagTypeContentAudioChannels, nil];
+    for (PlexFlagTypes attribute in flagAttributes) {
+        if ([mediaAttributes valueForKey:attribute]) {
+            PlexImage *flagImage = [self.selectedMediaObject.mediaContainer flagForType:attribute named:[mediaAttributes valueForKey:attribute]];
+            [flags addObject:[BRImage imageWithURL:flagImage.imageURL]];
+        }
+    }    
+    
+//	if ([self.selectedMediaObject.previewAsset isHD])
+//		[flags addObject:[[BRThemeInfo sharedTheme] hdPosterBadge]];
+//    
+//	if ([self.selectedMediaObject.previewAsset hasDolbyDigitalAudioTrack])
+//		[flags addObject:[[BRThemeInfo sharedTheme] dolbyDigitalBadge]];
+    
+	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
+		[flags addObject:[[BRThemeInfo sharedTheme] ccBadge]];
+    
+    return flags;
 }
 
 -(NSString *)rating {
