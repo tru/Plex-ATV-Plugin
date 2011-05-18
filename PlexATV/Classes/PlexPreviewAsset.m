@@ -603,4 +603,15 @@
 	return [pmo.attributes valueForKey:@"year"];
 }
 
+//-(NSDictionary *)orderedDictionary {
+//    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+//    
+//    [dict setObject:[self title] forKey:METADATA_TITLE];
+//    [dict setObject:[self mediaDescription] forKey:METADATA_SUMMARY];
+//    [dict setObject:[NSArray arrayWithObjects:@"Genre", @"Released", @"Length", nil] forKey:METADATA_CUSTOM_KEYS];
+//    [dict setObject:[NSArray arrayWithObjects:@"test1", @"test2", @"test3", nil] forKey:METADATA_CUSTOM_OBJECTS];
+//    DLog(@"dict: %@", dict);
+//    return dict;
+//}
+
 @end

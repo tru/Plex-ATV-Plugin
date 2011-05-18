@@ -21,7 +21,6 @@
 //Navigation Methods
 - (void)initiatePlaybackOfMediaObject:(PlexMediaObject *)aMediaObject;
 - (void)navigateToObjectsContents:(PlexMediaObject *)aMediaObject;
-- (void)navigateToDetailedMetadataController:(NSArray *)previewAssets withSelectedIndex:(int)selectedIndex;
 - (void)navigateToChannelsForMachine:(Machine *)aMachine;
 - (void)navigateToSearchForMachine:(Machine *)aMachine;
 - (void)navigateToSettingsWithTopLevelController:(BRBaseAppliance *)topLevelController;
@@ -33,7 +32,7 @@
 
 //Container Manipulation Methods
 - (BRController *)newTVShowsController:(PlexMediaContainer *)tvShowCategory;
-- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory;
+- (BRController *)newGridController:(PlexMediaContainer *)movieCategory withShelfKeyString:(NSString *)shelfKey;
 - (PlexMediaContainer *)applySkipFilteringOnContainer:(PlexMediaContainer *)container;
 
 @end

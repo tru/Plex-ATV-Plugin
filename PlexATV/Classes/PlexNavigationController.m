@@ -21,7 +21,7 @@
 #import "PlexSongListController.h"
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
-#import "HWDetailedMovieMetadataController.h"
+#import "PlexPreplayController.h"
 #import <SMFramework/SMFControllerPasscodeController.h>
 #import "PlexPlaybackController.h"
 #import "PlexMediaObject+Assets.h"
@@ -108,19 +108,6 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     [[[BRApplicationStackManager singleton] stack] pushController:self];
 }
 
-- (void)navigateToDetailedMetadataController:(NSArray *)previewAssets withSelectedIndex:(int)selectedIndex {
-    DLog(@"Navigating to: [Detailed Metadata]");
-    self.targetController = nil;
-    self.targetMediaObject = nil;
-    self.promptText = @"Loading \"Detailed Metadata\"...";
-    
-    HWDetailedMovieMetadataController* previewController = [[HWDetailedMovieMetadataController alloc] initWithMediaObjects:previewAssets withSelectedIndex:selectedIndex];
-    self.targetController = previewController;
-    [previewController release];
-    
-    [[[BRApplicationStackManager singleton] stack] pushController:self];
-}
-
 - (void)navigateToSearchForMachine:(Machine *)aMachine {
     DLog(@"Navigating to: [Search], for machine: [%@]", aMachine.userName);
     self.targetController = nil;
@@ -196,7 +183,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     }
     // ========== movie, initiate movie pre-play view ============
     if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
-        return [[HWDetailedMovieMetadataController alloc] initWithPlexMediaObject:aMediaObject];
+        return [[PlexPreplayController alloc] initWithPlexMediaObject:aMediaObject];
     }
     // ============ sound plugin or other type of sound, initiate playback ============
     else if ([@"Track" isEqualToString:aMediaObject.containerType]){
@@ -212,26 +199,44 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
         return [[PlexSongListController alloc] initWithPlexContainer:contents title:aMediaObject.name];
     }
     
-    // ============ tv or movie view ============    
-    NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-    if (viewTypeSetting == nil || [viewTypeSetting isEqualToString:@"Grid"]) {
-        
-        if (aMediaObject.isMovie) {
-            controller = [self newMoviesController:contents];
-            
-        } else if (aMediaObject.isTVShow) {
-            controller = [self newTVShowsController:contents];
-        }
-    } 
+    // ============ tv or movie view ============
+    NSInteger requestedViewType = 0;
+    if (aMediaObject.isMovie) {
+        requestedViewType = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForMovies];
+    } else {
+        requestedViewType = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForTvShows];
+    }
     
     BRTabControl *tabBar = nil;
-    //only filter and create tab bar if we are navigating plex's built in stuff
-    if ([contents.identifier isEqualToString:@"com.plexapp.plugins.library"]) {
-        contents = [self applySkipFilteringOnContainer:contents];
-        tabBar = [self newTabBarForContents:contents];
+    switch (requestedViewType) {
+        case kATVPlexViewTypeList: {
+            //only filter and create tab bar if we are navigating plex's built in stuff
+            if ([contents.identifier isEqualToString:@"com.plexapp.plugins.library"]) {
+                contents = [self applySkipFilteringOnContainer:contents];
+                tabBar = [self newTabBarForContents:contents];
+            }
+            
+            controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
+            break;
+        }
+        case kATVPlexViewTypeGrid: {
+            if (aMediaObject.isMovie) {
+                controller = [self newGridController:contents withShelfKeyString:@"recentlyAdded"];
+            } else {
+                controller = [self newGridController:contents withShelfKeyString:@"recentlyViewedShows"];
+            }
+            break;
+        }
+        case kATVPlexViewTypeBookcase: {
+            controller = [self newTVShowsController:contents];
+            break;
+        }
+        default:
+            break;
     }
     
     if (!controller) {
+        //if all else fails, use list view
         controller = [[HWPlexDir alloc] initWithRootContainer:contents andTabBar:tabBar];
     }
     return controller;
@@ -307,11 +312,11 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 	return menuController;
 }
 
-- (BRController *)newMoviesController:(PlexMediaContainer*)movieCategory {
+- (BRController *)newGridController:(PlexMediaContainer *)movieCategory withShelfKeyString:(NSString *)shelfKey {
 	BRController *menuController = nil;
 	PlexMediaObject *recent=nil;
 	PlexMediaObject *allMovies=nil;
-    //DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
+    DLog(@"showGridListControl_movieCategory_directories: %@", movieCategory.directories);
 	if (movieCategory.directories > 0) {
 		NSUInteger i, count = [movieCategory.directories count];
 		for (i = 0; i < count; i++) {
@@ -320,7 +325,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 			DLog(@"obj_type: %@",key);
 			if ([key isEqualToString:@"all"])
 				allMovies = obj;
-			else if ([key isEqualToString:@"recentlyAdded"])
+			else if ([key isEqualToString:shelfKey])
 				recent = obj;
 		}
 	}

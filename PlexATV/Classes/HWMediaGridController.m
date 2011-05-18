@@ -24,6 +24,7 @@
 @end
 
 @implementation HWMediaGridController
+@synthesize shelfMediaContainer, shelfMediaObjects, gridMediaContainer, gridMediaObjects;
 
 void checkNil(NSObject *ctrl)
 {
@@ -41,23 +42,20 @@ void checkNil(NSObject *ctrl)
 
 - (id)initWithPlexAllMovies:(PlexMediaContainer *)allMovies andRecentMovies:(PlexMediaContainer *)recentMovies {
 	self = [self init];
-	[allMovies retain];
-	[recentMovies retain];
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"initWithPlexContaner - converting to assets");
-#endif
-	
-    // we'll cut the recent movies down to MAX_RECENT_ITEMS, since recent actually has all movies, only sorted by added date
-    //and shelf isn't actually usable with bunch of items
-	NSArray *fullRecentMovies = recentMovies.directories;
-	NSRange theRange;  
-	theRange.location = 0;
-	theRange.length = [fullRecentMovies count] > MAX_RECENT_ITEMS ? MAX_RECENT_ITEMS : [fullRecentMovies count];
-	
-	_shelfMediaObjects = [[fullRecentMovies subarrayWithRange:theRange] retain];
-	_gridMediaObjects = allMovies.directories;
-    [fullRecentMovies release];
-	
+    if (self) {
+        self.shelfMediaContainer = recentMovies;
+        self.gridMediaContainer = allMovies;
+        
+        // we'll cut the recent movies down to MAX_RECENT_ITEMS, since recent actually has all movies, only sorted by added date
+        //and shelf isn't actually usable with bunch of items
+        NSArray *fullRecentMovies = recentMovies.directories;
+        NSRange theRange;  
+        theRange.location = 0;
+        theRange.length = [fullRecentMovies count] > MAX_RECENT_ITEMS ? MAX_RECENT_ITEMS : [fullRecentMovies count];
+        
+        self.shelfMediaObjects = [fullRecentMovies subarrayWithRange:theRange];
+        self.gridMediaObjects = allMovies.directories;
+    }
 	return self;
 }
 
@@ -65,11 +63,13 @@ void checkNil(NSObject *ctrl)
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"deallocing HWMediaShelfController");
 #endif
-	_shelfMediaObjects = nil;
-	_gridMediaObjects = nil;
-    //[_spinner release];
-    //[_cursorControl release];
-    //[_scroller release];
+    self.shelfMediaContainer = nil;
+    self.gridMediaContainer = nil;
+	self.shelfMediaObjects = nil;
+	self.gridMediaObjects = nil;
+    [_spinner release];
+    [_cursorControl release];
+    [_scroller release];
 	[_gridControl release];
 	[_shelfControl release];
 	[_panelControl release];
@@ -161,7 +161,7 @@ void checkNil(NSObject *ctrl)
 	div1.drawsLine = YES;
 	[div1 setStartOffsetText:0];
 	[div1 setAlignmentFactor:0.5f];
-	[div1 setLabel:@"Recently added"];
+	[div1 setLabel:self.shelfMediaContainer.name];
 	
 	
 	/*
@@ -201,7 +201,8 @@ void checkNil(NSObject *ctrl)
 	div2.drawsLine = YES;
 	[div2 setStartOffsetText:0];
 	[div2 setAlignmentFactor:0.5f];
-	[div2 setLabel:@"All movies"];
+    NSString *gridLabel = [NSString stringWithFormat:@"All %@", self.gridMediaContainer.name];
+	[div2 setLabel:gridLabel];
 	
 	CGRect dividerFrame;
 	dividerFrame.origin.x = 0;
@@ -229,8 +230,6 @@ void checkNil(NSObject *ctrl)
 	
 	CGRect gridBoxFrame;
 	gridBoxFrame.origin.x = 0;
-    //gridBoxFrame.origin.y = dividerFrame.size.height+5.f;
-    //[_gridControl setFrame:gridFrame];
 	
 	BRBoxControl *gridBox = [[BRBoxControl alloc] init];
 	[gridBox setAcceptsFocus:YES];
@@ -259,7 +258,6 @@ void checkNil(NSObject *ctrl)
 	[_panelControl layoutSubcontrols];
 	
 	[self addControl:_cursorControl];
-	[_cursorControl release];
 	
 	[_scroller setFrame:masterFrame];
 	[_scroller setFollowsFocus:YES];
@@ -283,12 +281,10 @@ void checkNil(NSObject *ctrl)
 	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
 	
-	for (int i=0;i<[_shelfMediaObjects count];i++)
+	for (int i=0;i<[self.shelfMediaObjects count];i++)
 	{
-		PlexMediaObject *pmo = [_shelfMediaObjects objectAtIndex:i];
-		//DLog(@"asset_title: %@", [asset title]);
+		PlexMediaObject *pmo = [self.shelfMediaObjects objectAtIndex:i];
 		[store addObject:pmo.previewAsset];
-		//[asset release];
 	}
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForShelf - have assets, creating datastore and provider");
@@ -317,9 +313,9 @@ void checkNil(NSObject *ctrl)
 	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType movie]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello2" predicate:_pred mediaTypes:_set];
 	
-	for (int i=0;i<[_gridMediaObjects count];i++)
+	for (int i=0;i<[self.gridMediaObjects count];i++)
 	{
-		PlexMediaObject *pmo = [_gridMediaObjects objectAtIndex:i];
+		PlexMediaObject *pmo = [self.gridMediaObjects objectAtIndex:i];
 		[store addObject:pmo.previewAsset];
 	}
 #if LOCAL_DEBUG_ENABLED
@@ -334,8 +330,6 @@ void checkNil(NSObject *ctrl)
 	
     BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
-    
-    
     [store release];
     
 #if LOCAL_DEBUG_ENABLED
@@ -357,7 +351,7 @@ void checkNil(NSObject *ctrl)
 		
 		if ([_shelfControl isFocused]) {
 			index = [_shelfControl focusedIndex];
-			mediaObjects = _shelfMediaObjects;
+			mediaObjects = self.shelfMediaObjects;
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"item in shelf selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
@@ -365,7 +359,7 @@ void checkNil(NSObject *ctrl)
 		
 		else if ([_gridControl isFocused]) {
 			index = [_gridControl _indexOfFocusedControl];
-			mediaObjects = _gridMediaObjects;
+			mediaObjects = self.gridMediaObjects;
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
@@ -377,7 +371,7 @@ void checkNil(NSObject *ctrl)
 			DLog(@"brEventaction. have %d mediaObjects and index %d, showing movie preview ctrl",[mediaObjects count], index);
 #endif      
 			
-            [[PlexNavigationController sharedPlexNavigationController] navigateToDetailedMetadataController:mediaObjects withSelectedIndex:index];
+            [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:[[mediaObjects objectAtIndex:index] retain]];
 		}
 		else {
 			DLog(@"error: no selected mediaObject");

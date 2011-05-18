@@ -18,15 +18,17 @@
 #import "Constants.h"
 
 @implementation PlexViewSettingsController
+@synthesize viewTypesDescription;
 
 //----------- general -----------
-#define ViewTypeSettingIndex                0
-#define ViewThemeMusicEnabledIndex          1
-#define ViewThemeMusicLoopEnabledIndex      2
+#define ViewTypeForMoviesIndex              0
+#define ViewTypeForTvShowsIndex             1
+#define ViewThemeMusicEnabledIndex          2
+#define ViewThemeMusicLoopEnabledIndex      3
 //----------- list -----------
-#define ViewListPosterZoomingEnabledIndex   3
+#define ViewListPosterZoomingEnabledIndex   4
 //----------- detailed metadata -----------
-#define ViewPreplayFanartEnabledIndex       4
+#define ViewPreplayFanartEnabledIndex       5
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -35,16 +37,19 @@
 		[self setLabel:@"Plex View Settings"];
 		[self setListTitle:@"Plex View Settings"];
 		
+        self.viewTypesDescription = [NSArray arrayWithObjects:@"List", @"Grid", @"Bookcase", nil];
+        
 		[self setupList];
         [[self list] addDividerAtIndex:0 withLabel:@"General"];
-        [[self list] addDividerAtIndex:3 withLabel:@"List"];
-        [[self list] addDividerAtIndex:4 withLabel:@"Detailed Metadata"];
+        [[self list] addDividerAtIndex:4 withLabel:@"List"];
+        [[self list] addDividerAtIndex:5 withLabel:@"Preplay"];
 	}	
 	return self;
 }
 
 - (void)dealloc {
-	[super dealloc];	
+    self.viewTypesDescription = nil;
+	[super dealloc];
 }
 
 
@@ -74,14 +79,24 @@
 	[_items removeAllObjects];
     
     // =========== general ===========
-  	// =========== view type setting ===========
-	SMFMenuItem *viewTypeSettingMenuItem = [SMFMenuItem menuItem];
+  	// =========== view type for movies setting ===========
+	SMFMenuItem *viewTypeForMoviesSettingMenuItem = [SMFMenuItem menuItem];
 	
-	NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-	[viewTypeSettingMenuItem setTitle:@"Video view"];
-    [viewTypeSettingMenuItem setRightText:viewTypeSetting];
-	[_items addObject:viewTypeSettingMenuItem];
+	[viewTypeForMoviesSettingMenuItem setTitle:@"View type for Movies"];
+	NSInteger viewTypeForMoviesSettingNumber = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForMovies];
+    NSString *viewTypeForMoviesSetting = [self.viewTypesDescription objectAtIndex:viewTypeForMoviesSettingNumber];
+    [viewTypeForMoviesSettingMenuItem setRightText:viewTypeForMoviesSetting];
+	[_items addObject:viewTypeForMoviesSettingMenuItem];
     
+    
+    // =========== view type for tv shows setting ===========
+	SMFMenuItem *viewTypeForTvShowsSettingMenuItem = [SMFMenuItem menuItem];
+	
+	[viewTypeForTvShowsSettingMenuItem setTitle:@"View type for TV Shows"];
+	NSInteger viewTypeForTvShowsSettingNumber = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForTvShows];
+    NSString *viewTypeForTvShowsSetting = [self.viewTypesDescription objectAtIndex:viewTypeForTvShowsSettingNumber];
+    [viewTypeForTvShowsSettingMenuItem setRightText:viewTypeForTvShowsSetting];
+	[_items addObject:viewTypeForTvShowsSettingMenuItem];
 
     // =========== theme music enabled ===========
 	SMFMenuItem *themeMusicMenuItem = [SMFMenuItem menuItem];
@@ -125,15 +140,25 @@
 #pragma mark List Delegate Methods
 - (void)itemSelected:(long)selected {
 	switch (selected) {
-        case ViewTypeSettingIndex: {
-            NSString *viewTypeSetting = [[HWUserDefaults preferences] objectForKey:PreferencesViewTypeSetting];
-            
-            if ([viewTypeSetting isEqualToString:@"List"]) {
-                [[HWUserDefaults preferences] setObject:@"Grid" forKey:PreferencesViewTypeSetting];
-            } else {
-                [[HWUserDefaults preferences] setObject:@"List" forKey:PreferencesViewTypeSetting];
+        case ViewTypeForMoviesIndex: {
+            NSInteger viewTypeNumber = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForMovies];
+            viewTypeNumber++;
+            if (viewTypeNumber >= 2) {
+                viewTypeNumber = 0;
             }
+            [[HWUserDefaults preferences] setInteger:viewTypeNumber forKey:PreferencesViewTypeForMovies];
             
+            [self setupList];
+            [self.list reload];      
+            break;
+        }
+        case ViewTypeForTvShowsIndex: {
+            NSInteger viewTypeNumber = [[HWUserDefaults preferences] integerForKey:PreferencesViewTypeForTvShows];
+            viewTypeNumber++;
+            if (viewTypeNumber >= FINAL_kATVPlexViewTypeBookcase_MAX) {
+                viewTypeNumber = 0;
+            }
+            [[HWUserDefaults preferences] setInteger:viewTypeNumber forKey:PreferencesViewTypeForTvShows];
             
             [self setupList];
             [self.list reload];      
@@ -178,9 +203,14 @@
 {
 	SMFBaseAsset *asset = [[SMFBaseAsset alloc] init];
 	switch (item) {
-        case ViewTypeSettingIndex: {
-            [asset setTitle:@"Select the video listing view type"];
-            [asset setSummary:@"Sets the type of view for videos, choose between list view or grid view ie. cover art view."];
+        case ViewTypeForMoviesIndex: {
+            [asset setTitle:@"Select the view type for the movies screens"];
+            [asset setSummary:@"Sets the type of view used when navigating movies, choose between list or grid view"];
+            break;
+        }
+        case ViewTypeForTvShowsIndex: {
+            [asset setTitle:@"Select the view type for the tv shows screens"];
+            [asset setSummary:@"Sets the type of view used when navigating tv shows, choose between list, grid or bookcase view"];
             break;
         }
 		case ViewThemeMusicEnabledIndex: {

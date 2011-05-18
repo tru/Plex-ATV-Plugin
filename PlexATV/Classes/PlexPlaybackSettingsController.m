@@ -14,17 +14,18 @@
 //
 
 #import "PlexPlaybackSettingsController.h"
+#import <plex-oss/PlexStreamingQuality.h>
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
 @implementation PlexPlaybackSettingsController
+@synthesize plexStreamingQualities;
 
 //----------- audio -----------
 #define PlaybackAudioAC3EnabledIndex        0
 #define PlaybackAudioDTSEnabledIndex        1
 //----------- video -----------
 #define PlaybackVideoQualityProfileIndex    2
-#define PlaybackVideoBitrateIndex           3
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -33,6 +34,7 @@
 		[self setLabel:@"Plex Playback Settings"];
 		[self setListTitle:@"Plex Playback Settings"];
 		
+        self.plexStreamingQualities = [HWUserDefaults plexStreamingQualities];
 		[self setupList];
         
         [[self list] addDividerAtIndex:0 withLabel:@"Audio"];
@@ -42,6 +44,8 @@
 }
 
 - (void)dealloc {
+    self.plexStreamingQualities = nil;
+    
 	[super dealloc];	
 }
 
@@ -96,38 +100,10 @@
 	SMFMenuItem *qualitySettingMenuItem = [SMFMenuItem menuItem];
 	
 	[qualitySettingMenuItem setTitle:@"Quality Profile"];
-    NSInteger qualityProfile = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];	
-    NSString *qualitySetting;
-    switch (qualityProfile) {
-        case kPlaybackVideoQualityProfileGood:
-            qualitySetting = [NSString stringWithFormat:@"Good"];
-            break;
-        case kPlaybackVideoQualityProfileBetter:
-            qualitySetting = [NSString stringWithFormat:@"Better"];
-            break;
-        case kPlaybackVideoQualityProfileBest:
-            qualitySetting = [NSString stringWithFormat:@"Best"];
-            break;            
-        default:
-            qualitySetting = [NSString stringWithFormat:@"Unknown"];
-            break;
-    }
-    [qualitySettingMenuItem setRightText:qualitySetting];
+    NSInteger qualityProfileNumber = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
+    PlexStreamingQualityDescriptor *qualitySetting = [self.plexStreamingQualities objectAtIndex:qualityProfileNumber];
+    [qualitySettingMenuItem setRightText:qualitySetting.name];
 	[_items addObject:qualitySettingMenuItem];
-    
-    
-    // =========== bitrate setting ===========
-	SMFMenuItem *bitrateSettingMenuItem = [SMFMenuItem menuItem];
-	
-	[bitrateSettingMenuItem setTitle:@"Max bitrate"];
-	float bitrate = [[HWUserDefaults preferences] floatForKey:PreferencesPlaybackVideoBitrate];
-    if (bitrate < 0.5) {
-        float defaultSetting = 12.0f;
-        [[HWUserDefaults preferences] setFloat:defaultSetting forKey:PreferencesPlaybackVideoBitrate];
-        bitrate = [[HWUserDefaults preferences] floatForKey:PreferencesPlaybackVideoBitrate];
-    }
-    [bitrateSettingMenuItem setRightText:[NSString stringWithFormat:@"%.1f Mbps", bitrate]];
-	[_items addObject:bitrateSettingMenuItem];
 }
 
 #pragma mark -
@@ -153,23 +129,10 @@
 		case PlaybackVideoQualityProfileIndex: {
 			NSInteger qualitySetting = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
 			qualitySetting++;
-            if (qualitySetting >= FINAL_kPlaybackVideoQualityProfileBest_COUNT) {
-                qualitySetting = kPlaybackVideoQualityProfileGood;
+            if (qualitySetting >= [self.plexStreamingQualities count]) {
+                qualitySetting = 0;
             }
             [[HWUserDefaults preferences] setInteger:qualitySetting forKey:PreferencesPlaybackVideoQualityProfile];
-			
-			[self setupList];
-			[self.list reload];
-			break;
-		}
-		case PlaybackVideoBitrateIndex: {
-			float bitrate = [[HWUserDefaults preferences] floatForKey:PreferencesPlaybackVideoBitrate];
-            if (bitrate == kPlaybackVideoBitrateMax) {
-                bitrate = 0.5;
-            } else {
-                bitrate += 0.5;
-            }
-            [[HWUserDefaults preferences] setFloat:bitrate forKey:PreferencesPlaybackVideoBitrate];
 			
 			[self setupList];
 			[self.list reload];
@@ -199,11 +162,6 @@
 		case PlaybackVideoQualityProfileIndex: {
 			[asset setTitle:@"Select the video quality profile"];
 			[asset setSummary:@"Sets the video quality profile of the streamed video."];
-			break;
-		}
-		case PlaybackVideoBitrateIndex: {
-			[asset setTitle:@"Select the max video bitrate"];
-			[asset setSummary:@"Values range from 0.5Mbps to 12Mbps (set in half increments)"];
 			break;
 		}
 		default:

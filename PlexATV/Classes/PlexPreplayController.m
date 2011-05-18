@@ -25,12 +25,14 @@
 
 #define LOCAL_DEBUG_ENABLED 0
 
-#import "HWDetailedMovieMetadataController.h"
+#import "PlexPreplayController.h"
 #import "PlexMediaProvider.h"
 #import "PlexNavigationController.h"
 #import "PlexAudioSubsController.h"
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/PlexMediaObject + VideoDetails.h>
+#import <plex-oss/PlexImage.h>
+#import <plex-oss/PlexMedia.h>
 #import "PlexMediaObject+Assets.h"
 #import "PlexPreviewAsset.h"
 
@@ -50,8 +52,8 @@ typedef enum {
 	kMoreButton
 } ActionButton;
 
-@implementation HWDetailedMovieMetadataController
-@synthesize mediaObjects;
+@implementation PlexPreplayController
+@synthesize relatedMediaContainer;
 @synthesize selectedMediaObject;
 
 #pragma mark -
@@ -74,6 +76,8 @@ typedef enum {
     self = [self init];
     if (self) {
         self.selectedMediaObject = aMediaObject;
+        self.relatedMediaContainer = self.selectedMediaObject.mediaContainer;
+        currentSelectedIndex = [self.relatedMediaContainer.directories indexOfObject:self.selectedMediaObject];
 #if LOCAL_DEBUG_ENABLED
         DLog(@"init with media object:%@", self.selectedMediaObject);
 #endif
@@ -81,34 +85,9 @@ typedef enum {
     return self;
 }
 
-- (id)initWithMediaObjects:(NSArray *)someMediaObjects withSelectedIndex:(int)selIndex {
-    self = [self init];
-	if (self) {
-		self.mediaObjects = someMediaObjects;
-#if LOCAL_DEBUG_ENABLED
-		DLog(@"init with asset count:%d and index:%d", [self.mediaObjects count], selIndex);
-#endif
-		if ([self.mediaObjects count] > selIndex) {
-			currentSelectedIndex = selIndex;
-			self.selectedMediaObject = [self.mediaObjects objectAtIndex:currentSelectedIndex];
-		} else if ([self.mediaObjects count] > 0) {
-			currentSelectedIndex = 0;
-			self.selectedMediaObject = [self.mediaObjects objectAtIndex:currentSelectedIndex];
-		} else {
-            //fail, container has no items
-		}
-		
-	}
-	return self;
-}
-
-- (id)initWithPlexContainer:(PlexMediaContainer*)aContainer withSelectedIndex:(int)selIndex {
-	NSArray *previewAssets = aContainer.directories;	
-	return [self initWithMediaObjects:previewAssets withSelectedIndex:selIndex];
-}
-
 -(void)dealloc {
-	self.mediaObjects = nil;
+    self.selectedMediaObject = nil;
+	self.relatedMediaContainer = nil;
     
     [listDropShadowControl release];
 	[super dealloc];
@@ -120,7 +99,7 @@ typedef enum {
         //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
 		self._shelfControl.focusedIndex = newIndex;
-		self.selectedMediaObject = [self.mediaObjects objectAtIndex:currentSelectedIndex];
+		self.selectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:currentSelectedIndex];
         //move the shelf if needed to show the new item
         //[self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
         //refresh metadata, but don't touch the shelf
@@ -138,7 +117,8 @@ typedef enum {
 
 - (void)wasPopped {
     self.datasource = nil;
-    self.mediaObjects = nil;
+    self.selectedMediaObject = nil;
+    self.relatedMediaContainer = nil;
 	[super wasPopped];
 }
 
@@ -168,7 +148,7 @@ typedef enum {
 	int newIndex;
 	if (currentSelectedIndex - 1 < 0) {
         //we have reached the beginning, loop around
-		newIndex = [self.mediaObjects count] - 1;
+		newIndex = [self.relatedMediaContainer.directories count] - 1;
 	} else {
         //go to previous one
 		newIndex = currentSelectedIndex - 1;
@@ -191,7 +171,7 @@ typedef enum {
 	
 	[[SMFThemeInfo sharedTheme] playNavigateSound];
 	int newIndex;
-	if (currentSelectedIndex + 1 < [self.mediaObjects count]) {
+	if (currentSelectedIndex + 1 < [self.relatedMediaContainer.directories count]) {
         //go to next one
 		newIndex = currentSelectedIndex + 1;
 	} else {
@@ -291,13 +271,13 @@ typedef enum {
 
 -(NSString *)summary {
 #if LOCAL_DEBUG_ENABLED
-    DLog(@"summary: %@", [self.selectedMediaItemPreviewData mediaSummary]);
+    DLog(@"summary: %@", [self.selectedMediaObject.previewAsset mediaSummary]);
 #endif
-	return [self.selectedMediaObject.previewAsset mediaSummary];
+    return [self.selectedMediaObject.previewAsset mediaSummary];
 }
 
 -(NSArray *)headers {
-	return [NSArray arrayWithObjects:@"Details",@"Actors",@"Director",@"Producers",nil];
+	return [NSArray arrayWithObjects:@"Details",@"Actors",@"Directors",@"Writers",nil];
 }
 
 -(NSArray *)columns {
@@ -315,20 +295,6 @@ typedef enum {
 	
 	NSString *duration = [NSString stringWithFormat:@"%d minutes", [self.selectedMediaObject.previewAsset duration]/60];
 	[details addObject:duration];
-	
-	NSMutableArray *badges = [NSMutableArray array];
-	if ([self.selectedMediaObject.previewAsset isHD])
-		[badges addObject:[[BRThemeInfo sharedTheme] hdPosterBadge]];
-	if ([self.selectedMediaObject.previewAsset hasDolbyDigitalAudioTrack])
-		[badges addObject:[[BRThemeInfo sharedTheme] dolbyDigitalBadge]];
-	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
-		[badges addObject:[[BRThemeInfo sharedTheme] ccBadge]];
-	[details addObject:badges];
-	
-    if ([self.selectedMediaObject.previewAsset starRatingImage]) {
-        BRImage *starRating = [self.selectedMediaObject.previewAsset starRatingImage];
-        [details addObject:starRating];
-	}
     
 	[table addObject:details];
 	
@@ -339,24 +305,16 @@ typedef enum {
         [table addObject:actors];
 	}
 	
-    // ======= director column ======
-	NSMutableArray *directorAndWriters = [NSMutableArray arrayWithArray:[self.selectedMediaObject.previewAsset directors]];
-    if (directorAndWriters == nil)
-        [directorAndWriters initWithCapacity:2];
+    // ======= directors column ======
+    if ([self.selectedMediaObject.previewAsset directors]) {
+        NSArray *directors = [self.selectedMediaObject.previewAsset directors];
+        [table addObject:directors];
+	}
     
-	[directorAndWriters addObject:@" "];
-	NSAttributedString *subHeadingWriters = [[NSAttributedString alloc]initWithString:@"Writers" attributes:[SMFMoviePreviewController columnHeaderAttributes]];
-	[directorAndWriters addObject:subHeadingWriters];
-	[subHeadingWriters release];
-	[directorAndWriters addObjectsFromArray:[self.selectedMediaObject.previewAsset writers]];
-	
-	[table addObject:directorAndWriters];
-	
-	
-    // ======= producers column ======
-    if ([self.selectedMediaObject.previewAsset producers]) {
-        NSArray *producers = [self.selectedMediaObject.previewAsset producers];
-        [table addObject:producers];
+    // ======= writers column ======
+    if ([self.selectedMediaObject.previewAsset writers]) {
+        NSArray *writers = [self.selectedMediaObject.previewAsset writers];
+        [table addObject:writers];
 	}
 	
     // ======= done building table ======
@@ -364,6 +322,34 @@ typedef enum {
 	DLog(@"table: %@", table);
 #endif
 	return table;
+}
+
+- (NSArray *)flags {
+    NSMutableArray *flags = [NSMutableArray array];
+    
+    if ([self.selectedMediaObject.previewAsset starRatingImage])
+        [flags addObject:[self.selectedMediaObject.previewAsset starRatingImage]];
+    
+    NSDictionary *mediaAttributes = self.selectedMediaObject.mediaResource.attributes;
+
+    NSArray *flagAttributes = [NSArray arrayWithObjects:PlexFlagTypeContentVideoResolution, PlexFlagTypeContentVideoCodec, PlexFlagTypeContentAudioCodec, PlexFlagTypeContentAudioChannels, nil];
+    for (PlexFlagTypes attribute in flagAttributes) {
+        if ([mediaAttributes valueForKey:attribute]) {
+            PlexImage *flagImage = [self.selectedMediaObject.mediaContainer flagForType:attribute named:[mediaAttributes valueForKey:attribute]];
+            [flags addObject:[BRImage imageWithURL:flagImage.imageURL]];
+        }
+    }    
+    
+//	if ([self.selectedMediaObject.previewAsset isHD])
+//		[flags addObject:[[BRThemeInfo sharedTheme] hdPosterBadge]];
+//    
+//	if ([self.selectedMediaObject.previewAsset hasDolbyDigitalAudioTrack])
+//		[flags addObject:[[BRThemeInfo sharedTheme] dolbyDigitalBadge]];
+    
+	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
+		[flags addObject:[[BRThemeInfo sharedTheme] ccBadge]];
+    
+    return flags;
 }
 
 -(NSString *)rating {
@@ -448,7 +434,7 @@ typedef enum {
 	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
 	
-	for (PlexMediaObject *pmo in self.mediaObjects) {
+	for (PlexMediaObject *pmo in self.relatedMediaContainer.directories) {
 		[store addObject:pmo.previewAsset];
 	}
 	

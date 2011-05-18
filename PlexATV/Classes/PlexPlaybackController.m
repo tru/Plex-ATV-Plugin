@@ -155,23 +155,9 @@ PlexMediaProvider* __provider = nil;
 	[pmo.attributes setObject:[NSNumber numberWithInt:offset] forKey:@"viewOffset"]; //set where in the video we want to start...
 	
     //determine the user selected quality setting
-	NSInteger qualityProfile = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
-	
-    PlexStreamingQualityDescriptor *streamQuality;
-    switch (qualityProfile) {
-        case kPlaybackVideoQualityProfileGood:
-            streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi];
-            break;
-        case kPlaybackVideoQualityProfileBetter:
-            streamQuality = [PlexStreamingQualityDescriptor quality720pHigh];
-            break;
-        case kPlaybackVideoQualityProfileBest:
-            streamQuality = [pmo.request bestQuality];
-            break;
-        default:
-            streamQuality = [PlexStreamingQualityDescriptor qualityiPadWiFi]; //default
-            break;
-    }
+//#error why is the descriptor never used? where does the quality get set if not here?
+    NSInteger qualityProfileNumber = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
+    PlexStreamingQualityDescriptor *streamQuality = [[HWUserDefaults plexStreamingQualities] objectAtIndex:qualityProfileNumber];
 	
 	DLog(@"streaming bitrate: %d", pmo.request.machine.streamingBitrate);	
 	DLog(@"Quality: %@", pmo.request.machine.streamQuality);

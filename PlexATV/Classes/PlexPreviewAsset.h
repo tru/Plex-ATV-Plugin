@@ -29,13 +29,15 @@
 #import <Backrow/Backrow.h>
 
 @class PlexMediaObject;
+
+//needs to be a subclass of photo media asset to enable supercharged grid
 @interface PlexPreviewAsset : BRPhotoMediaAsset<BRMediaAsset> {
 	NSURL* url;
 	PlexMediaObject* pmo;
 }
 @property (nonatomic, retain) PlexMediaObject* pmo;
 
-- (id) initWithURL:(NSURL*)url mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)pmo;
+- (id)initWithURL:(NSURL*)url mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)pmo;
 - (NSDate *)dateFromPlexDateString:(NSString *)dateString;
 
 //other metadata methods
@@ -46,4 +48,5 @@
 @property (readonly) BRImage *starRatingImage;
 @property (readonly) NSArray *writers;
 @property (readonly) NSString *year;
+
 @end

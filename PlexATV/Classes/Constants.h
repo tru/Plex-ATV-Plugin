@@ -4,7 +4,9 @@
 
 #define PreferencesMachinesExcludedFromServerList @"PreferencesMachinesExcludedFromServerList"
 
-#define PreferencesViewTypeSetting @"PreferencesViewTypeSetting"
+#define PreferencesViewTypeForTvShows @"PreferencesViewTypeForTvShows"
+#define PreferencesViewTypeForMovies @"PreferencesViewTypeForMovies"
+
 #define PreferencesViewThemeMusicEnabled @"PreferencesViewThemeMusicEnabled"
 #define PreferencesViewThemeMusicLoopEnabled @"PreferencesViewThemeMusicLoopEnabled"
 #define PreferencesViewListPosterZoomingEnabled @"PreferencesViewListPosterZoomingEnabled"
@@ -13,7 +15,6 @@
 #define PreferencesPlaybackAudioAC3Enabled @"PreferencesPlaybackAudioAC3Enabled"
 #define PreferencesPlaybackAudioDTSEnabled @"PreferencesPlaybackAudioDTSEnabled"
 #define PreferencesPlaybackVideoQualityProfile @"PreferencesPlaybackVideoQualityProfile"
-#define PreferencesPlaybackVideoBitrate @"PreferencesPlaybackVideoBitrate"
 
 #define PreferencesSecuritySettingsLockEnabled @"PreferencesSecuritySettingsLockEnabled"
 #define PreferencesSecurityPasscode @"PreferencesSecurityPasscode"
@@ -29,13 +30,12 @@
 
 
 typedef enum {
-	kPlaybackVideoQualityProfileGood = 0,
-    kPlaybackVideoQualityProfileBetter = 1,
-    kPlaybackVideoQualityProfileBest = 2,
-    FINAL_kPlaybackVideoQualityProfileBest_COUNT = 3,
-} PlaybackVideoQualityProfile;
+	kATVPlexViewTypeList = 0,
+	kATVPlexViewTypeGrid,
+	kATVPlexViewTypeBookcase,
+    FINAL_kATVPlexViewTypeBookcase_MAX
+} ATVPlexViewTypes;
 
-#define kPlaybackVideoBitrateMax 12.0
 
 typedef enum {
 	kBRMediaPlayerStateStopped = 0,
