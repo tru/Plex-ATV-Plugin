@@ -67,7 +67,7 @@
     BRPanelControl *flagPanel = [[BRPanelControl alloc] init];
     flagPanel.panelMode = 0;
     flagPanel.horizontalSpacing = 10.f;
-    flagPanel.horizontalMargin = 10.f;
+    //flagPanel.horizontalMargin = 10.f;
     flagPanel.frame = CGRectMake(cdiv1Frame.origin.x, 
                                  CGRectGetMaxY(cdiv1Frame), 
                                  cdiv1Frame.size.width, 
