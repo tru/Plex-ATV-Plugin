@@ -66,13 +66,9 @@ NSString * const MachineNameKey = @"PlexMachineName";
 @synthesize topShelfController = _topShelfController;
 @synthesize applianceCat = _applianceCategories;
 
-NSString * const CompoundIdentifierDelimiter = @"|||";
-
-+ (void)initialize {}
-
-
 - (id)init {
-	if((self = [super init]) != nil) {
+    self = [super init];
+	if(self) {
 		[PlexPrefs setBaseClassForPlexPrefs:[HWUserDefaults class]];
 		[UIDevice preloadCurrentForMacros];
 		//#warning Please check elan.plexapp.com/2010/12/24/happy-holidays-from-plex/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+osxbmc+%28Plex%29 to get a set of transcoder keys
@@ -82,18 +78,24 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         //tell PMS what kind of codecs and media we can play
         [HWUserDefaults setupPlexClient];
 		
-		DLog(@"==================== plex client starting up ====================");
+		DLog(@"==================== plex client starting up - init [%@] ====================", self);
         
 		_topShelfController = [[TopShelfController alloc] init];
 		_applianceCategories = [[NSMutableArray alloc] init];
 		
 		otherServersApplianceCategory = [SERVER_LIST_CAT retain];
 		settingsApplianceCategory = [SETTINGS_CAT retain];
-		
-		[[ProxyMachineDelegate shared] registerDelegate:self];
-		[[MachineManager sharedMachineManager] startAutoDetection];
-		[[MachineManager sharedMachineManager] startMonitoringMachineState];
-	} return self;
+        
+        
+        [[ProxyMachineDelegate shared] removeAllDelegates];
+        [[ProxyMachineDelegate shared] registerDelegate:self];
+        if (![[MachineManager sharedMachineManager] autoDetectionActive]) {
+            [[MachineManager sharedMachineManager] startAutoDetection];
+            [[MachineManager sharedMachineManager] startMonitoringMachineState];
+            [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
+        }
+	} 
+    return self;
 }
 
 - (id)controllerForIdentifier:(id)identifier args:(id)args {
