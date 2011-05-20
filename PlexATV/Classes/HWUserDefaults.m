@@ -115,6 +115,7 @@
     [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
     
     
+    [[PlexClientCapabilities sharedPlexClientCapabilities] resetCaps];
     /*
     NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
     for (Machine *m in machines) {

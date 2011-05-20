@@ -29,6 +29,7 @@
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexImage.h>
 #import <plex-oss/PlexRequest.h>
+#import <plex-oss/PlexClientCapabilities.h>
 #import <plex-oss/Preferences.h>
 #import <plex-oss/PlexStreamingQuality.h>
 #import "PlexMediaProvider.h"
@@ -86,6 +87,9 @@ PlexMediaProvider* __provider = nil;
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
+    //what capabilities are set up
+    DLog(@"machine capabilities: [%@]", [[PlexClientCapabilities sharedPlexClientCapabilities] capStringForMachine:self.mediaObject.request.machine]);
+    
     //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
 
