@@ -249,19 +249,6 @@ PlexMediaProvider* __provider = nil;
 			float current = playa.elapsedTime;
 			float total = [[[self.mediaObject mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
             
-            //            float percentageDone = (current/total) * 100.0f;
-            //float buffer = percentageDone+5.0f;
-            
-            //            id presentedPlayerController = [[BRMediaPlayerManager singleton] _presentedPlayerController];
-            //[presentedPlayerController setValue:buffer forKey:@"_lastBufferingProgress"]; //seems to not help
-            //            id transport = [presentedPlayerController valueForKey:@"_transport"];
-            //            id layer = [transport valueForKey:@"_layer"];
-            //            DLog(@"updating buffer");
-            //[layer setDownloadedRange:NSMakeRange(0, buffer)];
-            
-            
-            
-            
             // Only report progress after a certain number of seconds have been watched
             // and the movie is less than a certain percentage left
             if (current > kStartTrackingProgressTime
