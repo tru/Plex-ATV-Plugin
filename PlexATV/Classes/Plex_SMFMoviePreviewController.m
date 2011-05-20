@@ -82,15 +82,12 @@
             float scalingRatio = maxHeight/flagSize.height;
             flagSize = CGSizeMake(flagSize.width*scalingRatio, maxHeight);
             image = [flagImage croppedImageForSize:flagSize];
-            
-            DLog(@"scaling");
         } else {
             image = flagImage;
         }
         
         BRImageControl *imageControl = [[BRImageControl alloc] init];
         imageControl.image = image;
-        DLog(@"frame: [%@]", NSStringFromCGSize(image.pixelBounds));
         
         [flagPanel addControl:imageControl];
         [imageControl release];

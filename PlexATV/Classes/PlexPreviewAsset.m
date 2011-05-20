@@ -543,6 +543,25 @@
 
 #pragma mark -
 #pragma mark Additional Metadata Methods
+- (NSURL *)fanartUrl {
+    NSURL* fanartUrl = nil;
+    
+    NSString *artPath = nil;
+    if ([pmo.attributes valueForKey:@"art"]) {
+        //movie
+        artPath = [pmo.attributes valueForKey:@"art"];
+    } else {
+        //tv show
+        artPath = [pmo.mediaContainer.attributes valueForKey:@"art"];
+    }
+    
+    if (artPath) {
+		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",pmo.request.base, artPath];
+        fanartUrl = [pmo.request pathForScaledImage:backgroundImagePath ofSize:[BRWindow interfaceFrame].size];
+	}
+	return fanartUrl;
+}
+
 - (BOOL)hasClosedCaptioning {
 	return YES;
 }
