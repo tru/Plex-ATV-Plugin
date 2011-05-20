@@ -371,26 +371,7 @@ typedef enum {
 }
 
 - (NSURL *)backgroundImageUrl {
-    NSURL* backgroundImageUrl = nil;
-    
-    NSString *artPath = nil;
-    
-    if ([self.selectedMediaObject.attributes valueForKey:@"art"]) {
-        //movie
-        artPath = [self.selectedMediaObject.attributes valueForKey:@"art"];
-    } else {
-        //tv show
-        artPath = [self.selectedMediaObject.mediaContainer.attributes valueForKey:@"art"];
-    }
-    
-    if (artPath) {
-		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",self.selectedMediaObject.request.base, artPath];
-        backgroundImageUrl = [self.selectedMediaObject.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
-	}
-#if LOCAL_DEBUG_ENABLED
-    DLog(@"background image url [%@]", backgroundImageUrl);
-#endif
-	return backgroundImageUrl;
+	return [self.selectedMediaObject.previewAsset fanartUrl];
 }
 
 -(NSArray *)buttons {
