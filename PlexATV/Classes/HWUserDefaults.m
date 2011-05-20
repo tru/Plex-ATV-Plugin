@@ -109,11 +109,6 @@
     
     [[PlexClientCapabilities sharedPlexClientCapabilities] setAudioDecoderForCodec:PlexClientDecoderName_AAC bitrate:PlexClientBitrateAny channels:PlexClientAudioChannels_5_1Surround];
     
-    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_LIVE_STREAMING];
-    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_720p_PLAYBACK];
-    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_HTTP_MP4_STREAMING];
-    [[PlexClientCapabilities sharedPlexClientCapabilities] supports:CLIENT_CAP_DECODER_CAPS];
-    
     
     [[PlexClientCapabilities sharedPlexClientCapabilities] resetCaps];
     /*
