@@ -23,6 +23,41 @@
 }
 
 
+-(BOOL)brEventAction:(BREvent *)action {
+    BRControl *c = [self focusedControl];
+    if ([[self stack] peekController]!=self)
+        return [super brEventAction:action];
+    int remoteAction = [action remoteAction];
+	if([c isKindOfClass:[SMFListDropShadowControl class]]) {
+		return [super brEventAction:action];
+	}
+	
+    if (remoteAction == kBREventRemoteActionPlayPause && 
+        self.delegate != nil && 
+        action.value == 1 && 
+        [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
+        [self.delegate respondsToSelector:@selector(controller:buttonSelectedAtIndex:)]) {
+        id selectedC = [self focusedControl];
+        for (int j=0;j<[_buttons count];j++) {
+            if([_buttons objectAtIndex:j]==selectedC) {
+                [self.delegate controller:self playButtonEventOnButtonAtIndex:j];
+                return YES;
+            }
+        }
+    }
+    if (remoteAction == kBREventRemoteActionPlayPause && 
+        self.delegate != nil && 
+        action.value == 1 && 
+        [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
+        [self.delegate respondsToSelector:@selector(controller:playButtonEventInShelf:)] &&
+        [c isKindOfClass:[BRMediaShelfControl class]]) {
+            
+        [self.delegate controller:self playButtonEventInShelf:(BRMediaShelfControl *)c];
+        return YES;
+    }
+    return [super brEventAction:action];
+}
+
 -(void)reload {
     [super reload];
     
@@ -35,9 +70,9 @@
      */
     BRDividerControl *cdiv1 = [[BRDividerControl alloc] init];
     CGRect cdiv1Frame = CGRectMake(mtcf.origin.x, 
-								  348.f, 
-								  mtcf.size.width,
-								  masterFrame.size.height*(10.f/720.f));
+                                   348.f, 
+                                   mtcf.size.width,
+                                   masterFrame.size.height*(10.f/720.f));
     [cdiv1 setFrame:cdiv1Frame];
     [self addControl:cdiv1];
     [_hideList addObject:cdiv1];
@@ -67,6 +102,7 @@
     BRPanelControl *flagPanel = [[BRPanelControl alloc] init];
     flagPanel.panelMode = 0;
     flagPanel.horizontalSpacing = 10.f;
+    flagPanel.acceptsFocus = NO;
     //flagPanel.horizontalMargin = 10.f;
     flagPanel.frame = CGRectMake(cdiv1Frame.origin.x, 
                                  CGRectGetMaxY(cdiv1Frame), 

@@ -12,8 +12,15 @@
 - (NSArray *)flags;
 @end
 
+@protocol Plex_SMFMoviePreviewControllerDelegate <SMFMoviePreviewControllerDelegate>
+@optional
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventOnButtonAtIndex:(int)index;
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventInShelf:(BRMediaShelfControl *)shelfControl;
+@end
+
 @interface Plex_SMFMoviePreviewController : SMFMoviePreviewController {}
 @property (retain) NSObject<Plex_SMFMoviePreviewControllerDatasource> *datasource;
+@property (retain) NSObject<Plex_SMFMoviePreviewControllerDelegate> *delegate;
 @property (retain) NSArray *flags;
 
 @end

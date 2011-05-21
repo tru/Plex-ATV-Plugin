@@ -248,6 +248,22 @@ typedef enum {
     }
 }
 
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventOnButtonAtIndex:(int)index {
+#if LOCAL_DEBUG_ENABLED
+	DLog(@"play button on button at index [%d]", index);
+#endif
+    [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
+}
+
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventInShelf:(BRMediaShelfControl *)shelfControl {
+    int selectedIndex = [shelfControl focusedIndex];
+    PlexMediaObject *shelfSelectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:selectedIndex];
+#if LOCAL_DEBUG_ENABLED
+	DLog(@"play button in shelf at index [%d]: %@", selectedIndex, shelfSelectedMediaObject);
+#endif
+    [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:shelfSelectedMediaObject];
+}
+
 
 #pragma mark -
 #pragma mark datasource methods
@@ -338,13 +354,7 @@ typedef enum {
             PlexImage *flagImage = [self.selectedMediaObject.mediaContainer flagForType:attribute named:[mediaAttributes valueForKey:attribute]];
             [flags addObject:[BRImage imageWithURL:flagImage.imageURL]];
         }
-    }    
-    
-//	if ([self.selectedMediaObject.previewAsset isHD])
-//		[flags addObject:[[BRThemeInfo sharedTheme] hdPosterBadge]];
-//    
-//	if ([self.selectedMediaObject.previewAsset hasDolbyDigitalAudioTrack])
-//		[flags addObject:[[BRThemeInfo sharedTheme] dolbyDigitalBadge]];
+    }
     
 	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
 		[flags addObject:[[BRThemeInfo sharedTheme] ccBadge]];
