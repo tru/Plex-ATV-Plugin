@@ -56,18 +56,9 @@ PlexMediaProvider* __provider = nil;
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-//- (id) init
-//{
-//	self = [super init];
-//	if (self != nil) {
-//        
-//	}
-//	return self;
-//}
 
 -(id)initWithPlexMediaObject:(PlexMediaObject *)aMediaObject {
-	[self init];
-	
+	self = [super init];
 	if (self != nil) {
 		self.mediaObject = aMediaObject;
 	}
@@ -77,7 +68,7 @@ PlexMediaProvider* __provider = nil;
 
 - (void) dealloc {
 	DLog(@"deallocing player controller for %@", self.mediaObject.name);
-
+    
 	self.mediaObject = nil;
     self.playProgressTimer = nil;
 	[super dealloc];
@@ -90,9 +81,6 @@ PlexMediaProvider* __provider = nil;
     //what capabilities are set up
     DLog(@"machine capabilities: [%@]", [[PlexClientCapabilities sharedPlexClientCapabilities] capStringForMachine:self.mediaObject.request.machine]);
     
-    //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
-
     //register for notifications when a movie has finished playing properly to the end.
     //used to mark movie as seen
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieFinished:) name:@"AVPlayerItemDidPlayToEndTimeNotification" object:nil];
@@ -218,6 +206,9 @@ PlexMediaProvider* __provider = nil;
     
     //we need all the memory we can spare so we don't get killed by the OS
 	[pma release];
+    
+    //we'll use this notification to catch the menu-ing out of a movie, ie. the stopped notification from the main player instead of relying on our timer
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerStateChanged:) name:@"BRMPStateChanged" object:nil];
 }
 
 -(void)playbackAudio {
@@ -243,7 +234,7 @@ PlexMediaProvider* __provider = nil;
 
 -(void)reportProgress:(NSTimer*)tm {    
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
-
+    
     //TODO: keep investigating updating buffer progress
     //playa->_aggregateBufferedRange = [NSMakeRange(0, playa.elapsedTime+30);
     
