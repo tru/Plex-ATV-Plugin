@@ -98,10 +98,11 @@ typedef enum {
 	if (currentSelectedIndex != newIndex) {
         //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
+        lastFocusedIndex = newIndex;
 		self._shelfControl.focusedIndex = newIndex;
 		self.selectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:currentSelectedIndex];
         //move the shelf if needed to show the new item
-        //[self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
+        [self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
         //refresh metadata, but don't touch the shelf
 		[self reload];
 	}
@@ -125,6 +126,7 @@ typedef enum {
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasExhumed];
+    [self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
 }
 
 - (void)wasBuried {
@@ -418,6 +420,10 @@ typedef enum {
     
     
     return buttons;
+}
+
+-(NSString *)shelfTitle {
+    return self.relatedMediaContainer.name;
 }
 
 -(BRPhotoDataStoreProvider *)providerForShelf {
