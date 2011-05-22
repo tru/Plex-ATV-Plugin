@@ -6,20 +6,19 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Sub_SMFMoviePreviewController.h"
 
-@protocol Plex_SMFMoviePreviewControllerDatasource <Sub_SMFMoviePreviewControllerDatasource>
+@protocol Plex_SMFMoviePreviewControllerDatasource <SMFMoviePreviewControllerDatasource>
 - (NSURL *)backgroundImageUrl;
 - (NSArray *)flags;
 @end
 
-@protocol Plex_SMFMoviePreviewControllerDelegate <Sub_SMFMoviePreviewControllerDelegate>
+@protocol Plex_SMFMoviePreviewControllerDelegate <SMFMoviePreviewControllerDelegate>
 @optional
--(void)controller:(Sub_SMFMoviePreviewController *)c playButtonEventOnButtonAtIndex:(int)index;
--(void)controller:(Sub_SMFMoviePreviewController *)c playButtonEventInShelf:(BRMediaShelfControl *)shelfControl;
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventOnButtonAtIndex:(int)index;
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventInShelf:(BRMediaShelfControl *)shelfControl;
 @end
 
-@interface Plex_SMFMoviePreviewController : Sub_SMFMoviePreviewController {}
+@interface Plex_SMFMoviePreviewController : SMFMoviePreviewController {}
 @property (retain) NSObject<Plex_SMFMoviePreviewControllerDatasource> *datasource;
 @property (retain) NSObject<Plex_SMFMoviePreviewControllerDelegate> *delegate;
 @property (retain) NSArray *flags;
