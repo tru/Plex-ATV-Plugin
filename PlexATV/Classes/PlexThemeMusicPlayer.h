@@ -19,5 +19,6 @@
 
 - (void)startPlayingThemeMusicIfAppropiateForMediaObject:(PlexMediaObject *)mediaObject;
 - (void)stopPlayingThemeMusicForMediaObject:(PlexMediaObject *)pmo;
+- (AVPlayerItem *)playerItemForURL:(NSURL *)url withVolumeAt:(CGFloat)requestedVolume;
 
 @end
