@@ -149,10 +149,12 @@ PlexMediaProvider* __provider = nil;
 	[self.mediaObject.attributes setObject:[NSNumber numberWithInt:offset] forKey:@"viewOffset"]; //set where in the video we want to start...
 	
     //determine the user selected quality setting
-    //FIXME: why is the descriptor never used? where does the quality get set if not here?
     NSInteger qualityProfileNumber = [[HWUserDefaults preferences] integerForKey:PreferencesPlaybackVideoQualityProfile];
     PlexStreamingQualityDescriptor *streamQuality = [[HWUserDefaults plexStreamingQualities] objectAtIndex:qualityProfileNumber];
 	
+    //send our desired quality setting to the PMS
+    self.mediaObject.request.machine.streamQuality = streamQuality;
+    
 	DLog(@"streaming bitrate: %d", self.mediaObject.request.machine.streamingBitrate);	
 	DLog(@"Quality: %@", self.mediaObject.request.machine.streamQuality);
 	//DLog(@"%@", pmo.request.machine.capabilities.qualities);
