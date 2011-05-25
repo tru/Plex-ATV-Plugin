@@ -153,8 +153,11 @@
 }
 
 - (id)coverArt {
-  DLog();
   return [BRImage imageWithURL:[self.imageProxy url]];
+}
+
+- (NSString *)coverArtURL {
+    return [[self.imageProxy url] description];
 }
 
 - (id)dateAcquired {
