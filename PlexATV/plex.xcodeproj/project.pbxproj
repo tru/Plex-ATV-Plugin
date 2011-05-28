@@ -35,7 +35,6 @@
 /* Begin PBXBuildFile section */
 		013307461278688D0067A5FE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 013307451278688D0067A5FE /* QuartzCore.framework */; };
 		013310FD127C09FD0067A5FE /* PlexIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 013310FC127C09FD0067A5FE /* PlexIcon.png */; };
-		0133123C127C26D70067A5FE /* PlexLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 0133123B127C26D70067A5FE /* PlexLogo.png */; };
 		015D313D12E10A52001A32C1 /* ProxyMachineDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 015D313C12E10A52001A32C1 /* ProxyMachineDelegate.m */; };
 		015D320A12E11C80001A32C1 /* PlexMediaAssetOld.m in Sources */ = {isa = PBXBuildFile; fileRef = 015D320912E11C80001A32C1 /* PlexMediaAssetOld.m */; };
 		01A0EE5E1272224C007A60B5 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A0EE5D1272224C007A60B5 /* CoreFoundation.framework */; };
@@ -57,6 +56,9 @@
 		72118C27136B800400A8F74B /* PlexSearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72118C26136B800300A8F74B /* PlexSearchController.m */; };
 		7217FABE134AC90800408E48 /* Plex_SMFMoviePreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7217FABD134AC90800408E48 /* Plex_SMFMoviePreviewController.m */; };
 		721D91E7135C9D060067DE9E /* PlexNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 721D91E6135C9D060067DE9E /* PlexNavigationController.m */; };
+		7229641A139094E800CE19CC /* PmsLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 72296418139094E800CE19CC /* PmsLogo.png */; };
+		7229641B139094E800CE19CC /* PmsMainMenuLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 72296419139094E800CE19CC /* PmsMainMenuLogo.png */; };
+		7229641D1390988A00CE19CC /* Poster.png in Resources */ = {isa = PBXBuildFile; fileRef = 7229641C1390988A00CE19CC /* Poster.png */; };
 		7247BC7F1374C34B00170427 /* Plex_SMFBookcaseController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */; };
 		7273929912FA891E008B4C86 /* HWServerDetailsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7273929812FA891E008B4C86 /* HWServerDetailsController.m */; };
 		727A3F4912F78FB100994193 /* PlexViewSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 727A3F4812F78FB100994193 /* PlexViewSettingsController.m */; };
@@ -101,7 +103,6 @@
 /* Begin PBXFileReference section */
 		013307451278688D0067A5FE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		013310FC127C09FD0067A5FE /* PlexIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PlexIcon.png; path = Resources/PlexIcon.png; sourceTree = "<group>"; };
-		0133123B127C26D70067A5FE /* PlexLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PlexLogo.png; path = Resources/PlexLogo.png; sourceTree = "<group>"; };
 		015D313B12E10A52001A32C1 /* ProxyMachineDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProxyMachineDelegate.h; path = Classes/ProxyMachineDelegate.h; sourceTree = "<group>"; };
 		015D313C12E10A52001A32C1 /* ProxyMachineDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProxyMachineDelegate.m; path = Classes/ProxyMachineDelegate.m; sourceTree = "<group>"; };
 		015D31B812E114CE001A32C1 /* HWAppliance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWAppliance.h; path = Classes/HWAppliance.h; sourceTree = "<group>"; };
@@ -140,6 +141,9 @@
 		721D91C9135C96ED0067DE9E /* PlexNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexNavigationController.h; path = Classes/PlexNavigationController.h; sourceTree = "<group>"; };
 		721D91E5135C9A730067DE9E /* Plex_SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plex_SynthesizeSingleton.h; path = Classes/Plex_SynthesizeSingleton.h; sourceTree = "<group>"; };
 		721D91E6135C9D060067DE9E /* PlexNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexNavigationController.m; path = Classes/PlexNavigationController.m; sourceTree = "<group>"; };
+		72296418139094E800CE19CC /* PmsLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PmsLogo.png; path = Resources/PmsLogo.png; sourceTree = "<group>"; };
+		72296419139094E800CE19CC /* PmsMainMenuLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PmsMainMenuLogo.png; path = Resources/PmsMainMenuLogo.png; sourceTree = "<group>"; };
+		7229641C1390988A00CE19CC /* Poster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Poster.png; path = Resources/Poster.png; sourceTree = "<group>"; };
 		7247BC7D1374C34B00170427 /* Plex_SMFBookcaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Plex_SMFBookcaseController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = Plex_SMFBookcaseController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7273929712FA891E008B4C86 /* HWServerDetailsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWServerDetailsController.h; path = Classes/HWServerDetailsController.h; sourceTree = "<group>"; };
@@ -254,10 +258,12 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				72296418139094E800CE19CC /* PmsLogo.png */,
+				72296419139094E800CE19CC /* PmsMainMenuLogo.png */,
 				72C4224D131A272200B90041 /* PlexTextLogo.png */,
-				0133123B127C26D70067A5FE /* PlexLogo.png */,
 				013310FC127C09FD0067A5FE /* PlexIcon.png */,
 				72EA80F612DEB49B00138F7D /* PlexSettings.png */,
+				7229641C1390988A00CE19CC /* Poster.png */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
 			);
@@ -494,9 +500,11 @@
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
 				875A873412704ACC00ECADC2 /* theos in Resources */,
 				013310FD127C09FD0067A5FE /* PlexIcon.png in Resources */,
-				0133123C127C26D70067A5FE /* PlexLogo.png in Resources */,
 				72EA80F712DEB49B00138F7D /* PlexSettings.png in Resources */,
 				72C4224E131A272200B90041 /* PlexTextLogo.png in Resources */,
+				7229641A139094E800CE19CC /* PmsLogo.png in Resources */,
+				7229641B139094E800CE19CC /* PmsMainMenuLogo.png in Resources */,
+				7229641D1390988A00CE19CC /* Poster.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
