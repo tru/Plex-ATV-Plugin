@@ -51,10 +51,19 @@
         [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
         [self.delegate respondsToSelector:@selector(controller:playButtonEventInShelf:)] &&
         [c isKindOfClass:[BRMediaShelfControl class]]) {
-            
+        
         [self.delegate controller:self playButtonEventInShelf:(BRMediaShelfControl *)c];
         return YES;
     }
+    if((remoteAction == kBREventRemoteActionDown || remoteAction == kBREventRemoteActionHoldDown) &&
+       action.value == 1 && 
+       self.delegate != nil && 
+       [self focusedControl] == _shelfControl &&
+       [self.delegate respondsToSelector:@selector(controller:downButtonEventInShelf:)]) {
+        [self.delegate controller:self downButtonEventInShelf:_shelfControl];
+        return YES;
+    }
+    
     return [super brEventAction:action];
 }
 

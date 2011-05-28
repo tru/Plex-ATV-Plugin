@@ -35,6 +35,7 @@
 #import <plex-oss/PlexMedia.h>
 #import "PlexMediaObject+Assets.h"
 #import "PlexPreviewAsset.h"
+#import "PlexMoreInfoController.h"
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
@@ -267,6 +268,14 @@ typedef enum {
 	DLog(@"play button in shelf at index [%d]: %@", selectedIndex, shelfSelectedMediaObject);
 #endif
     [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:shelfSelectedMediaObject];
+}
+
+-(void)controller:(SMFMoviePreviewController *)c downButtonEventInShelf:(BRMediaShelfControl *)shelfControl {
+    PlexMediaContainer *moreInfoContainer = [self.selectedMediaObject loadDetails];
+    PlexMoreInfoController *moreInfoController = [[PlexMoreInfoController alloc] initWithMoreInfoContainer:moreInfoContainer];
+    [[self stack] pushController:moreInfoController];
+    [moreInfoController release];
+    
 }
 
 

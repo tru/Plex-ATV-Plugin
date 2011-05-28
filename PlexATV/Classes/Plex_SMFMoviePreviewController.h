@@ -16,6 +16,7 @@
 @optional
 -(void)controller:(SMFMoviePreviewController *)c playButtonEventOnButtonAtIndex:(int)index;
 -(void)controller:(SMFMoviePreviewController *)c playButtonEventInShelf:(BRMediaShelfControl *)shelfControl;
+-(void)controller:(SMFMoviePreviewController *)c downButtonEventInShelf:(BRMediaShelfControl *)shelfControl;
 @end
 
 @interface Plex_SMFMoviePreviewController : SMFMoviePreviewController {}
