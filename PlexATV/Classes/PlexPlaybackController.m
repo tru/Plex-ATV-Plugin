@@ -107,7 +107,9 @@ PlexMediaProvider* __provider = nil;
 	[super wasBuried];
 }
 
-- (void)controlWasActivated {}
+- (void)controlWasActivated {
+    [super controlWasActivated];
+}
 
 
 #pragma mark -
