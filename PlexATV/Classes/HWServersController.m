@@ -94,7 +94,7 @@
 #pragma mark -
 #pragma mark Menu Controller Delegate Methods
 - (id)previewControlForItem:(long)item {
-	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWServersController class]] pathForResource:@"PlexLogo" ofType:@"png"]];
+	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWServersController class]] pathForResource:@"PmsLogo" ofType:@"png"]];
 	BRImageAndSyncingPreviewController *obj = [[BRImageAndSyncingPreviewController alloc] init];
 	[obj setImage:theImage];
 	return [obj autorelease];

@@ -52,7 +52,7 @@ NSString * const MachineNameKey = @"PlexMachineName";
 - (BRTopShelfView *)topShelfView {
 	BRTopShelfView *topShelf = [[BRTopShelfView alloc] init];
 	BRImageControl *imageControl = [topShelf productImage];
-	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWUserDefaults class]] pathForResource:@"PlexLogo" ofType:@"png"]];
+	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWUserDefaults class]] pathForResource:@"PmsMainMenuLogo" ofType:@"png"]];
 	[imageControl setImage:theImage];
 	
 	return [topShelf autorelease];
