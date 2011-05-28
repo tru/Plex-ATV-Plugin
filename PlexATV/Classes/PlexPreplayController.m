@@ -193,7 +193,6 @@ typedef enum {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"controller selected %@", ctrl);
 #endif
-    PlexAudioSubsController *subCtrl;
     
 	if ([ctrl isKindOfClass:[BRButtonControl class]]) {
         //one of the buttons have been pushed
@@ -204,16 +203,20 @@ typedef enum {
         
 		int buttonId = [buttonControl.identifier intValue];
 		switch (buttonId) {
-			case kPlayButton:
+			case kPlayButton: {
 				DLog(@"initiate movie playback");
                 [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
 				break;
-            case kMoreButton:
+            }
+            case kMoreButton: {
                 [listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
                 break;
-            case kAudioSubsButton:
-                subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaObject];
+            }
+            case kAudioSubsButton: {
+                PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaObject];
                 [[[BRApplicationStackManager singleton] stack] pushController:subCtrl];
+                [subCtrl release];
+            }
 			default:
 				break;
 		}
