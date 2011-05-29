@@ -15,7 +15,7 @@
 
 
 @implementation PlexMoreInfoController
-@synthesize list, contentContainer, metadataTitleControl, gridControl;
+@synthesize scrollControl, metadataTitleControl, gridControl;
 @synthesize moreInfoContainer, mediaObject, menuItems;
 
 #pragma mark -
@@ -35,6 +35,8 @@
             DLog(@"mediaObject: [%@]", self.mediaObject);
             [self setupListForMediaObject:self.mediaObject];
         }
+        [self setupPreviewControl];
+        [self.list setDatasource:self];
     }
     return self;
 }
@@ -84,8 +86,7 @@
 }
 
 -(void)dealloc {
-    self.list = nil;
-    self.contentContainer = nil;
+    self.scrollControl = nil;
     self.metadataTitleControl = nil;
     self.gridControl = nil;
     
@@ -116,128 +117,112 @@
 	[super wasBuried];
 }
 
-- (void)controlWasActivated {
-    [self drawSelf];
-    DLog(@"was activated");
-    [super controlWasActivated];
-    DLog(@"selection set");
-}
+//- (void)controlWasActivated {
+//    //[self drawSelf];
+//    DLog(@"was activated");
+//    [super controlWasActivated];
+//    DLog(@"selection set");
+//}
 
 
 #pragma mark -
 #pragma mark Controller Drawing and Events
-- (void)drawSelf {    
+- (void)setupPreviewControl {
     /*
-     - Left half: List Control      {origin:{x:39,y:0},size:{width:372,height:700}}
-     - Right half: Panel Control    {origin:{x:395,y:0},size:{width:855,height:720}}
-     -- Scroll Control              {origin:{x:0,y:0},size:{width:855,height:720}}
-     --- Panel Control              {origin:{x:0,y:325},size:{width:855,height:395}}
-     ---- Spacer                    {origin:{x:405,y:827},size:{width:44,height:44}}
-     ---- Control                   {origin:{x:0,y:776},size:{width:855,height:51}}
-     ----- Metadata Title Control   {origin:{x:51,y:0},size:{width:855,height:51}}
-     ------ Title and Subtext
-     ---- Spacer                    {origin:{x:418,y:758},size:{width:18,height:18}}
-     ---- Grid                      {origin:{x:0,y:44},size:{width:855,height:714}}
-     ---- Spacer                    {origin:{x:405,y:0},size:{width:44,height:44}}
+     - Scroll Control              {origin:{x:0,y:0},size:{width:855,height:720}}
+     -- Panel Control              {origin:{x:0,y:325},size:{width:855,height:395}}
+     --- Spacer                    {origin:{x:405,y:827},size:{width:44,height:44}}
+     --- Control                   {origin:{x:0,y:776},size:{width:855,height:51}}
+     ---- Metadata Title Control   {origin:{x:51,y:0},size:{width:855,height:51}}
+     ----- Title and Subtext
+     --- Spacer                    {origin:{x:418,y:758},size:{width:18,height:18}}
+     --- Grid                      {origin:{x:0,y:44},size:{width:855,height:714}}
+     --- Spacer                    {origin:{x:405,y:0},size:{width:44,height:44}}
      */
     
+    
+    //============================ SCROLL CONTROL ============================
+    BRScrollControl *aScrollControl = [[BRScrollControl alloc] init];
+    aScrollControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 720.0f);
+    
+    
+    
+    //============================ INNER PANEL CONTROL ============================
+    BRPanelControl *innerPanelControl = [[BRPanelControl alloc] init];
+    innerPanelControl.panelMode = 1;
+    innerPanelControl.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    innerPanelControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 395.0f);
+    
+    
+    
+    //============================ SPACER CONTROL ============================
+    BRSpacerControl *spacerTop = [BRSpacerControl spacerWithPixels:44.0f];
+    [innerPanelControl addControl:spacerTop];
+    
+    
+    
+    //============================ CONTROL ============================
+    BRControl *metadataControl = [[BRControl alloc] init];
+    metadataControl.frame = CGRectMake(0.0f, 776.0f, 855.0f, 51.0f);
+    
+    
+    
+    //============================ METADATA TITLE CONTROL ============================
+    BRMetadataTitleControl *aMetadataTitleControl = [[BRMetadataTitleControl alloc] init];
+    aMetadataTitleControl.frame = CGRectMake(51.0f, 0.0f, 855.0f, 51.0f);
+    
+    [metadataControl addControl:aMetadataTitleControl];
+    self.metadataTitleControl = aMetadataTitleControl;
+    [aMetadataTitleControl release];
+    
+    [innerPanelControl addControl:metadataControl];
+    [metadataControl release];
+    
+    
+    
+    //============================ SPACER CONTROL ============================
+    BRSpacerControl *spacerTitleGrid = [BRSpacerControl spacerWithPixels:18.0f];
+    [innerPanelControl addControl:spacerTitleGrid];
+    
+    
+    
+    //============================ GRID CONTROL ============================
+    BRGridControl *aGridControl = [[BRGridControl alloc] init];
+    aGridControl.frame = CGRectMake(0.0f, 44.0f, 855.0f, 714.0f);
+    //TODO: setup delegate/datasource
+    
+    [innerPanelControl addControl:aGridControl];
+    self.gridControl = aGridControl;
+    [aGridControl release];
+    
+    
+    
+    //============================ SPACER CONTROL ============================
+    BRSpacerControl *spacerBottom = [BRSpacerControl spacerWithPixels:44.0f];
+    [innerPanelControl addControl:spacerBottom];
+    
+    
+    [aScrollControl addControl:innerPanelControl];
+    [innerPanelControl release];
+    
+    self.scrollControl = aScrollControl;
+    [aScrollControl release];
+}
+
+- (void)layoutSubcontrols {
+    [super layoutSubcontrols];
+    /*
+     - Left half: List Control      {origin:{x:39,y:0},size:{width:372,height:700}}
+     - Right half: Preview Control  {origin:{x:395,y:0},size:{width:855,height:720}}
+     */
     
     //CGRect masterFrame = [BRWindow interfaceFrame];
 	
     //============================ LIST ============================
-    if (!self.list) {
-        BRListControl *aListControl = [[BRListControl alloc] init];
-        aListControl.frame = CGRectMake(39.0f, 0.0f, 372.0f, 700.0f);
-        
-        self.list = aListControl;
-        [aListControl release];
-        [self addControl:self.list];
-        [self.list setDatasource:self];
-        [self setFocusedControl:self.list];
-    }
+    self.list.frame = CGRectMake(39.0f, 0.0f, 372.0f, 700.0f);
     
-    
-    //============================ PANEL CONTROL ============================
-    if (!self.metadataTitleControl) {
-        //============================ OUTER PANEL CONTROL ============================
-        BRPanelControl *outerPanelControl = [[BRPanelControl alloc] init];
-        outerPanelControl.panelMode = 1;
-        outerPanelControl.frame = CGRectMake(395.0f, 0.0f, 855.0f, 720.0f);
-        
-        
-        
-        //============================ SCROLL CONTROL ============================
-        BRScrollControl *aScrollControl = [[BRScrollControl alloc] init];
-        aScrollControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 720.0f);
-        
-        
-        
-        //============================ INNER PANEL CONTROL ============================
-        BRPanelControl *innerPanelControl = [[BRPanelControl alloc] init];
-        innerPanelControl.panelMode = 1;
-        innerPanelControl.frame = CGRectMake(395.0f, 0.0f, 855.0f, 395.0f);
-        
-        
-        
-        //============================ SPACER CONTROL ============================
-        BRSpacerControl *spacerTop = [BRSpacerControl spacerWithPixels:44.0f];
-        [innerPanelControl addControl:spacerTop];
-        
-        
-        //============================ CONTROL ============================
-        BRControl *metadataControl = [[BRControl alloc] init];
-        metadataControl.frame = CGRectMake(0.0f, 776.0f, 855.0f, 51.0f);
-        
-        
-        
-        //============================ METADATA TITLE CONTROL ============================
-        BRMetadataTitleControl *aMetadataTitleControl = [[BRMetadataTitleControl alloc] init];
-        aMetadataTitleControl.frame = CGRectMake(51.0f, 0.0f, 855.0f, 51.0f);
-        
-        [metadataControl addControl:aMetadataTitleControl];
-        self.metadataTitleControl = aMetadataTitleControl;
-        [aMetadataTitleControl release];
-        
-        [innerPanelControl addControl:metadataControl];
-        [metadataControl release];
-        
-        
-        
-        //============================ SPACER CONTROL ============================
-        BRSpacerControl *spacerTitleGrid = [BRSpacerControl spacerWithPixels:18.0f];
-        [innerPanelControl addControl:spacerTitleGrid];
-        
-        
-        
-        //============================ GRID CONTROL ============================
-        BRGridControl *aGridControl = [[BRGridControl alloc] init];
-        aGridControl.frame = CGRectMake(0.0f, 44.0f, 855.0f, 714.0f);
-        //TODO: setup delegate/datasource
-        
-        [innerPanelControl addControl:aGridControl];
-        self.gridControl = aGridControl;
-        [aGridControl release];
-        
-        
-        
-        //============================ SPACER CONTROL ============================
-        BRSpacerControl *spacerBottom = [BRSpacerControl spacerWithPixels:44.0f];
-        [innerPanelControl addControl:spacerBottom];
-        
-        
-        
-        
-        [aScrollControl addControl:innerPanelControl];
-        [innerPanelControl release];
-        
-        [outerPanelControl addControl:aScrollControl];
-        [aScrollControl release];
-        
-        [self addControl:outerPanelControl];
-        [outerPanelControl release];
-    }
-    
-    [self layoutSubcontrols];
+    BRControl *previewContainer = [self valueForKey:@"_previewContainer"];
+    previewContainer.frame = CGRectMake(395.0f, 0.0f, 855.0f, 720.0f);
 }
 
 
@@ -329,6 +314,16 @@
 
 - (id)titleForRow:(long)row {
     return [[self.menuItems objectAtIndex:row] text];
+}
+
+- (id)previewControlForItem:(long)item {
+    PlexMoreInfoMenuItem *menuItem = [self.menuItems objectAtIndex:item];
+    PlexDirectory *directory = menuItem.directory;
+    
+    [self.metadataTitleControl setTitle:[directory.attributes objectForKey:@"tag"]];
+    [self.metadataTitleControl setTitleSubtext:[NSString stringWithFormat:@"%d Items", 10]];
+    
+    return self.scrollControl;
 }
 
 

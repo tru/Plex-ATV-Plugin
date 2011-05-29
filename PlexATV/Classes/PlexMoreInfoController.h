@@ -8,11 +8,10 @@
 #import <Foundation/Foundation.h>
 @class PlexMediaContainer, PlexMediaObject;
 
-@interface PlexMoreInfoController : BRController {
+@interface PlexMoreInfoController : BRMediaMenuController <BRMenuListItemProvider> {
     
 }
-@property (retain) BRListControl *list;
-@property (retain) BRPanelControl *contentContainer;
+@property (retain) BRScrollControl *scrollControl;
 @property (retain) BRMetadataTitleControl *metadataTitleControl;
 @property (retain) BRGridControl *gridControl;
 
@@ -23,8 +22,8 @@
 - (id)initWithMoreInfoContainer:(PlexMediaContainer *)mediaContainer;
 - (void)setupListForMediaObject:(PlexMediaObject *)aMediaObject;
 - (void)addCreditsSectionToArray:(NSMutableArray *)creditsSectionArray ForKey:(NSString *)key withLabel:(NSString *)label;
+- (void)setupPreviewControl;
 
-- (void)drawSelf;
 //list methods
 -(void)playPauseActionForRow:(long)row;
 - (void)setSelection:(int)selection;
