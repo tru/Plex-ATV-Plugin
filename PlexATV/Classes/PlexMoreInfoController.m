@@ -10,13 +10,15 @@
 #import "PlexMoreInfoController.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
+#import <plex-oss/PlexRequest.h>
 #import "PlexNavigationController.h"
 #import "PlexMoreInfoMenuItem.h"
 
 
 @implementation PlexMoreInfoController
-@synthesize scrollControl, metadataTitleControl, gridControl;
-@synthesize moreInfoContainer, mediaObject, menuItems;
+@synthesize scrollControl, metadataTitleControl, gridControl, waitSpinnerControl;
+@synthesize moreInfoContainer, mediaObject, menuItems; 
+@synthesize currentGridContentMediaContainer, currentGridContent;
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -89,9 +91,13 @@
     self.scrollControl = nil;
     self.metadataTitleControl = nil;
     self.gridControl = nil;
+    self.waitSpinnerControl = nil;
     
-    self.menuItems = nil;
     self.moreInfoContainer = nil;
+    self.mediaObject = nil;
+    self.menuItems = nil;
+    self.currentGridContentMediaContainer = nil;
+    self.currentGridContent = nil;
     [super dealloc];
 }
 
@@ -224,6 +230,20 @@
     
     BRControl *previewContainer = [self valueForKey:@"_previewContainer"];
     previewContainer.frame = CGRectMake(395.0f, 0.0f, 855.0f, 720.0f);
+    
+    if (!self.waitSpinnerControl) {
+        BRWaitSpinnerControl *spinner = [[BRWaitSpinnerControl alloc] init];
+        CGPoint centerOfPreviewContainer = CGPointMake(CGRectGetMidX(previewContainer.frame), 
+                                                       CGRectGetMidY(previewContainer.frame));
+        CGFloat spinnerDimension = 86.0f;
+        spinner.frame = CGRectMake(centerOfPreviewContainer.x-(spinnerDimension/2), 
+                                   centerOfPreviewContainer.y-(spinnerDimension/2), 
+                                   spinnerDimension, spinnerDimension);
+        spinner.spins = NO;
+        [self addControl:spinner];
+        self.waitSpinnerControl = spinner;
+        [spinner release];
+    }
 }
 
 
@@ -296,6 +316,74 @@
 #pragma mark - 
 #pragma mark Grid Content Methods
 
+#define kContentsForDirectoryRequestKey @"kContentsForDirectoryRequestKey"
+#define kContentsForDirectoryQueryKey @"kContentsForDirectoryQueryKey"
+#define kContentsForDirectoryKey @"kContentsForDirectoryKey"
+- (void)finishedRetrivalOfContentsForDirectoryWithData:(NSDictionary *)data {
+    self.waitSpinnerControl.spins = NO;
+    
+    self.currentGridContentMediaContainer = [data objectForKey:kContentsForDirectoryKey];
+    self.currentGridContent = self.currentGridContentMediaContainer.directories;
+    
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"retrieved grid content [%@] with items [%@]", self.currentGridContentMediaContainer, self.currentGridContent);
+#endif
+    
+    [self.metadataTitleControl setTitleSubtext:[NSString stringWithFormat:@"%d Items", [self.currentGridContent count]]];
+    
+    //free the passed data
+    [data release];
+}
+
+- (void)performRetrivalOfContentsForDirectoryWithData:(NSMutableDictionary *)data {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSString *gridContentQuery = [data objectForKey:kContentsForDirectoryQueryKey];
+    PlexRequest* gridContentRequest = [data objectForKey:kContentsForDirectoryRequestKey];
+
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"retrieving grid content with request [%@] and query [%@]", gridContentRequest, gridContentQuery);
+#endif
+    
+    PlexMediaContainer *gridContent = [gridContentRequest query:gridContentQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    
+    [data setObject:gridContent forKey:kContentsForDirectoryKey];
+    [self performSelectorOnMainThread:@selector(finishedRetrivalOfContentsForDirectoryWithData:) withObject:data waitUntilDone:YES];
+    [pool drain];
+}
+
+- (void)startRetrievalOfContentsForDirectory:(PlexDirectory *)directory {
+    [self.metadataTitleControl setTitle:[directory.attributes objectForKey:@"tag"]];
+    
+    NSMutableString *directoryContentsQuery = [NSMutableString stringWithString:@"/library"];
+    if ([directory.containerType isEqualToString:@"Role"] ||
+        [directory.containerType isEqualToString:@"Writer"] ||
+        [directory.containerType isEqualToString:@"Director"]) {
+        //  /library/people/956/media
+        [directoryContentsQuery appendFormat:@"/people/%@/media", [directory.attributes objectForKey:@"id"]];
+
+        } else if ([directory.containerType isEqualToString:@"Genre"]) {
+         // /library/sections/28/genre/174
+            [directoryContentsQuery appendFormat:@"/sections/%d/genre/%@", directory.sectionKey, [directory.attributes objectForKey:@"id"]];
+            
+    } else {
+        //invalid query
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"failed to generate query for containerType: [%@]", directory.containerType);
+#endif
+        [self.metadataTitleControl setTitleSubtext:@"failed to load"];
+        return;
+    }
+    
+    //start spinner
+    self.waitSpinnerControl.spins = YES;
+    [self.metadataTitleControl setTitleSubtext:@"loading..."];
+    
+    PlexRequest* directoryContentsRequest = directory.request;
+    
+    //is freed after the search finished
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:directoryContentsQuery, kContentsForDirectoryQueryKey, directoryContentsRequest, kContentsForDirectoryRequestKey, nil];
+    [self performSelectorInBackground:@selector(performRetrivalOfContentsForDirectoryWithData:) withObject:data];
+}
 
 
 
@@ -321,8 +409,7 @@
     PlexMoreInfoMenuItem *menuItem = [self.menuItems objectAtIndex:item];
     PlexDirectory *directory = menuItem.directory;
     
-    [self.metadataTitleControl setTitle:[directory.attributes objectForKey:@"tag"]];
-    [self.metadataTitleControl setTitleSubtext:[NSString stringWithFormat:@"%d Items", 10]];
+    [self startRetrievalOfContentsForDirectory:directory];
     
     return self.scrollControl;
 }
