@@ -5,16 +5,18 @@
 //  Created by ccjensen on 5/26/11.
 //
 
+#define LOCAL_DEBUG_ENABLED 1
+
 #import "PlexMoreInfoController.h"
-#import "PlexMediaObject+Assets.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import "PlexNavigationController.h"
-#import "PlexPreviewAsset.h"
+#import "PlexMoreInfoMenuItem.h"
+
 
 @implementation PlexMoreInfoController
 @synthesize list, contentContainer, metadataTitleControl, gridControl;
-@synthesize moreInfoContainer, mediaObject, items, menuItems;
+@synthesize moreInfoContainer, mediaObject, menuItems;
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -25,9 +27,13 @@
         self.moreInfoContainer = mediaContainer;
         
         NSArray *mediaObjects = self.moreInfoContainer.directories;
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"mediaObjects: [%@]", mediaObjects);
+#endif
         if ([mediaObjects count] == 1) {
             self.mediaObject = [mediaObjects objectAtIndex:0];
-//            [self setupListForMediaObject:self.mediaObject];
+            DLog(@"mediaObject: [%@]", self.mediaObject);
+            [self setupListForMediaObject:self.mediaObject];
         }
     }
     return self;
@@ -35,32 +41,46 @@
 
 - (void)setupListForMediaObject:(PlexMediaObject *)aMediaObject {
     //possible contents: genre, writer, director, role (cast)
-    
-    NSMutableArray *newItems = [NSMutableArray array];
     NSMutableArray *newMenuItems = [NSMutableArray array];
     
-    if (self.mediaObject) {
-        PlexPreviewAsset *previewAsset = self.mediaObject.previewAsset;
+    if (self.mediaObject) {        
+        [self addCreditsSectionToArray:newMenuItems ForKey:@"Role" withLabel:@"Actors"];
+        [self addCreditsSectionToArray:newMenuItems ForKey:@"Genre" withLabel:@"Categories"];
+        [self addCreditsSectionToArray:newMenuItems ForKey:@"Director" withLabel:@"Directors"];
+        [self addCreditsSectionToArray:newMenuItems ForKey:@"Writer" withLabel:@"Writers"];
+    }
+    
+    self.menuItems = newMenuItems;
+}
+
+- (void)addCreditsSectionToArray:(NSMutableArray *)creditsSectionArray ForKey:(NSString *)key withLabel:(NSString *)label {
+    NSMutableDictionary *dividerTextAttributes = [NSMutableDictionary dictionary];
+    [dividerTextAttributes setValue:@"HelveticaNeue-Bold" forKey:@"BRFontName"];
+    [dividerTextAttributes setValue:[NSNumber numberWithInt:23] forKey:@"BRFontPointSize"];
+    [dividerTextAttributes setValue:[NSNumber numberWithInt:4] forKey:@"BRLineBreakModeKey"];
+    [dividerTextAttributes setValue:[NSNumber numberWithInt:0] forKey:@"BRTextAlignmentKey"];
+    [dividerTextAttributes setValue:(id)[[UIColor colorWithRed:0.26f green:0.26f blue:0.26f alpha:1.0f] CGColor] forKey:@"CTForegroundColor"];
+    
+    NSDictionary *subObjects = self.mediaObject.subObjects;
+    
+    NSArray *creditItems = [subObjects objectForKey:key];
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"Credit items for key [%@] with label [%@] : [%@]", key, label, creditItems);
+#endif
+    if ([creditItems count] > 0) {
+        BRDividerControl *dividerControl = [[BRDividerControl alloc] init];
+        dividerControl.dividerHeightStyle = 1;
+        dividerControl.drawsLine = NO;
+        [dividerControl setStartOffsetText:0.0f];
+        [dividerControl setLabel:label withAttributes:dividerTextAttributes];
+        [creditsSectionArray addObject:dividerControl];
+        [dividerControl release];
         
-        if ([[previewAsset cast] count] > 0) {
-            //we have actors
-            
-        }
-        
-        if ([[previewAsset cast] count] > 0) {
-            //we have genres/categories
-        }
-        
-        if ([[previewAsset cast] count] > 0) {
-            //we have directors
-        }
-        
-        if ([[previewAsset cast] count] > 0) {
-            //we have writers
+        for (PlexDirectory *directory in creditItems) {
+            PlexMoreInfoMenuItem *menuItem = [PlexMoreInfoMenuItem menuItemForDirectory:directory];
+            [creditsSectionArray addObject:menuItem];
         }
     }
-    self.items = newItems;
-    self.menuItems = menuItems;
 }
 
 -(void)dealloc {
@@ -78,6 +98,7 @@
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
+    DLog(@"was pushed");
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasPushed];
 }
@@ -96,15 +117,16 @@
 }
 
 - (void)controlWasActivated {
+    [self drawSelf];
+    DLog(@"was activated");
     [super controlWasActivated];
+    DLog(@"selection set");
 }
 
 
 #pragma mark -
 #pragma mark Controller Drawing and Events
-- (void)layoutSubcontrols {
-    [super layoutSubcontrols];
-    
+- (void)drawSelf {    
     /*
      - Left half: List Control      {origin:{x:39,y:0},size:{width:372,height:700}}
      - Right half: Panel Control    {origin:{x:395,y:0},size:{width:855,height:720}}
@@ -129,8 +151,9 @@
         
         self.list = aListControl;
         [aListControl release];
-        [self.list setDatasource:self];
         [self addControl:self.list];
+        [self.list setDatasource:self];
+        [self setFocusedControl:self.list];
     }
     
     
@@ -213,6 +236,8 @@
         [self addControl:outerPanelControl];
         [outerPanelControl release];
     }
+    
+    [self layoutSubcontrols];
 }
 
 
@@ -259,13 +284,16 @@
             }
             break;
 		case kBREventRemoteActionUp:
-		case kBREventRemoteActionHoldUp:
-			if([self getSelection] == 0 && [action value] == 1 && [self focusedControl]==[self list])
-			{
-				[self setSelection:itemCount-1];
-				return YES;
-			}
+		case kBREventRemoteActionHoldUp: {
+//            BRControl *old = [self focusedControl];
+//            BOOL r = [super brEventAction:action];
+//            BRControl *new = [self focusedControl];
+//            if (old==self.textEntry && new!=self.textEntry) {
+//                [self hideSearchInterface:YES];
+//            }
+//            return r;
 			break;
+        }
 		case kBREventRemoteActionDown:
 		case kBREventRemoteActionHoldDown:
 			if([self getSelection] == itemCount-1 && [action value] == 1&& [self focusedControl]==[self list])
@@ -288,7 +316,7 @@
 #pragma mark -
 #pragma mark List Provider Methods
 - (float)heightForRow:(long)row {
-    return 0.0f;
+    return 43.599998474121094;
 }
 
 - (long)itemCount {
@@ -296,38 +324,33 @@
 }
 
 - (id)itemForRow:(long)row {
-    
-    
-    PlexMediaObject *pmo = [self.menuItems objectAtIndex:row];
-    return pmo.menuItem;
+    return [self.menuItems objectAtIndex:row];
 }
 
 - (id)titleForRow:(long)row {
-    PlexMediaObject *pmo = [self.menuItems objectAtIndex:row];
-	return pmo.name;
+    return [[self.menuItems objectAtIndex:row] text];
 }
 
 
 #pragma mark -
 #pragma mark BRMenuListItemProvider Delegate
 - (BOOL)rowSelectable:(long)selectable {
-	return YES;
+	return NO;
 }
 
-- (void)itemSelected:(long)selected; {
-	PlexMediaObject* pmo = [self.menuItems objectAtIndex:selected];
-    [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
+- (void)itemSelected:(long)selected {
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"List menu item selected at row %ld: [%@]", selected, [self.menuItems objectAtIndex:selected]);
+#endif
+    PlexMoreInfoMenuItem *menuItem = [self.menuItems objectAtIndex:selected];
 }
 
 -(void)playPauseActionForRow:(long)row {
-    PlexMediaObject* pmo = [self.menuItems objectAtIndex:row];
-    if (pmo.hasMedia) {
-        //play media
-        [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:pmo];
-    } else {
-        //not media, pretend it was a selection
-        [self.list.datasource itemSelected:row];
-    }
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"List menu item play/paused at row %ld: [%@]", row, [self.menuItems objectAtIndex:row]);
+#endif
+    //not media, pretend it was a selection
+    [self.list.datasource itemSelected:row];
 }
 
 

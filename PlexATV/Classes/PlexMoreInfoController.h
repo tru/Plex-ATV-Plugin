@@ -18,11 +18,13 @@
 
 @property (retain) PlexMediaContainer *moreInfoContainer;
 @property (retain) PlexMediaObject *mediaObject;
-@property (retain) NSArray *items;
 @property (retain) NSArray *menuItems;
 
+- (id)initWithMoreInfoContainer:(PlexMediaContainer *)mediaContainer;
 - (void)setupListForMediaObject:(PlexMediaObject *)aMediaObject;
+- (void)addCreditsSectionToArray:(NSMutableArray *)creditsSectionArray ForKey:(NSString *)key withLabel:(NSString *)label;
 
+- (void)drawSelf;
 //list methods
 -(void)playPauseActionForRow:(long)row;
 - (void)setSelection:(int)selection;
