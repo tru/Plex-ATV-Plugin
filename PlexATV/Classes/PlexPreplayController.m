@@ -134,6 +134,19 @@ typedef enum {
 	[super wasBuried];
 }
 
+- (void)controlWasActivated {    
+    if (moreInfoSelected) {
+        CATransition *transition = [CATransition animation];
+        transition.type = @"push";
+        transition.subtype = kCATransitionFromTop;
+        transition.duration = 0.75f;
+        [[[BRApplicationStackManager singleton] stack] setActions:[NSDictionary dictionaryWithObject:transition forKey:@"sublayers"]];
+        
+        moreInfoSelected = NO;
+    }
+    [super controlWasActivated];
+}
+
 
 #pragma mark -
 #pragma mark Delegate Methods
@@ -271,11 +284,11 @@ typedef enum {
 }
 
 -(void)controller:(SMFMoviePreviewController *)c downButtonEventInShelf:(BRMediaShelfControl *)shelfControl {
+    moreInfoSelected = YES;
     PlexMediaContainer *moreInfoContainer = [self.selectedMediaObject loadDetails];
     PlexMoreInfoController *moreInfoController = [[PlexMoreInfoController alloc] initWithMoreInfoContainer:moreInfoContainer];
     [[self stack] pushController:moreInfoController];
     [moreInfoController release];
-    
 }
 
 
@@ -361,7 +374,7 @@ typedef enum {
         [flags addObject:[self.selectedMediaObject.previewAsset starRatingImage]];
     
     NSDictionary *mediaAttributes = self.selectedMediaObject.mediaResource.attributes;
-
+    
     NSArray *flagAttributes = [NSArray arrayWithObjects:PlexFlagTypeContentVideoResolution, PlexFlagTypeContentVideoCodec, PlexFlagTypeContentAudioCodec, PlexFlagTypeContentAudioChannels, nil];
     for (PlexFlagTypes attribute in flagAttributes) {
         if ([mediaAttributes valueForKey:attribute]) {

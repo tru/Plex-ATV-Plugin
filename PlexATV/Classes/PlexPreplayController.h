@@ -34,6 +34,8 @@
 	int currentSelectedIndex;
 	int lastFocusedIndex;
  	SMFListDropShadowControl *listDropShadowControl; //popup
+    
+    BOOL moreInfoSelected;
 }
 @property (retain) PlexMediaContainer *relatedMediaContainer;
 @property (retain) PlexMediaObject *selectedMediaObject;

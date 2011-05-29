@@ -99,7 +99,6 @@
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
-    DLog(@"was pushed");
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasPushed];
 }
@@ -117,13 +116,15 @@
 	[super wasBuried];
 }
 
-//- (void)controlWasActivated {
-//    //[self drawSelf];
-//    DLog(@"was activated");
-//    [super controlWasActivated];
-//    DLog(@"selection set");
-//}
-
+- (void)controlWasActivated {
+    CATransition *transition = [CATransition animation];
+    transition.type = @"push";
+    transition.subtype = kCATransitionFromBottom;
+    transition.duration = 0.75f;
+    [[[BRApplicationStackManager singleton] stack] setActions:[NSDictionary dictionaryWithObject:transition forKey:@"sublayers"]];
+    
+    [super controlWasActivated];
+}
 
 #pragma mark -
 #pragma mark Controller Drawing and Events
