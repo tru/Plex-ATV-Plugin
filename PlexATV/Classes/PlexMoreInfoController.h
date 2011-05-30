@@ -12,6 +12,7 @@
     
 }
 @property (retain) BRScrollControl *scrollControl;
+@property (retain) BRCursorControl *cursorControl;
 @property (retain) BRPanelControl *innerPanelControl;
 @property (retain) BRSpacerControl *spacerTopControl;
 @property (retain) BRControl *metadataControl;

@@ -23,7 +23,7 @@
 @end
 
 @implementation PlexMoreInfoController
-@synthesize scrollControl, innerPanelControl, spacerTopControl, metadataControl, metadataTitleControl, spacerTitleGridControl, gridControl, spacerBottom;
+@synthesize scrollControl, cursorControl, innerPanelControl, spacerTopControl, metadataControl, metadataTitleControl, spacerTitleGridControl, gridControl, spacerBottom;
 @synthesize waitSpinnerControl;
 @synthesize moreInfoContainer, mediaObject, menuItems; 
 @synthesize currentGridContentMediaContainer, currentGridContent;
@@ -97,6 +97,7 @@
 
 -(void)dealloc {
     self.scrollControl = nil;
+    self.cursorControl = nil;
     self.innerPanelControl = nil;
     self.spacerTopControl = nil;
     self.metadataControl = nil;
@@ -164,19 +165,23 @@
     
     //============================ SCROLL CONTROL ============================
     BRScrollControl *aScrollControl = [[BRScrollControl alloc] init];
-    aScrollControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 720.0f);
-    [aScrollControl setDefaultAnimationMode:0 fastScrollingAnimationMode:1];
-    
     self.scrollControl = aScrollControl;
     [aScrollControl release];
+    
+    self.scrollControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 720.0f);
+    [self.scrollControl setDefaultAnimationMode:0 fastScrollingAnimationMode:1];
+    
+//    BRCursorControl *aCursorControl = [[BRCursorControl alloc] init];
+//    self.cursorControl = aCursorControl;
+//    [aCursorControl release];
+    
 }
 
 - (void)newGrid {    
     //============================ SPACER CONTROL ============================
     BRSpacerControl *aSpacerControl = [BRSpacerControl spacerWithPixels:44.0f];
     self.spacerTopControl = aSpacerControl;
-    [innerPanelControl addControl:self.spacerTopControl];
-    
+    self.spacerTopControl.acceptsFocus = NO;
     
     
     //============================ CONTROL ============================
@@ -185,6 +190,7 @@
     [aControl release];
     
     self.metadataControl.frame = CGRectMake(0.0f, 776.0f, 855.0f, 51.0f);
+    self.metadataControl.acceptsFocus = NO;
     
     
     //============================ METADATA TITLE CONTROL ============================
@@ -193,6 +199,7 @@
     [aMetadataTitleControl release];
     
     self.metadataTitleControl.frame = CGRectMake(51.0f, 0.0f, 855.0f, 51.0f);
+    self.metadataTitleControl.acceptsFocus = NO;
     
     [self.metadataControl addControl:self.metadataTitleControl];
     [self.innerPanelControl addControl:self.metadataControl];
@@ -201,6 +208,7 @@
     //============================ SPACER CONTROL ============================
     BRSpacerControl *aSpacerControl1 = [BRSpacerControl spacerWithPixels:18.0f];
     self.spacerTitleGridControl = aSpacerControl1;
+    self.spacerTitleGridControl.acceptsFocus = NO;
     
     
     
@@ -221,6 +229,7 @@
     //============================ SPACER CONTROL ============================
     BRSpacerControl *aSpacerControl2 = [BRSpacerControl spacerWithPixels:44.0f];
     self.spacerBottom = aSpacerControl2;
+    self.spacerBottom.acceptsFocus = NO;
 
 
     
@@ -232,6 +241,7 @@
     self.innerPanelControl.panelMode = 1;
     self.innerPanelControl.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
     self.innerPanelControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 395.0f);
+    self.innerPanelControl.acceptsFocus = YES;
  
     [self.innerPanelControl addControl:self.spacerTopControl];
     [self.innerPanelControl addControl:self.metadataControl];
@@ -256,6 +266,15 @@
     
     BRControl *previewContainer = [self valueForKey:@"_previewContainer"];
     previewContainer.frame = CGRectMake(395.0f, 0.0f, 855.0f, 720.0f);
+    previewContainer.acceptsFocus = YES;
+    
+    if (!self.cursorControl) {
+        BRCursorControl *aCursorControl = [[BRCursorControl alloc] init];
+        self.cursorControl = aCursorControl;
+        [aCursorControl release];
+        
+        [previewContainer addControl:self.cursorControl];
+    }
     
     if (!self.waitSpinnerControl) {
         BRWaitSpinnerControl *spinner = [[BRWaitSpinnerControl alloc] init];
@@ -279,35 +298,15 @@
     if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
     
-    int itemCount = [[(BRListControl *)[self list] datasource] itemCount];
-    switch (remoteAction)
-    {	
-        case kBREventRemoteActionMenu:
-            break;
-        case kBREventRemoteActionSwipeLeft:
-        case kBREventRemoteActionLeft:
-        {
-            //            BRControl *old = [self focusedControl];
-            //            BOOL r = [super brEventAction:action];
-            //            BRControl *new = [self focusedControl];
-            //            if (new==self.textEntry && old!=self.textEntry) {
-            //                [self hideSearchInterface:NO];
-            //                //TODO: should be improved, we want to focus clear action button
-            //                [self.textEntry setFocusToGlyphNamed:@"r"];
-            //            }
-            //            return r;
-        }
-        case kBREventRemoteActionSwipeRight:
-        case kBREventRemoteActionRight:
-        {
-            //            BRControl *old = [self focusedControl];
-            //            BOOL r = [super brEventAction:action];
-            //            BRControl *new = [self focusedControl];
-            //            if (old==self.textEntry && new!=self.textEntry) {
-            //                [self hideSearchInterface:YES];
-            //            }
-            //            return r;
-        }
+    switch (remoteAction) {
+		case kBREventRemoteActionUp:
+		case kBREventRemoteActionHoldUp:
+//			if([self getSelection] == 0 && [action value] == 1 && [self focusedControl]==[self list])
+//			{
+//				[self setSelection:itemCount-1];
+//				return YES;
+//			}
+//			break;
         case kBREventRemoteActionPlayPause:
             if (self.list.focused) {
                 if([action value] == 1)
@@ -315,27 +314,7 @@
                 return YES;
             }
             break;
-		case kBREventRemoteActionUp:
-		case kBREventRemoteActionHoldUp: {
-            //            BRControl *old = [self focusedControl];
-            //            BOOL r = [super brEventAction:action];
-            //            BRControl *new = [self focusedControl];
-            //            if (old==self.textEntry && new!=self.textEntry) {
-            //                [self hideSearchInterface:YES];
-            //            }
-            //            return r;
-			break;
-        }
-		case kBREventRemoteActionDown:
-		case kBREventRemoteActionHoldDown:
-			if([self getSelection] == itemCount-1 && [action value] == 1&& [self focusedControl]==[self list])
-			{
-				[self setSelection:0];
-				return YES;
-			}
-			break;
     }
-    DLog(@"calling super for event");
 	return [super brEventAction:action];
 }
 
