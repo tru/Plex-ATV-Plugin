@@ -11,7 +11,7 @@
 
 @implementation Plex_SMFMoviePreviewController
 
-@dynamic datasource, flags;
+@dynamic datasource, delegate, flags;
 
 -(void)controlWasActivated
 {
