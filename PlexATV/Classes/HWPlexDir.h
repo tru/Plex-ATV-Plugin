@@ -41,7 +41,6 @@
 
 - (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar;
 - (void)showModifyViewedStatusViewForRow:(long)row;
-- (BOOL)showAudioAndSubStreamChooserForRow:(long)row;
 - (void)reselectCurrentTabBarItem;
 
 
