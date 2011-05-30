@@ -11,7 +11,7 @@
 #import "PlexMediaObject+Assets.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
-#import "Plex_SMFControlFactory.h"
+#import "PlexControlFactory.h"
 #import "PlexNavigationController.h"
 
 #define LOCAL_DEBUG_ENABLED 1
@@ -172,23 +172,22 @@ void checkNil(NSObject *ctrl)
 	[_shelfControl setProvider:[self getProviderForShelf]];
 	[_shelfControl setColumnCount:7];
 	[_shelfControl setCentered:NO];
-	[_shelfControl setHorizontalGap:23];
-    //    [_shelfControl setCoverflowMargin:.021746988594532013];
+    [_shelfControl setCoverflowMargin:0.05000000074505806f];
 	
     
 	
 	DLog(@"box");
 	BRBoxControl *shelfBox = [[BRBoxControl alloc] init];
 	[shelfBox setAcceptsFocus:YES];
-	[shelfBox setDividerSuggestedHeight:40.f];
-	[shelfBox setDividerMargin:0.05f];
+    [shelfBox setSpace:0.0f];
+	[shelfBox setDividerSuggestedHeight:46.f];
+	[shelfBox setDividerMargin:0.05000000074505806f];
 	[shelfBox setContent:_shelfControl];
 	[shelfBox setDivider:div1];
 	[shelfBox layoutSubcontrols];
 	CGRect boxFrame = shelfBox.frame;
-	boxFrame.size.height = 255.0f;
+	boxFrame.size.height = 261.0f;
 	[shelfBox setFrame:boxFrame];
-    //shelfBox.frame.size.width = 255.f;
 	[_panelControl addControl:shelfBox];
 	
 	
@@ -215,10 +214,9 @@ void checkNil(NSObject *ctrl)
 	[_gridControl setColumnCount:7];
 	[_gridControl setWrapsNavigation:YES];
 	[_gridControl setHorizontalGap:0];
-	[_gridControl setVerticalGap:20.f];
+	[_gridControl setVerticalGap:20.0f];
 	[_gridControl setLeftMargin:0.05000000074505806];
 	[_gridControl setRightMargin:0.05000000074505806];
-    [_gridControl setAllRowsAreSameHeight:NO];
 	[_gridControl setAcceptsFocus:YES];
 	[_gridControl setProviderRequester:_gridControl];
     //[_gridControl layoutSubcontrols];
@@ -289,11 +287,11 @@ void checkNil(NSObject *ctrl)
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForShelf - have assets, creating datastore and provider");
 #endif
-	BRPosterControlFactory *tcControlFactory = [BRPosterControlFactory factory];
-	[tcControlFactory setDefaultImage:[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage]];
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
+	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 	
 	BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
-																		  controlFactory:tcControlFactory];
+																		  controlFactory:controlFactory];
 	
 	
 #if LOCAL_DEBUG_ENABLED
@@ -323,9 +321,7 @@ void checkNil(NSObject *ctrl)
 #endif
     
     
-    Plex_SMFControlFactory *controlFactory = [[Plex_SMFControlFactory alloc] initForMainMenu:NO];
-    controlFactory._poster = YES;
-    controlFactory.favorProxy = YES;
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
 	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 	
     BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
