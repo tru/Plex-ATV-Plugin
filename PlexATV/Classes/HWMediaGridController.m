@@ -294,9 +294,7 @@ void checkNil(NSObject *ctrl)
 																		  controlFactory:controlFactory];
 	
 	
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"getProviderForShelf_end");
-#endif
+    [controlFactory release];
 	[store release];
 	return provider;
 	
@@ -343,7 +341,7 @@ void checkNil(NSObject *ctrl)
 	if (remoteAction==kBREventRemoteActionPlay && action.value==1)
 	{
 		int index;
-		NSArray *mediaObjects;
+		NSArray *mediaObjects = nil;
 		
 		if ([_shelfControl isFocused]) {
 			index = [_shelfControl focusedIndex];

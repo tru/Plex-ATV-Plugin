@@ -367,6 +367,7 @@
 	
     BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
+    [controlFactory release];
     [store release];
 	
 	return provider;
