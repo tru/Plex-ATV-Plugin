@@ -12,8 +12,16 @@
     
 }
 @property (retain) BRScrollControl *scrollControl;
+@property (retain) BRPanelControl *innerPanelControl;
+@property (retain) BRSpacerControl *spacerTopControl;
+@property (retain) BRControl *metadataControl;
 @property (retain) BRMetadataTitleControl *metadataTitleControl;
+@property (retain) BRSpacerControl *spacerTitleGridControl;
 @property (retain) BRGridControl *gridControl;
+@property (retain) BRSpacerControl *spacerBottom;
+
+
+
 @property (retain) BRWaitSpinnerControl *waitSpinnerControl;
 
 @property (retain) PlexMediaContainer *moreInfoContainer;
@@ -27,6 +35,9 @@
 - (void)setupListForMediaObject:(PlexMediaObject *)aMediaObject;
 - (void)addCreditsSectionToArray:(NSMutableArray *)creditsSectionArray ForKey:(NSString *)key withLabel:(NSString *)label;
 - (void)setupPreviewControl;
+
+//Grid Datesource & Delegate Methods
+- (id)gridProvider;
 
 //Grid Content Methods
 - (void)startRetrievalOfContentsForDirectory:(PlexDirectory *)directory;

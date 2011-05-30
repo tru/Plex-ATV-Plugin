@@ -11,12 +11,20 @@
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexRequest.h>
+#import "PlexMediaObject+Assets.h"
 #import "PlexNavigationController.h"
 #import "PlexMoreInfoMenuItem.h"
+#import "PlexControlFactory.h"
 
+//these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
+//naming conflicts with Backrow.framework. below is a hack!
+@interface BRThemeInfo (PlexExtentions)
+- (id)storeRentalPlaceholderImage;
+@end
 
 @implementation PlexMoreInfoController
-@synthesize scrollControl, metadataTitleControl, gridControl, waitSpinnerControl;
+@synthesize scrollControl, innerPanelControl, spacerTopControl, metadataControl, metadataTitleControl, spacerTitleGridControl, gridControl, spacerBottom;
+@synthesize waitSpinnerControl;
 @synthesize moreInfoContainer, mediaObject, menuItems; 
 @synthesize currentGridContentMediaContainer, currentGridContent;
 
@@ -89,8 +97,14 @@
 
 -(void)dealloc {
     self.scrollControl = nil;
+    self.innerPanelControl = nil;
+    self.spacerTopControl = nil;
+    self.metadataControl = nil;
     self.metadataTitleControl = nil;
+    self.spacerTitleGridControl = nil;
     self.gridControl = nil;
+    self.spacerBottom = nil;
+    
     self.waitSpinnerControl = nil;
     
     self.moreInfoContainer = nil;
@@ -136,6 +150,7 @@
 #pragma mark Controller Drawing and Events
 - (void)setupPreviewControl {
     /*
+     Panel Control                 {origin:{x:395,y:0},size:{width:855,height:720}}
      - Scroll Control              {origin:{x:0,y:0},size:{width:855,height:720}}
      -- Panel Control              {origin:{x:0,y:325},size:{width:855,height:395}}
      --- Spacer                    {origin:{x:405,y:827},size:{width:44,height:44}}
@@ -147,73 +162,84 @@
      --- Spacer                    {origin:{x:405,y:0},size:{width:44,height:44}}
      */
     
-    
     //============================ SCROLL CONTROL ============================
     BRScrollControl *aScrollControl = [[BRScrollControl alloc] init];
     aScrollControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 720.0f);
+    [aScrollControl setDefaultAnimationMode:0 fastScrollingAnimationMode:1];
     
-    
-    
-    //============================ INNER PANEL CONTROL ============================
-    BRPanelControl *innerPanelControl = [[BRPanelControl alloc] init];
-    innerPanelControl.panelMode = 1;
-    innerPanelControl.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-    innerPanelControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 395.0f);
-    
-    
-    
+    self.scrollControl = aScrollControl;
+    [aScrollControl release];
+}
+
+- (void)newGrid {    
     //============================ SPACER CONTROL ============================
-    BRSpacerControl *spacerTop = [BRSpacerControl spacerWithPixels:44.0f];
-    [innerPanelControl addControl:spacerTop];
+    BRSpacerControl *aSpacerControl = [BRSpacerControl spacerWithPixels:44.0f];
+    self.spacerTopControl = aSpacerControl;
+    [innerPanelControl addControl:self.spacerTopControl];
     
     
     
     //============================ CONTROL ============================
-    BRControl *metadataControl = [[BRControl alloc] init];
-    metadataControl.frame = CGRectMake(0.0f, 776.0f, 855.0f, 51.0f);
+    BRControl *aControl = [[BRControl alloc] init];
+    self.metadataControl = aControl;
+    [aControl release];
     
+    self.metadataControl.frame = CGRectMake(0.0f, 776.0f, 855.0f, 51.0f);
     
     
     //============================ METADATA TITLE CONTROL ============================
     BRMetadataTitleControl *aMetadataTitleControl = [[BRMetadataTitleControl alloc] init];
-    aMetadataTitleControl.frame = CGRectMake(51.0f, 0.0f, 855.0f, 51.0f);
-    
-    [metadataControl addControl:aMetadataTitleControl];
     self.metadataTitleControl = aMetadataTitleControl;
     [aMetadataTitleControl release];
     
-    [innerPanelControl addControl:metadataControl];
-    [metadataControl release];
+    self.metadataTitleControl.frame = CGRectMake(51.0f, 0.0f, 855.0f, 51.0f);
     
+    [self.metadataControl addControl:self.metadataTitleControl];
+    [self.innerPanelControl addControl:self.metadataControl];
     
     
     //============================ SPACER CONTROL ============================
-    BRSpacerControl *spacerTitleGrid = [BRSpacerControl spacerWithPixels:18.0f];
-    [innerPanelControl addControl:spacerTitleGrid];
+    BRSpacerControl *aSpacerControl1 = [BRSpacerControl spacerWithPixels:18.0f];
+    self.spacerTitleGridControl = aSpacerControl1;
     
     
     
     //============================ GRID CONTROL ============================
     BRGridControl *aGridControl = [[BRGridControl alloc] init];
-    aGridControl.frame = CGRectMake(0.0f, 44.0f, 855.0f, 714.0f);
-    //TODO: setup delegate/datasource
-    
-    [innerPanelControl addControl:aGridControl];
     self.gridControl = aGridControl;
     [aGridControl release];
     
-    
+    self.gridControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 206.0f);
+	[self.gridControl setColumnCount:5];
+	[self.gridControl setWrapsNavigation:NO];
+	[self.gridControl setHorizontalGap:0];
+	[self.gridControl setVerticalGap:20.0f];
+	[self.gridControl setLeftMargin:0.05000000074505806];
+	[self.gridControl setRightMargin:0.05000000074505806];
+	[self.gridControl setAcceptsFocus:YES];
     
     //============================ SPACER CONTROL ============================
-    BRSpacerControl *spacerBottom = [BRSpacerControl spacerWithPixels:44.0f];
-    [innerPanelControl addControl:spacerBottom];
+    BRSpacerControl *aSpacerControl2 = [BRSpacerControl spacerWithPixels:44.0f];
+    self.spacerBottom = aSpacerControl2;
+
+
     
+    //============================ INNER PANEL CONTROL ============================
+    BRPanelControl *aPanelControl = [[BRPanelControl alloc] init];
+    self.innerPanelControl = aPanelControl;
+    [aPanelControl release];
     
-    [aScrollControl addControl:innerPanelControl];
-    [innerPanelControl release];
+    self.innerPanelControl.panelMode = 1;
+    self.innerPanelControl.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    self.innerPanelControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 395.0f);
+ 
+    [self.innerPanelControl addControl:self.spacerTopControl];
+    [self.innerPanelControl addControl:self.metadataControl];
+    [self.innerPanelControl addControl:self.spacerTitleGridControl];
+    [self.innerPanelControl addControl:self.gridControl];
+    [self.innerPanelControl addControl:self.spacerBottom];
     
-    self.scrollControl = aScrollControl;
-    [aScrollControl release];
+    self.scrollControl.content = self.innerPanelControl;
 }
 
 - (void)layoutSubcontrols {
@@ -261,26 +287,26 @@
         case kBREventRemoteActionSwipeLeft:
         case kBREventRemoteActionLeft:
         {
-//            BRControl *old = [self focusedControl];
-//            BOOL r = [super brEventAction:action];
-//            BRControl *new = [self focusedControl];
-//            if (new==self.textEntry && old!=self.textEntry) {
-//                [self hideSearchInterface:NO];
-//                //TODO: should be improved, we want to focus clear action button
-//                [self.textEntry setFocusToGlyphNamed:@"r"];
-//            }
-//            return r;
+            //            BRControl *old = [self focusedControl];
+            //            BOOL r = [super brEventAction:action];
+            //            BRControl *new = [self focusedControl];
+            //            if (new==self.textEntry && old!=self.textEntry) {
+            //                [self hideSearchInterface:NO];
+            //                //TODO: should be improved, we want to focus clear action button
+            //                [self.textEntry setFocusToGlyphNamed:@"r"];
+            //            }
+            //            return r;
         }
         case kBREventRemoteActionSwipeRight:
         case kBREventRemoteActionRight:
         {
-//            BRControl *old = [self focusedControl];
-//            BOOL r = [super brEventAction:action];
-//            BRControl *new = [self focusedControl];
-//            if (old==self.textEntry && new!=self.textEntry) {
-//                [self hideSearchInterface:YES];
-//            }
-//            return r;
+            //            BRControl *old = [self focusedControl];
+            //            BOOL r = [super brEventAction:action];
+            //            BRControl *new = [self focusedControl];
+            //            if (old==self.textEntry && new!=self.textEntry) {
+            //                [self hideSearchInterface:YES];
+            //            }
+            //            return r;
         }
         case kBREventRemoteActionPlayPause:
             if (self.list.focused) {
@@ -291,13 +317,13 @@
             break;
 		case kBREventRemoteActionUp:
 		case kBREventRemoteActionHoldUp: {
-//            BRControl *old = [self focusedControl];
-//            BOOL r = [super brEventAction:action];
-//            BRControl *new = [self focusedControl];
-//            if (old==self.textEntry && new!=self.textEntry) {
-//                [self hideSearchInterface:YES];
-//            }
-//            return r;
+            //            BRControl *old = [self focusedControl];
+            //            BOOL r = [super brEventAction:action];
+            //            BRControl *new = [self focusedControl];
+            //            if (old==self.textEntry && new!=self.textEntry) {
+            //                [self hideSearchInterface:YES];
+            //            }
+            //            return r;
 			break;
         }
 		case kBREventRemoteActionDown:
@@ -309,7 +335,41 @@
 			}
 			break;
     }
+    DLog(@"calling super for event");
 	return [super brEventAction:action];
+}
+
+
+#pragma mark -
+#pragma mark Grid UI Methods
+- (void)refreshGrid {
+    [self.gridControl setProvider:[self gridProvider]];
+    [self.gridControl setProviderRequester:self.gridControl];
+}
+
+- (id)gridProvider {
+	NSSet *_set = [NSSet setWithObject:[BRMediaType movie]];
+	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType movie]];
+	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello2" predicate:_pred mediaTypes:_set];
+	
+	for (int i=0;i<[self.currentGridContent count];i++)
+	{
+		PlexMediaObject *pmo = [self.currentGridContent objectAtIndex:i];
+		[store addObject:pmo.previewAsset];
+	}
+#if LOCAL_DEBUG_ENABLED
+	DLog(@"getProviderForGrid - have assets, creating datastore and provider");
+#endif
+    
+    
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
+	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+	
+    BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
+																		  controlFactory:controlFactory];
+    [store release];
+	
+	return provider;
 }
 
 
@@ -330,16 +390,17 @@
 #endif
     
     [self.metadataTitleControl setTitleSubtext:[NSString stringWithFormat:@"%d Items", [self.currentGridContent count]]];
-    
     //free the passed data
     [data release];
+    
+    [self refreshGrid];
 }
 
 - (void)performRetrivalOfContentsForDirectoryWithData:(NSMutableDictionary *)data {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSString *gridContentQuery = [data objectForKey:kContentsForDirectoryQueryKey];
     PlexRequest* gridContentRequest = [data objectForKey:kContentsForDirectoryRequestKey];
-
+    
 #if LOCAL_DEBUG_ENABLED
     DLog(@"retrieving grid content with request [%@] and query [%@]", gridContentRequest, gridContentQuery);
 #endif
@@ -360,11 +421,11 @@
         [directory.containerType isEqualToString:@"Director"]) {
         //  /library/people/956/media
         [directoryContentsQuery appendFormat:@"/people/%@/media", [directory.attributes objectForKey:@"id"]];
-
-        } else if ([directory.containerType isEqualToString:@"Genre"]) {
-         // /library/sections/28/genre/174
-            [directoryContentsQuery appendFormat:@"/sections/%d/genre/%@", directory.sectionKey, [directory.attributes objectForKey:@"id"]];
-            
+        
+    } else if ([directory.containerType isEqualToString:@"Genre"]) {
+        // /library/sections/28/genre/174
+        [directoryContentsQuery appendFormat:@"/sections/%d/genre/%@", directory.sectionKey, [directory.attributes objectForKey:@"id"]];
+        
     } else {
         //invalid query
 #if LOCAL_DEBUG_ENABLED
@@ -409,6 +470,7 @@
     PlexMoreInfoMenuItem *menuItem = [self.menuItems objectAtIndex:item];
     PlexDirectory *directory = menuItem.directory;
     
+    [self newGrid];
     [self startRetrievalOfContentsForDirectory:directory];
     
     return self.scrollControl;
@@ -425,7 +487,6 @@
 #if LOCAL_DEBUG_ENABLED
     DLog(@"List menu item selected at row %ld: [%@]", selected, [self.menuItems objectAtIndex:selected]);
 #endif
-    PlexMoreInfoMenuItem *menuItem = [self.menuItems objectAtIndex:selected];
 }
 
 -(void)playPauseActionForRow:(long)row {
