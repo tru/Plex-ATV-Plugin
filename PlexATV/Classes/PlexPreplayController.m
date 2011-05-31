@@ -35,6 +35,7 @@
 #import <plex-oss/PlexMedia.h>
 #import "PlexMediaObject+Assets.h"
 #import "PlexPreviewAsset.h"
+#import "PlexMoreInfoController.h"
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
@@ -98,10 +99,11 @@ typedef enum {
 	if (currentSelectedIndex != newIndex) {
         //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
+        lastFocusedIndex = newIndex;
 		self._shelfControl.focusedIndex = newIndex;
 		self.selectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:currentSelectedIndex];
         //move the shelf if needed to show the new item
-        //[self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
+        [self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
         //refresh metadata, but don't touch the shelf
 		[self reload];
 	}
@@ -125,10 +127,24 @@ typedef enum {
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasExhumed];
+    [self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
 }
 
 - (void)wasBuried {
 	[super wasBuried];
+}
+
+- (void)controlWasActivated {    
+    if (moreInfoSelected) {
+        CATransition *transition = [CATransition animation];
+        transition.type = @"push";
+        transition.subtype = kCATransitionFromTop;
+        transition.duration = 0.75f;
+        [[[BRApplicationStackManager singleton] stack] setActions:[NSDictionary dictionaryWithObject:transition forKey:@"sublayers"]];
+        
+        moreInfoSelected = NO;
+    }
+    [super controlWasActivated];
 }
 
 
@@ -191,7 +207,6 @@ typedef enum {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"controller selected %@", ctrl);
 #endif
-    PlexAudioSubsController *subCtrl;
     
 	if ([ctrl isKindOfClass:[BRButtonControl class]]) {
         //one of the buttons have been pushed
@@ -202,16 +217,20 @@ typedef enum {
         
 		int buttonId = [buttonControl.identifier intValue];
 		switch (buttonId) {
-			case kPlayButton:
+			case kPlayButton: {
 				DLog(@"initiate movie playback");
                 [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
 				break;
-            case kMoreButton:
+            }
+            case kMoreButton: {
                 [listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
                 break;
-            case kAudioSubsButton:
-                subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaObject];
+            }
+            case kAudioSubsButton: {
+                PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaObject];
                 [[[BRApplicationStackManager singleton] stack] pushController:subCtrl];
+                [subCtrl release];
+            }
 			default:
 				break;
 		}
@@ -246,6 +265,30 @@ typedef enum {
 	if (shelfIsSelected) {
 		lastFocusedIndex = index;
     }
+}
+
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventOnButtonAtIndex:(int)index {
+#if LOCAL_DEBUG_ENABLED
+	DLog(@"play button on button at index [%d]", index);
+#endif
+    [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
+}
+
+-(void)controller:(SMFMoviePreviewController *)c playButtonEventInShelf:(BRMediaShelfControl *)shelfControl {
+    int selectedIndex = [shelfControl focusedIndex];
+    PlexMediaObject *shelfSelectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:selectedIndex];
+#if LOCAL_DEBUG_ENABLED
+	DLog(@"play button in shelf at index [%d]: %@", selectedIndex, shelfSelectedMediaObject);
+#endif
+    [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:shelfSelectedMediaObject];
+}
+
+-(void)controller:(SMFMoviePreviewController *)c downButtonEventInShelf:(BRMediaShelfControl *)shelfControl {
+    moreInfoSelected = YES;
+    PlexMediaContainer *moreInfoContainer = [self.selectedMediaObject loadDetails];
+    PlexMoreInfoController *moreInfoController = [[PlexMoreInfoController alloc] initWithMoreInfoContainer:moreInfoContainer];
+    [[self stack] pushController:moreInfoController];
+    [moreInfoController release];
 }
 
 
@@ -331,20 +374,14 @@ typedef enum {
         [flags addObject:[self.selectedMediaObject.previewAsset starRatingImage]];
     
     NSDictionary *mediaAttributes = self.selectedMediaObject.mediaResource.attributes;
-
+    
     NSArray *flagAttributes = [NSArray arrayWithObjects:PlexFlagTypeContentVideoResolution, PlexFlagTypeContentVideoCodec, PlexFlagTypeContentAudioCodec, PlexFlagTypeContentAudioChannels, nil];
     for (PlexFlagTypes attribute in flagAttributes) {
         if ([mediaAttributes valueForKey:attribute]) {
             PlexImage *flagImage = [self.selectedMediaObject.mediaContainer flagForType:attribute named:[mediaAttributes valueForKey:attribute]];
             [flags addObject:[BRImage imageWithURL:flagImage.imageURL]];
         }
-    }    
-    
-//	if ([self.selectedMediaObject.previewAsset isHD])
-//		[flags addObject:[[BRThemeInfo sharedTheme] hdPosterBadge]];
-//    
-//	if ([self.selectedMediaObject.previewAsset hasDolbyDigitalAudioTrack])
-//		[flags addObject:[[BRThemeInfo sharedTheme] dolbyDigitalBadge]];
+    }
     
 	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
 		[flags addObject:[[BRThemeInfo sharedTheme] ccBadge]];
@@ -371,26 +408,7 @@ typedef enum {
 }
 
 - (NSURL *)backgroundImageUrl {
-    NSURL* backgroundImageUrl = nil;
-    
-    NSString *artPath = nil;
-    
-    if ([self.selectedMediaObject.attributes valueForKey:@"art"]) {
-        //movie
-        artPath = [self.selectedMediaObject.attributes valueForKey:@"art"];
-    } else {
-        //tv show
-        artPath = [self.selectedMediaObject.mediaContainer.attributes valueForKey:@"art"];
-    }
-    
-    if (artPath) {
-		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",self.selectedMediaObject.request.base, artPath];
-        backgroundImageUrl = [self.selectedMediaObject.request pathForScaledImage:backgroundImagePath ofSize:self.frame.size];
-	}
-#if LOCAL_DEBUG_ENABLED
-    DLog(@"background image url [%@]", backgroundImageUrl);
-#endif
-	return backgroundImageUrl;
+	return [self.selectedMediaObject.previewAsset fanartUrl];
 }
 
 -(NSArray *)buttons {
@@ -427,6 +445,10 @@ typedef enum {
     
     
     return buttons;
+}
+
+-(NSString *)shelfTitle {
+    return self.relatedMediaContainer.name;
 }
 
 -(BRPhotoDataStoreProvider *)providerForShelf {

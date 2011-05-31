@@ -26,17 +26,18 @@
 @class PlexMediaObject;
 
 @interface PlexPlaybackController : BRController {
-    PlexMediaObject *pmo;
-    NSTimer* playProgressTimer;
     BOOL playbackCancelled;
     BOOL firstLaunch;
 }
+@property (retain) PlexMediaObject *mediaObject;
+@property (retain) NSTimer* playProgressTimer;
 
--(id)initWithPlexMediaObject:(PlexMediaObject*)mediaObject;
+-(id)initWithPlexMediaObject:(PlexMediaObject *)aMediaObject;
 -(void)startPlaying;
 -(void)playbackVideoWithOffset:(int)offset;
 -(void)movieFinished:(NSNotification*)event;
+-(void)playerStateChanged:(NSNotification*)event;
 -(void)playbackAudio;
-
+- (void)postProgress:(NSDictionary *)progressDict;
 - (void)showResumeDialog;
 @end

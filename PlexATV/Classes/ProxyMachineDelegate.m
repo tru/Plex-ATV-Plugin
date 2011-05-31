@@ -60,6 +60,13 @@
 	
 }
 
+-(void)removeAllDelegates{
+#if LOCAL_DEBUG_ENABLED
+	DLog(@"Removing all machine Delegates");
+#endif
+	[delegates removeAllObjects];
+}
+
 -(void)removeDelegate:(id<MachineManagerDelegate>)del{
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"Removed machine Delegate %@", del);

@@ -11,7 +11,7 @@
 
 @implementation Plex_SMFMoviePreviewController
 
-@dynamic datasource, flags;
+@dynamic datasource, delegate, flags;
 
 -(void)controlWasActivated
 {
@@ -22,6 +22,50 @@
     [super controlWasActivated];
 }
 
+
+-(BOOL)brEventAction:(BREvent *)action {
+    BRControl *c = [self focusedControl];
+    if ([[self stack] peekController]!=self)
+        return [super brEventAction:action];
+    int remoteAction = [action remoteAction];
+	if([c isKindOfClass:[SMFListDropShadowControl class]]) {
+		return [super brEventAction:action];
+	}
+	
+    if (remoteAction == kBREventRemoteActionPlayPause && 
+        self.delegate != nil && 
+        action.value == 1 && 
+        [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
+        [self.delegate respondsToSelector:@selector(controller:buttonSelectedAtIndex:)]) {
+        id selectedC = [self focusedControl];
+        for (int j=0;j<[_buttons count];j++) {
+            if([_buttons objectAtIndex:j]==selectedC) {
+                [self.delegate controller:self playButtonEventOnButtonAtIndex:j];
+                return YES;
+            }
+        }
+    }
+    if (remoteAction == kBREventRemoteActionPlayPause && 
+        self.delegate != nil && 
+        action.value == 1 && 
+        [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
+        [self.delegate respondsToSelector:@selector(controller:playButtonEventInShelf:)] &&
+        [c isKindOfClass:[BRMediaShelfControl class]]) {
+        
+        [self.delegate controller:self playButtonEventInShelf:(BRMediaShelfControl *)c];
+        return YES;
+    }
+    if((remoteAction == kBREventRemoteActionDown || remoteAction == kBREventRemoteActionHoldDown) &&
+       action.value == 1 && 
+       self.delegate != nil && 
+       [self focusedControl] == _shelfControl &&
+       [self.delegate respondsToSelector:@selector(controller:downButtonEventInShelf:)]) {
+        [self.delegate controller:self downButtonEventInShelf:_shelfControl];
+        return YES;
+    }
+    
+    return [super brEventAction:action];
+}
 
 -(void)reload {
     [super reload];
@@ -35,9 +79,9 @@
      */
     BRDividerControl *cdiv1 = [[BRDividerControl alloc] init];
     CGRect cdiv1Frame = CGRectMake(mtcf.origin.x, 
-								  348.f, 
-								  mtcf.size.width,
-								  masterFrame.size.height*(10.f/720.f));
+                                   348.f, 
+                                   mtcf.size.width,
+                                   masterFrame.size.height*(10.f/720.f));
     [cdiv1 setFrame:cdiv1Frame];
     [self addControl:cdiv1];
     [_hideList addObject:cdiv1];
@@ -67,7 +111,8 @@
     BRPanelControl *flagPanel = [[BRPanelControl alloc] init];
     flagPanel.panelMode = 0;
     flagPanel.horizontalSpacing = 10.f;
-    flagPanel.horizontalMargin = 10.f;
+    flagPanel.acceptsFocus = NO;
+    //flagPanel.horizontalMargin = 10.f;
     flagPanel.frame = CGRectMake(cdiv1Frame.origin.x, 
                                  CGRectGetMaxY(cdiv1Frame), 
                                  cdiv1Frame.size.width, 
@@ -82,15 +127,12 @@
             float scalingRatio = maxHeight/flagSize.height;
             flagSize = CGSizeMake(flagSize.width*scalingRatio, maxHeight);
             image = [flagImage croppedImageForSize:flagSize];
-            
-            DLog(@"scaling");
         } else {
             image = flagImage;
         }
         
         BRImageControl *imageControl = [[BRImageControl alloc] init];
         imageControl.image = image;
-        DLog(@"frame: [%@]", NSStringFromCGSize(image.pixelBounds));
         
         [flagPanel addControl:imageControl];
         [imageControl release];

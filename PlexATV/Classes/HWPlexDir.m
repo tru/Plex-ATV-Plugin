@@ -152,15 +152,6 @@
 			}
 			break;
 		}
-        case kBREventRemoteActionMenuHold:
-			if([event value] == 1) {
-                long selected = [self getSelection];
-                BOOL handled = [self showAudioAndSubStreamChooserForRow:selected];
-                if (handled) {
-                    return handled;
-                }
-            }
-            break;
 		case kBREventRemoteActionSwipeLeft:
 		case kBREventRemoteActionLeft:
             if([event value] == 1) {
@@ -324,29 +315,10 @@
 
 #pragma mark -
 #pragma mark Actions
-- (BOOL)showAudioAndSubStreamChooserForRow:(long)row {
-    BOOL handled = NO;
-    //get the currently selected row
-	PlexMediaObject* pmo = [self.items objectAtIndex:row];
-	
-	if (pmo.hasMedia 
-        || [@"Video" isEqualToString:pmo.containerType]
-        || [PlexMediaObjectTypeShow isEqualToString:pmo.type]) {
-        
-        PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:pmo];
-        [[self stack] pushController:subCtrl];
-        [subCtrl release];
-        handled = YES;
-    }
-    return handled;
-}
-
 - (void)showModifyViewedStatusViewForRow:(long)row {
     //get the currently selected row
 	PlexMediaObject* pmo = [self.items objectAtIndex:row];
 	NSString *plexMediaObjectType = [pmo.attributes valueForKey:@"type"];
-	
-	DLog(@"HERE: %@", plexMediaObjectType);
 	
 	if (pmo.hasMedia 
         || [@"Video" isEqualToString:pmo.containerType]

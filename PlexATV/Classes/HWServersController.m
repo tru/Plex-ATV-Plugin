@@ -28,9 +28,11 @@
 		
 		_machines = [[NSMutableArray alloc] init];
 		
-		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"serverName" ascending:YES];
-		_machineSortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-		[sortDescriptor release];
+		NSSortDescriptor *firstSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"usersServerName" ascending:YES];
+		NSSortDescriptor *secondSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"serverName" ascending:YES];
+		_machineSortDescriptors = [[NSArray alloc] initWithObjects:firstSortDescriptor, secondSortDescriptor, nil];
+		[firstSortDescriptor release];
+        [secondSortDescriptor release];
 		
 		[[self list] setDatasource:self];
  		[[self list] addDividerAtIndex:1 withLabel:@"List of Servers"];
@@ -65,6 +67,7 @@
 
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
+    [[self list] reload];
 	[super wasExhumed];
 }
 
@@ -91,7 +94,7 @@
 #pragma mark -
 #pragma mark Menu Controller Delegate Methods
 - (id)previewControlForItem:(long)item {
-	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWServersController class]] pathForResource:@"PlexLogo" ofType:@"png"]];
+	BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[HWServersController class]] pathForResource:@"PmsLogo" ofType:@"png"]];
 	BRImageAndSyncingPreviewController *obj = [[BRImageAndSyncingPreviewController alloc] init];
 	[obj setImage:theImage];
 	return [obj autorelease];

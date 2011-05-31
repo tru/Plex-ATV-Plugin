@@ -11,6 +11,7 @@
 #import "PlexMediaObject+Assets.h"
 #import "PlexNavigationController.h"
 #import "PlexThemeMusicPlayer.h"
+#import "PlexControlFactory.h"
 
 #define LOCAL_DEBUG_ENABLED 0
 
@@ -170,14 +171,12 @@
 		[store addObject:season.previewAsset];
 	}
 	
-	SMFControlFactory *controlFactory = [SMFControlFactory posterControlFactory];
-	controlFactory.favorProxy = YES;
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
 	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
-#if LOCAL_DEBUG_ENABLED
-	DLog(@"store size: %ld",[store count]);
-#endif
-	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
-	[store release];
+	
+    BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
+																		  controlFactory:controlFactory];
+    [store release];
 	return provider; 
 }
 

@@ -81,7 +81,9 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 	[super wasBuried];
 }
 
-- (void)controlWasActivated {}
+- (void)controlWasActivated {
+    [super controlWasActivated];
+}
 
 #pragma mark -
 #pragma mark Navigation Methods

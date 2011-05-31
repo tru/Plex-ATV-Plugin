@@ -29,11 +29,13 @@
 #import <plex-oss/PlexMediaStream.h>
 #import "Plex_SMFMoviePreviewController.h"
 
-@interface PlexPreplayController : Plex_SMFMoviePreviewController<Plex_SMFMoviePreviewControllerDatasource, SMFMoviePreviewControllerDelegate, SMFListDropShadowDatasource, SMFListDropShadowDelegate> {
+@interface PlexPreplayController : Plex_SMFMoviePreviewController<Plex_SMFMoviePreviewControllerDatasource, Plex_SMFMoviePreviewControllerDelegate, SMFListDropShadowDatasource, SMFListDropShadowDelegate> {
 	BOOL shelfIsSelected;
 	int currentSelectedIndex;
 	int lastFocusedIndex;
  	SMFListDropShadowControl *listDropShadowControl; //popup
+    
+    BOOL moreInfoSelected;
 }
 @property (retain) PlexMediaContainer *relatedMediaContainer;
 @property (retain) PlexMediaObject *selectedMediaObject;

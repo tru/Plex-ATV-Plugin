@@ -17,4 +17,5 @@
 
 -(void)registerDelegate:(id<MachineManagerDelegate>)del;
 -(void)removeDelegate:(id<MachineManagerDelegate>)del;
+-(void)removeAllDelegates;
 @end

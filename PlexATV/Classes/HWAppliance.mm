@@ -1,18 +1,13 @@
+#define LOCAL_DEBUG_ENABLED 1
+
 #import "HWAppliance.h"
-#import "HWPlexDir.h"
-#import "HWBasicMenu.h"
-#import "HWSettingsController.h"
 #import <Foundation/Foundation.h>
 #import <plex-oss/PlexRequest + Security.h>
 #import <plex-oss/MachineManager.h>
-#import <plex-oss/PlexMediaContainer.h>
-#import "PlexMediaObject+Assets.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
 #import "PlexNavigationController.h"
 #import "PlexTopShelfController.h"
-
-#define LOCAL_DEBUG_ENABLED 1
 
 #define SERVER_LIST_ID @"hwServerList"
 #define SETTINGS_ID @"hwSettings"
@@ -39,7 +34,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 
 
 - (id)init {
-	if((self = [super init]) != nil) {
+    self = [super init];
+	if(self) {
 		[PlexPrefs setBaseClassForPlexPrefs:[HWUserDefaults class]];
 		[UIDevice preloadCurrentForMacros];
 		//#warning Please check elan.plexapp.com/2010/12/24/happy-holidays-from-plex/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+osxbmc+%28Plex%29 to get a set of transcoder keys
@@ -49,7 +45,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         //tell PMS what kind of codecs and media we can play
         [HWUserDefaults setupPlexClient];
 		
-		DLog(@"==================== plex client starting up ====================");
+		DLog(@"==================== plex client starting up - init [%@] ====================", self);
         
 		self.topShelfController = [[PlexTopShelfController alloc] init];
 		self.currentApplianceCategories = [[NSMutableArray alloc] init];
@@ -57,11 +53,17 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		
 		self.otherServersApplianceCategory = [SERVER_LIST_CAT retain];
 		self.settingsApplianceCategory = [SETTINGS_CAT retain];
-		
-		[[ProxyMachineDelegate shared] registerDelegate:self];
-		[[MachineManager sharedMachineManager] startAutoDetection];
-		[[MachineManager sharedMachineManager] startMonitoringMachineState];
-	} return self;
+        
+        
+        [[ProxyMachineDelegate shared] removeAllDelegates];
+        [[ProxyMachineDelegate shared] registerDelegate:self];
+        if (![[MachineManager sharedMachineManager] autoDetectionActive]) {
+            [[MachineManager sharedMachineManager] startAutoDetection];
+            [[MachineManager sharedMachineManager] startMonitoringMachineState];
+            [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
+        }
+	} 
+    return self;
 }
 
 - (id)controllerForIdentifier:(id)identifier args:(id)args {
