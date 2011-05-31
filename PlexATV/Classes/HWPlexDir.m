@@ -320,8 +320,6 @@
 	PlexMediaObject* pmo = [self.items objectAtIndex:row];
 	NSString *plexMediaObjectType = [pmo.attributes valueForKey:@"type"];
 	
-	DLog(@"HERE: %@", plexMediaObjectType);
-	
 	if (pmo.hasMedia 
         || [@"Video" isEqualToString:pmo.containerType]
         || [@"show" isEqualToString:plexMediaObjectType]
