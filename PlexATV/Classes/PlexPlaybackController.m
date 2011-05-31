@@ -236,32 +236,55 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"presented audio player");
 }
 
+#define kProgressCurrentTime @"kProgressCurrentTime"
+#define kProgressTotalTime @"kProgressTotalTime"
+#define kProgressSeenState @"kProgressSeenState"
+- (void)postProgress:(NSDictionary *)progressDict {
+    if ([NSThread isMainThread]) {
+        [self performSelectorInBackground:@selector(postProgress:) withObject:progressDict];        
+    } else {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        NSNumber *currentNumber = [progressDict objectForKey:kProgressCurrentTime];
+        NSNumber *totalNumber = [progressDict objectForKey:kProgressTotalTime];
+        NSString *seenState = [progressDict objectForKey:kProgressSeenState];
+        
+        CGFloat current = [currentNumber floatValue];
+        CGFloat total = [totalNumber floatValue];
+        
+        // Only report progress after a certain number of seconds have been watched
+        // and the movie is less than a certain percentage left
+        if (current > kStartTrackingProgressTime
+            && kEndTrackingProgressPercentageCompleted > current/total) {
+            DLog(@"posting progress [%f]", current);
+            [self.mediaObject postMediaProgress:current];
+        }
+        
+        //if not already marked as seen, and when an item has less than a certain percentage left
+        if ( [self.mediaObject seenState] != PlexMediaObjectSeenStateSeen 
+            && kEndTrackingProgressPercentageCompleted < current/total) {
+            DLog(@"more than %f completed, mark as watched", kEndTrackingProgressPercentageCompleted);
+            [self.mediaObject markSeen];
+        }
+        
+        DLog(@"current [%f] out of a total [%f] (%f2 percentage). watched status [%@]", current, total, (current/total)*100.f, seenState);
+        
+        [pool release];
+    }
+}
+
 -(void)reportProgress:(NSTimer*)tm {    
 	BRMediaPlayer *playa = [[BRMediaPlayerManager singleton] activePlayer];
-    
-    //TODO: keep investigating updating buffer progress
+        //TODO: keep investigating updating buffer progress
     //playa->_aggregateBufferedRange = [NSMakeRange(0, playa.elapsedTime+30);
     
 	switch (playa.playerState) {
 		case kBRMediaPlayerStatePlaying: {
-			//report time back to PMS so we can continue in the right spot
-			float current = playa.elapsedTime;
-			float total = [[[self.mediaObject mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
+			//report time back to PMS on a background thread so we can continue in the right spot
+			CGFloat current = playa.elapsedTime;
+			CGFloat total = [[[self.mediaObject mediaResource] attributes] integerForKey:@"duration"]/1000.0f;
             
-            // Only report progress after a certain number of seconds have been watched
-            // and the movie is less than a certain percentage left
-            if (current > kStartTrackingProgressTime
-                && kEndTrackingProgressPercentageCompleted > current/total) {
-                DLog(@"posting progress [%f]", current);
-				[self.mediaObject postMediaProgress:playa.elapsedTime];
-			}
-            
-            //if not already marked as seen, and when an item has less than a certain percentage left
-            if ( [self.mediaObject seenState] != PlexMediaObjectSeenStateSeen 
-                && kEndTrackingProgressPercentageCompleted < current/total) {
-                DLog(@"more than %f completed, mark as watched", kEndTrackingProgressPercentageCompleted);
-                [self.mediaObject markSeen];
-            }
+            NSNumber *currentNumber = [NSNumber numberWithFloat:current];
+            NSNumber *totalNumber = [NSNumber numberWithFloat:total];
             
             NSString *seenState;
             if ([self.mediaObject seenState] == PlexMediaObjectSeenStateUnseen) {
@@ -273,8 +296,9 @@ PlexMediaProvider* __provider = nil;
             } else {
                 seenState = @"unknown";
             }
-            DLog(@"current [%f] out of a total [%f] (%f2 percentage). watched status [%@]", current, total, (current/total)*100.f, seenState);
             
+            NSDictionary *progressDictionary = [NSDictionary dictionaryWithObjectsAndKeys:totalNumber, kProgressTotalTime, currentNumber, kProgressCurrentTime, seenState, kProgressSeenState, nil];
+            [self postProgress:progressDictionary];            
 			break;
 		}
 		case kBRMediaPlayerStatePaused:

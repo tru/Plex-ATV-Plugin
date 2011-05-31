@@ -38,6 +38,6 @@
 -(void)movieFinished:(NSNotification*)event;
 -(void)playerStateChanged:(NSNotification*)event;
 -(void)playbackAudio;
-
+- (void)postProgress:(NSDictionary *)progressDict;
 - (void)showResumeDialog;
 @end
