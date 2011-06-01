@@ -139,7 +139,8 @@ typedef enum {
         CATransition *transition = [CATransition animation];
         transition.type = @"push";
         transition.subtype = kCATransitionFromTop;
-        transition.duration = 0.75f;
+        transition.duration = 0.4f;
+        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
         [[[BRApplicationStackManager singleton] stack] setActions:[NSDictionary dictionaryWithObject:transition forKey:@"sublayers"]];
         
         moreInfoSelected = NO;

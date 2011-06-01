@@ -9,7 +9,7 @@
 @class PlexMediaContainer, PlexMediaObject, PlexDirectory;
 
 @interface PlexMoreInfoController : BRMediaMenuController <BRMenuListItemProvider> {
-    
+    int firstFocusableItemIndex;
 }
 @property (retain) BRScrollControl *scrollControl;
 @property (retain) BRCursorControl *cursorControl;
