@@ -29,6 +29,9 @@
 #define ScopeBarOtherFiltersItemsIndex 2
 
 
+//additional keyboard commands
+#define kBREventRemoteActionPlayPause2 16
+
 typedef enum {
 	kATVPlexViewTypeList = 0,
 	kATVPlexViewTypeGrid,

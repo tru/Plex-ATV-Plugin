@@ -136,7 +136,7 @@
 -(BOOL)brEventAction:(BREvent *)event {
 	int remoteAction = [event remoteAction];
 #if LOCAL_DEBUG_ENABLED
-    DLog(@"remoteaction [%d]", remoteAction);
+    DLog(@"remoteaction [%d] with event value [%d]", remoteAction, [event value]);
 #endif
 	if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
@@ -167,6 +167,7 @@
             }
 			break;
 		case kBREventRemoteActionPlayPause:
+        case kBREventRemoteActionPlayPause2:
 			if([event value] == 1) {
 				[self playPauseActionForRow:[self getSelection]];
             }
