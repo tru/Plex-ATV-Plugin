@@ -68,20 +68,24 @@
 #pragma mark -
 #pragma mark User Defaults Methods
 
-+ (NSInteger)lastTabBarSelectionForViewGroup:(NSString *)viewGroup {
-    NSInteger lastTabBarSelection = 0;
++ (NSInteger)lastTabBarSelectionForMachineID:(NSString *)machineID section:(NSInteger)sectionKey viewGroup:(NSString *)viewGroup {
+    NSInteger lastTabBarSelection = 0; //default
     NSDictionary *selections = [[[self class] preferences] objectForKey:PersistedTabBarLastSelections];
-    if ([selections valueForKey:viewGroup] != nil) {
-        lastTabBarSelection = [[selections objectForKey:viewGroup] intValue];
+    
+    NSString *key = [NSString stringWithFormat:@"%@-%d-%@", machineID, sectionKey, viewGroup];
+    if ([selections valueForKey:key] != nil) {
+        lastTabBarSelection = [[selections objectForKey:key] intValue];
     }
     return lastTabBarSelection;
 }
 
-+ (void)setLastTabBarSelection:(NSInteger)selectedIndex forViewGroup:(NSString *)viewGroup {
++ (void)setLastTabBarSelection:(NSInteger)selectedIndex forMachineID:(NSString *)machineID section:(NSInteger)sectionKey viewGroup:(NSString *)viewGroup {
     NSDictionary *oldSelections = [[[self class] preferences] objectForKey:PersistedTabBarLastSelections];
     NSMutableDictionary *selections = [NSMutableDictionary dictionaryWithDictionary:oldSelections];
     
-    [selections setObject:[NSNumber numberWithInteger:selectedIndex] forKey:viewGroup];
+    NSString *key = [NSString stringWithFormat:@"%@-%d-%@", machineID, sectionKey, viewGroup];
+    [selections setObject:[NSNumber numberWithInteger:selectedIndex] forKey:key];
+    
     [[[self class] preferences] setObject:selections forKey:PersistedTabBarLastSelections];
 }
 
