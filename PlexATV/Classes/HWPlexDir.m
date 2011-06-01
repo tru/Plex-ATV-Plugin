@@ -72,7 +72,10 @@
         [self.tabBar setAcceptsFocus:NO];
         [self.tabBar setTabControlDelegate:self];
         [self addControl:self.tabBar];
-        [self.tabBar selectTabItemAtIndex:1];
+        
+        //find last selected tab item [defaulted to 0]
+        NSInteger lastTabBarSelection = [HWUserDefaults lastTabBarSelectionForViewGroup:self.rootContainer.viewGroup];
+        [self.tabBar selectTabItemAtIndex:lastTabBarSelection];
     }
 	return self;
 }
@@ -102,7 +105,7 @@
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
     
-    //refresh scope bar in case any items have changed
+    //refresh tab bar in case any items have changed
     [self reselectCurrentTabBarItem];
 	[super wasExhumed];
 }
@@ -201,21 +204,27 @@
 }
 
 - (void)tabControl:(id)control didSelectTabItem:(id)item {
-    //change scope
-    NSInteger newScopeSelection = [self.tabBar selectedTabItemIndex];
+    //change tab
+    NSInteger newTabSelection = [self.tabBar selectedTabItemIndex];
+    
+    //persist the selection for this section type
+    NSString *viewGroup = self.rootContainer.viewGroup;
+    
     
     NSArray *allItems = self.rootContainer.directories;    
-    switch (newScopeSelection) {
-        case ScopeBarCurrentItemsIndex: {
+    switch (newTabSelection) {
+        case TabBarCurrentItemsIndex: {
+            [HWUserDefaults setLastTabBarSelection:TabBarCurrentItemsIndex forViewGroup:viewGroup];
             self.items = allItems;
             break;
         }
-        case ScopeBarUnwatchedItemsIndex: {
+        case TabBarUnwatchedItemsIndex: {
+            [HWUserDefaults setLastTabBarSelection:TabBarUnwatchedItemsIndex forViewGroup:viewGroup];
             NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
             self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
             break;
         }
-        case ScopeBarOtherFiltersItemsIndex: {
+        case TabBarOtherFiltersItemsIndex: {
             PlexMediaContainer *filters = (PlexMediaContainer *)[item identifier];
             self.items = filters.directories;
             break;
@@ -265,7 +274,7 @@
     //we force set the hash so two movies with same title don't end up with the same preview
     [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
     
-    if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
+    if ([tabBar selectedTabItemIndex] == TabBarOtherFiltersItemsIndex) {
         //parade
 #if LOCAL_DEBUG_ENABLED
         DLog(@"using parade preview for [%@]", pmo);
