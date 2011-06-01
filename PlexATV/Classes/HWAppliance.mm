@@ -66,10 +66,13 @@ NSString * const MachineNameKey = @"PlexMachineName";
 @synthesize topShelfController = _topShelfController;
 @synthesize applianceCat = _applianceCategories;
 
++ (void)initialize {
+    [PlexPrefs setBaseClassForPlexPrefs:[HWUserDefaults class]];
+}
+
 - (id)init {
     self = [super init];
 	if(self) {
-		[PlexPrefs setBaseClassForPlexPrefs:[HWUserDefaults class]];
 		[UIDevice preloadCurrentForMacros];
 		//#warning Please check elan.plexapp.com/2010/12/24/happy-holidays-from-plex/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+osxbmc+%28Plex%29 to get a set of transcoder keys
 		[PlexRequest setStreamingKey:@"k3U6GLkZOoNIoSgjDshPErvqMIFdE0xMTx8kgsrhnC0=" forPublicKey:@"KQMIY6GATPC63AIMC4R2"];
