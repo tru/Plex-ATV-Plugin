@@ -14,6 +14,9 @@
 + (NSDictionary *)defaultValues;
 + (NSArray *)plexStreamingQualities;
 
++ (NSInteger)lastTabBarSelectionForViewGroup:(NSString *)viewGroup;
++ (void)setLastTabBarSelection:(NSInteger)selectedIndex forViewGroup:(NSString *)viewGroup;
+
 //plex prefs methods
 -(void)syncSettings;
 

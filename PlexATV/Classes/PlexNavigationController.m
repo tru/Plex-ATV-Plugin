@@ -264,14 +264,14 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
             currentlySelectedFilterName = @"All";
         }
         [i setLabel:currentlySelectedFilterName];
-        [i setIdentifier:ScopeBarCurrentItemsIdentifier];
+        [i setIdentifier:TabBarCurrentItemsIdentifier];
         [tabBar addTabItem:i];
         [i release];
         
         //this one is always added, though perhaps needs to not be included in the music views?
         i = [[BRTabControlItem alloc] init];
         [i setLabel:@"Unwatched"];
-        [i setIdentifier:ScopeBarUnwatchedItemsIdentifier];
+        [i setIdentifier:TabBarUnwatchedItemsIdentifier];
         [tabBar addTabItem:i];
         [i release];
         
