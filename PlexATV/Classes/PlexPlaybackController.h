@@ -27,7 +27,6 @@
 
 @interface PlexPlaybackController : BRController {
     BOOL playbackCancelled;
-    BOOL firstLaunch;
 }
 @property (retain) PlexMediaObject *mediaObject;
 @property (retain) NSTimer* playProgressTimer;

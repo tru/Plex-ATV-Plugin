@@ -32,7 +32,7 @@
 		return [super brEventAction:action];
 	}
 	
-    if (remoteAction == kBREventRemoteActionPlayPause && 
+    if ((remoteAction == kBREventRemoteActionPlayPause || remoteAction == kBREventRemoteActionPlayPause2) && 
         self.delegate != nil && 
         action.value == 1 && 
         [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
@@ -45,7 +45,7 @@
             }
         }
     }
-    if (remoteAction == kBREventRemoteActionPlayPause && 
+    if ((remoteAction == kBREventRemoteActionPlayPause || remoteAction == kBREventRemoteActionPlayPause2) && 
         self.delegate != nil && 
         action.value == 1 && 
         [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&

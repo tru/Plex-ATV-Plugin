@@ -80,57 +80,6 @@
 	[super wasBuried];
 }
 
-
-//handle custom event
--(BOOL)brEventAction:(BREvent *)event
-{
-	int remoteAction = [event remoteAction];
-	if ([(BRControllerStack *)[self stack] peekController] != self)
-		remoteAction = 0;
-	
-	int itemCount = [[(BRListControl *)[self list] datasource] itemCount];
-	switch (remoteAction)
-	{
-		case kBREventRemoteActionSelectHold: {
-            return YES;
-			break;
-		}
-		case kBREventRemoteActionSwipeLeft:
-		case kBREventRemoteActionLeft:
-			return YES;
-			break;
-		case kBREventRemoteActionSwipeRight:
-		case kBREventRemoteActionRight:
-			return YES;
-			break;
-		case kBREventRemoteActionPlayPause:
-			DLog(@"play/pause event");
-			if([event value] == 1)
-				[self playPauseActionForRow:[self getSelection]];
-			
-			
-			return YES;
-			break;
-		case kBREventRemoteActionUp:
-		case kBREventRemoteActionHoldUp:
-			if([self getSelection] == 0 && [event value] == 1)
-			{
-				[self setSelection:itemCount-1];
-				return YES;
-			}
-			break;
-		case kBREventRemoteActionDown:
-		case kBREventRemoteActionHoldDown:
-			if([self getSelection] == itemCount-1 && [event value] == 1)
-			{
-				[self setSelection:0];
-				return YES;
-			}
-			break;
-	}
-	return [super brEventAction:event];
-}
-
 - (id)previewControlForItem:(long)item {
 	PlexMediaObject* pmo = [rootContainer.directories objectAtIndex:item];
 	return pmo.previewControl;
