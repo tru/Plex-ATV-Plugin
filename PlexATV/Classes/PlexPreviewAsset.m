@@ -134,6 +134,7 @@
 - (void)cleanUpPlaybackContext {}
 
 - (BOOL)closedCaptioned {
+    //TODO: return correct value
 	return NO;
 }
 
@@ -197,7 +198,7 @@
 }
 
 - (BOOL)dolbyDigital {
-  DLog();
+    //TODO: return correct value
 	return YES;
 }
 
@@ -235,9 +236,7 @@
 }
 
 - (BOOL)hasCoverArt {
-	if (pmo.art || pmo.thumb)
-		return YES;	
-	return NO;
+    return pmo.art.hasImage || pmo.thumb.hasImage;
 }
 
 - (BOOL)hasVideoContent {
@@ -245,7 +244,9 @@
 }
 
 - (id)imageProxy {
-	return [BRURLImageProxy proxyWithURL:self.coverArtNSUrl];
+    BRURLImageProxy *imageProxy = [BRURLImageProxy proxyWithURL:self.coverArtNSUrl];
+    //imageProxy.writeToDisk = YES;
+	return imageProxy;
 }
 
 - (id)imageProxyWithBookMarkTimeInMS:(unsigned int)fp8 {
@@ -543,8 +544,6 @@
         image = pmo.art;
     }
 	image.maxImageSize = CGSizeMake(512, 512);
-    
-    DLog(@"Image URL: [%@]", image.imageURL);
     return image.imageURL;
 }
 
