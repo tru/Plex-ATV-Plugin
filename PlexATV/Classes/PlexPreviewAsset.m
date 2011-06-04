@@ -28,6 +28,7 @@
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/Machine.h>
+#import <plex-oss/PlexImage.h>
 #import <ambertation-plex/Ambertation.h>
 
 @interface BRThemeInfo (PlexExtentions)
@@ -153,11 +154,11 @@
 }
 
 - (id)coverArt {
-  return [BRImage imageWithURL:[self.imageProxy url]];
+  return [BRImage imageWithURL:self.coverArtNSUrl];
 }
 
 - (NSString *)coverArtURL {
-    return [[self.imageProxy url] description];
+    return [self.coverArtNSUrl description];
 }
 
 - (id)dateAcquired {
@@ -244,20 +245,7 @@
 }
 
 - (id)imageProxy {
-	NSString *thumbURL = nil;
-	
-	if ([pmo.attributes valueForKey:@"thumb"] != nil){
-		thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"thumb"]];
-	}
-	else if ([pmo.attributes valueForKey:@"art"] != nil) {
-		thumbURL = [NSString stringWithFormat:@"%@%@",pmo.request.base, [pmo.attributes valueForKey:@"art"]];
-	}
-	
-	NSURL* turl = [pmo.request pathForScaledImage:thumbURL ofSize:CGSizeMake(512, 512)];
-	BRURLImageProxy *imageProxy = [BRURLImageProxy proxyWithURL:turl];
-  //[imageProxy setDefaultImage:[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage]];
-    //DLog(@"imageProxy_defaultImage: %@",[imageProxy defaultImage]);
-	return imageProxy;
+	return [BRURLImageProxy proxyWithURL:self.coverArtNSUrl];
 }
 
 - (id)imageProxyWithBookMarkTimeInMS:(unsigned int)fp8 {
@@ -546,6 +534,20 @@
 
 #pragma mark -
 #pragma mark Additional Metadata Methods
+- (NSURL *)coverArtNSUrl {
+    PlexImage *image;
+	
+    if (pmo.thumb.hasImage) {
+        image = pmo.thumb;
+    } else if (pmo.art.hasImage) {
+        image = pmo.art;
+    }
+	image.maxImageSize = CGSizeMake(512, 512);
+    
+    DLog(@"Image URL: [%@]", image.imageURL);
+    return image.imageURL;
+}
+
 - (NSURL *)fanartUrl {
     NSURL* fanartUrl = nil;
     
