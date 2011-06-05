@@ -245,7 +245,10 @@
 }
 
 - (id)imageProxy {
-    BRURLImageProxy *aImageProxy = [BRURLImageProxy proxyWithURL:self.coverArtRealURL];
+    NSURLRequest *request = [pmo.request urlRequestWithAuthenticationHeadersForURL:self.coverArtRealURL];
+    
+    NSDictionary *headerFields = [request allHTTPHeaderFields];
+    BRURLImageProxy *aImageProxy = [BRURLImageProxy proxyWithURL:[request URL] headerFields:headerFields];
     //aImageProxy.writeToDisk = YES;
 	return aImageProxy;
 }
