@@ -1,0 +1,126 @@
+copyrightAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0xae1c020> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.05 0.05 0.05 1 )",BRTextAlignmentKey:0,BRFontPointSize:10,BRFontName:"HelveticaNeue"}
+
+
+dividerLabelAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:20,BRFontName:".HelveticaNeueATV"}
+
+
+errorFailureReasonAttributes
+{BRLineBreakModeKey:0,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:39,BRFontName:".HelveticaNeueATV"}
+
+
+errorSuggestionAttributes
+{BRLineBreakModeKey:0,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:20,BRFontName:".HelveticaNeueATV"}
+
+
+labelTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:28,BRFontName:".HelveticaNeueATV"}
+
+
+menuItemBoldTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:23,BRFontName:"HelveticaNeue-Bold"}
+
+
+menuItemSmallTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:1,BRFontPointSize:20,BRFontName:".HelveticaNeueATV"}
+
+
+menuItemTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:27,BRFontName:".HelveticaNeueATV"}
+
+
+menuTitleSubtextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:23,BRFontName:".HelveticaNeueATV"}
+
+
+menuTitleTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:39,BRFontName:".HelveticaNeueATV"}
+
+
+metadataLabelAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x34d0f90> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.4 0.4 0.4 1 )",BRTextAlignmentKey:1,BRFontPointSize:19,BRFontName:"HelveticaNeue-Bold"}
+
+
+metadataLineAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x9687b70> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.73 0.73 0.73 1 )",BRTextAlignmentKey:0,BRFontPointSize:19,BRFontName:".HelveticaNeueATV"}
+
+
+metadataNumReviewsAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x96a4880> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.4 0.4 0.4 1 )",BRTextAlignmentKey:0,BRFontPointSize:18,BRFontName:".HelveticaNeueATV"}
+
+
+metadataOrangeLineAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x96a2df0> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.792 0.439 0.196 1 )",BRTextAlignmentKey:0,BRFontPointSize:19,BRFontName:".HelveticaNeueATV"}
+
+
+metadataSummaryFieldAttributes
+{BRLineBreakModeKey:0,CTForegroundColor:"<CGColor 0x96a69a0> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.73 0.73 0.73 1 )",BRTextAlignmentKey:3,BRFontPointSize:19,BRFontName:".HelveticaNeueATV"}
+
+
+metadataTitleAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:21,BRFontName:"HelveticaNeue-Bold"}
+
+
+metadataTitleSubtextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x96e3610> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.18 0.18 0.18 1 )",BRTextAlignmentKey:0,BRFontPointSize:17,BRFontName:".HelveticaNeueATV"}
+
+
+movieMetadataLabelAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x4e4b90> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.5 0.5 0.5 1 )",BRTextAlignmentKey:0,BRFontPointSize:19,BRFontName:"HelveticaNeue-Bold"}
+
+
+pairingPINTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:94,BRFontName:"HelveticaNeue"}
+
+
+promptCenteredTextAttributes
+{BRLineBreakModeKey:0,CTForegroundColor:"<CGColor 0x96bdd60> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.9 0.9 0.9 1 )",BRTextAlignmentKey:2,BRFontPointSize:21,BRFontName:".HelveticaNeueATV"}
+
+
+promptTextAttributes
+{BRLineBreakModeKey:0,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:20,BRFontName:"HelveticaNeue"}
+
+
+settingsItemSmallTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:1,BRFontPointSize:20,BRFontName:".HelveticaNeueATV"}
+
+
+smallHeightListDividerLabelAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x4e4b90> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.5 0.5 0.5 1 )",BRTextAlignmentKey:0,BRFontPointSize:20,BRFontName:".HelveticaNeueATV"}
+
+
+smallHeightListItemAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0xae2d700> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.89 0.89 0.89 1 )",BRTextAlignmentKey:0,BRFontPointSize:25,BRFontName:".HelveticaNeueATV"}
+
+
+smallMenuTitleTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:36,BRFontName:".HelveticaNeueATV"}
+
+
+smallTextAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:36,BRFontName:".HelveticaNeueATV"}
+
+
+syncProgressMainAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:20,BRFontName:".HelveticaNeueATV"}
+
+
+syncProgressSecondaryAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:18,BRFontName:"HelveticaNeue"}
+
+
+textEntryInputFieldAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:28,BRFontName:".HelveticaNeueATV"}
+
+
+trackInfoPrimaryAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:0,BRFontPointSize:20,BRFontName:".HelveticaNeueATV"}
+
+
+trackInfoSecondaryAttributes
+{BRLineBreakModeKey:4,CTForegroundColor:"<CGColor 0xae76720> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 0.68 0.68 0.68 1 )",BRTextAlignmentKey:0,BRFontPointSize:18,BRFontName:"HelveticaNeue"}
+
+
+waitSpinnerPromptAttributes
+{BRLineBreakModeKey:0,CTForegroundColor:"<CGColor 0x3430e30> [<CGColorSpace 0x41be90> (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; ICCProfile(RGB))] ( 1 1 1 1 )",BRTextAlignmentKey:2,BRFontPointSize:39,BRFontName:".HelveticaNeueATV"}

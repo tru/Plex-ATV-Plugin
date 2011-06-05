@@ -70,6 +70,7 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"deallocing player controller for %@", self.mediaObject.name);
     
 	self.mediaObject = nil;
+    [self.playProgressTimer invalidate];
     self.playProgressTimer = nil;
 	[super dealloc];
 }

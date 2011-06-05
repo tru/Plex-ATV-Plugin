@@ -39,7 +39,7 @@
 -(BRControl *)controlForImageProxy:(BRURLImageProxy *)imageProxy title:(NSString *)title {
         BRPosterControl *returnObj = [[BRPosterControl alloc] init];
         returnObj.posterStyle = 1;
-        returnObj.title = [[NSAttributedString alloc]initWithString:title attributes:[[BRThemeInfo sharedTheme] menuItemSmallTextAttributes]];
+        returnObj.title = [[NSAttributedString alloc]initWithString:title attributes:[[BRThemeInfo sharedTheme] menuTitleSubtextAttributes]];
         returnObj.imageProxy=imageProxy;
         returnObj.defaultImage=self.defaultImage;
         returnObj.alwaysShowTitles=self._alwaysShowTitles;

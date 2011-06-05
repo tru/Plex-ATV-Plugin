@@ -55,6 +55,7 @@ void checkNil(NSObject *ctrl)
         
         self.shelfMediaObjects = [fullRecentMovies subarrayWithRange:theRange];
         self.gridMediaObjects = allMovies.directories;
+        _lastFocusedControlIndex = 0; //set inital focused control
     }
 	return self;
 }
@@ -105,6 +106,7 @@ void checkNil(NSObject *ctrl)
 	DLog(@"controlWasActivated");
     [self _removeAllControls];
 	[self drawSelf];
+            
 	[super controlWasActivated];
 	
 }
@@ -240,7 +242,7 @@ void checkNil(NSObject *ctrl)
 	
 	
 	[gridBox layoutSubcontrols];
-	
+
 	[_panelControl addControl:gridBox];
 	
     
@@ -352,20 +354,20 @@ void checkNil(NSObject *ctrl)
 		}
 		
 		else if ([_gridControl isFocused]) {
-			index = [_gridControl _indexOfFocusedControl];
+			_lastFocusedControlIndex = [_gridControl _indexOfFocusedControl];
 			mediaObjects = self.gridMediaObjects;
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
+			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], _lastFocusedControlIndex);
 #endif      
 			
 		}
 		
 		if (mediaObjects) {
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"brEventaction. have %d mediaObjects and index %d, showing movie preview ctrl",[mediaObjects count], index);
+			DLog(@"brEventaction. have %d mediaObjects and index %d, showing movie preview ctrl",[mediaObjects count], _lastFocusedControlIndex);
 #endif      
 			
-            [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:[[mediaObjects objectAtIndex:index] retain]];
+            [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:[[mediaObjects objectAtIndex:_lastFocusedControlIndex] retain]];
 		}
 		else {
 			DLog(@"error: no selected mediaObject");
