@@ -155,11 +155,11 @@
 }
 
 - (id)coverArt {
-  return [BRImage imageWithURL:self.coverArtNSUrl];
+    return [BRImage imageWithURL:self.coverArtRealURL];
 }
 
 - (NSString *)coverArtURL {
-    return [self.coverArtNSUrl description];
+    return [self.coverArtRealURL description];
 }
 
 - (id)dateAcquired {
@@ -228,6 +228,7 @@
 }
 
 - (BOOL)hasBeenPlayed {
+    //TODO: return correct value
 	return YES;
 }
 
@@ -236,7 +237,7 @@
 }
 
 - (BOOL)hasCoverArt {
-    return pmo.art.hasImage || pmo.thumb.hasImage;
+	return pmo.art.hasImage || pmo.thumb.hasImage;
 }
 
 - (BOOL)hasVideoContent {
@@ -244,9 +245,9 @@
 }
 
 - (id)imageProxy {
-    BRURLImageProxy *imageProxy = [BRURLImageProxy proxyWithURL:self.coverArtNSUrl];
-    //imageProxy.writeToDisk = YES;
-	return imageProxy;
+    BRURLImageProxy *aImageProxy = [BRURLImageProxy proxyWithURL:self.coverArtRealURL];
+    //aImageProxy.writeToDisk = YES;
+	return aImageProxy;
 }
 
 - (id)imageProxyWithBookMarkTimeInMS:(unsigned int)fp8 {
@@ -274,6 +275,7 @@
 }
 
 - (BOOL)isExplicit {
+    //TODO: return correct value
 	return NO;
 }
 
@@ -283,6 +285,7 @@
 }
 
 - (BOOL)isInappropriate {
+    //TODO: return correct value
 	return NO;
 }
 
@@ -303,6 +306,7 @@
 }
 
 - (BOOL)isWidescreen {
+    //TODO: return correct value
 	return YES;
 }
 
@@ -311,6 +315,7 @@
 }
 
 - (id)lastPlayed {
+    //TODO: return correct value
 	return nil;
 }
 
@@ -354,6 +359,7 @@
 }
 
 - (long)performanceCount {
+    //TODO: return correct value
 	return 0;
 }
 
@@ -375,13 +381,11 @@
 			self.mediaDescription, @"mediaDescription",
 			self.rating, @"rating",
 			self.starRating, @"starRating",
-      self.dolbyDigital, @"dolbyDigital",
+            self.dolbyDigital, @"dolbyDigital",
 			nil];
 }
 
-- (void)setPlaybackMetadataValue:(id)value forKey:(id)key {
-	return;
-}
+- (void)setPlaybackMetadataValue:(id)value forKey:(id)key {}
 
 - (id)playbackRightsOwner {
 	return [pmo.attributes valueForKey:@"studio"];
@@ -391,6 +395,7 @@
 
 - (id)previewURL {
 	//[super previewURL];
+    DLog(@"preview URL");
 	return nil;//[[NSURL fileURLWithPath:[pmo.thumb imagePath]] absoluteString];
 }
 
@@ -461,9 +466,9 @@
     //whereas mediacontainer.backTitle is used in "All shows->Futurama-Season 1->Episode 4"
 	if ([pmo.attributes objectForKey:@"grandparentTitle"] != nil) {
 		return [pmo.attributes objectForKey:@"grandparentTitle"];    
-	}
-	else
+	} else {
 		return pmo.mediaContainer.backTitle;
+    }
 }
 
 - (id)seriesNameForSorting {
@@ -487,8 +492,7 @@
 }
 
 - (unsigned)startTimeInMS {
-  DLog(@"startTimeInMS");
-  return [[pmo.attributes valueForKey:@"viewOffset"] intValue];
+    return [[pmo.attributes valueForKey:@"viewOffset"] intValue];
 }
 
 - (unsigned)startTimeInSeconds {
@@ -496,16 +500,17 @@
 }
 
 - (unsigned)stopTimeInMS {
+    //TODO: return correct value
 	return 0;
 }
 
 - (unsigned)stopTimeInSeconds {
+    //TODO: return correct value
 	return 0;
 }
 
 -(id)title {
 	NSString *agentAttr = [pmo.attributes valueForKey:@"agent"];
-    //  if ([@"movie" isEqualToString:plexMediaType] || [@"show" isEqualToString:plexMediaType] || [@"episode" isEqualToString:plexMediaType] && [agentAttr empty])
 	if (agentAttr != nil)
 		return nil;
 	else
@@ -513,7 +518,7 @@
 }
 
 - (id)titleForSorting {
-	return pmo.name;
+	return [self title];
 }
 
 - (id)trickPlayURL {
@@ -527,6 +532,7 @@
 }
 
 - (id)viewCount {
+    //TODO: return correct value
 	return nil;
 }
 
@@ -535,16 +541,21 @@
 
 #pragma mark -
 #pragma mark Additional Metadata Methods
-- (NSURL *)coverArtNSUrl {
-    PlexImage *image;
-	
+- (NSURL *)coverArtRealURL {
+    NSURL *imageURL = nil;
+    PlexImage *image = nil;
     if (pmo.thumb.hasImage) {
         image = pmo.thumb;
     } else if (pmo.art.hasImage) {
         image = pmo.art;
     }
-	image.maxImageSize = CGSizeMake(512, 512);
-    return image.imageURL;
+    
+    if (image) {
+        image.maxImageSize = CGSizeMake(512, 512);
+        imageURL = image.imageURL;
+    }
+    
+    return imageURL;
 }
 
 - (NSURL *)fanartUrl {
