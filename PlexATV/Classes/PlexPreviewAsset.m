@@ -545,7 +545,6 @@
 #pragma mark -
 #pragma mark Additional Metadata Methods
 - (NSURL *)coverArtRealURL {
-    NSURL *imageURL = nil;
     PlexImage *image = nil;
     if (pmo.thumb.hasImage) {
         image = pmo.thumb;
@@ -553,11 +552,10 @@
         image = pmo.art;
     }
     
+    NSURL *imageURL = nil;
     if (image) {
-        image.maxImageSize = CGSizeMake(512, 512);
-        imageURL = image.imageURL;
+        imageURL = [pmo.request pathForScaledImage:[image.imageURL absoluteString] ofSize:CGSizeMake(512, 512)];
     }
-    
     return imageURL;
 }
 
