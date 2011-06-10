@@ -10,6 +10,7 @@
 #import <plex-oss/PlexRequest + Security.h>
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
+#import <plex-oss/MachineConnectionBase.h>
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
@@ -23,7 +24,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
 
 - (void)startPlayingThemeMusicIfAppropiateForMediaObject:(PlexMediaObject *)mediaObject {
     BOOL themeMusicEnabled = [[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicEnabled];
-    if (!themeMusicEnabled) {
+    BOOL isLocalMachine = mediaObject.request.machine.bestConnection.inLocalNetwork;
+    if (!themeMusicEnabled || !isLocalMachine) {
         return;
     }
     
@@ -34,12 +36,12 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
     if (mediaObject.isTVShow && [mediaObject.attributes valueForKey:@"theme"] != nil) {
         //tv show with theme
         hasThemeMusic = YES;
-        themeUrlAsString = [mediaObject.request buildAbsoluteKey: [mediaObject.attributes valueForKey:@"theme"]];
+        themeUrlAsString = [mediaObject.request buildAbsoluteKey:[mediaObject.attributes valueForKey:@"theme"]];
         
     } else if ((mediaObject.isSeason || mediaObject.isEpisode) && [mediaObject.mediaContainer.attributes valueForKey:@"theme"] != nil) {
         //season or episode with theme
         hasThemeMusic = YES;
-        themeUrlAsString = [mediaObject.request buildAbsoluteKey: [mediaObject.mediaContainer.attributes valueForKey:@"theme"]];
+        themeUrlAsString = [mediaObject.request buildAbsoluteKey:[mediaObject.mediaContainer.attributes valueForKey:@"theme"]];
         
     }
     
