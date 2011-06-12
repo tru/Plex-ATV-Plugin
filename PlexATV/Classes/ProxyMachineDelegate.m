@@ -5,7 +5,7 @@
 //  Created by Frank Bauer on 14.01.11.
 //
 
-#define LOCAL_DEBUG_ENABLED 0
+#define LOCAL_DEBUG_ENABLED 1
 
 #import "ProxyMachineDelegate.h"
 
@@ -100,7 +100,7 @@
 -(void)machineWasChanged:(Machine*)m{
 	for (id<MachineManagerDelegate> d in delegates){
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"Send machineWasChanged to %@", d);
+		DLog(@"Send machineWasChanged to %@ (optional)", d);
 #endif
 		if ([d respondsToSelector:@selector(machineWasChanged:)]) {
 			[d machineWasChanged:m];
@@ -111,7 +111,7 @@
 -(void)machine:(Machine*)m changedConnection:(MachineConnectionBase*)con{
 	for (id<MachineManagerDelegate> d in delegates){
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"Send machine:changedConnection to %@", d);
+		DLog(@"Send machine:changedConnection to %@ (optional)", d);
 #endif
 		if ([d respondsToSelector:@selector(machine:changedConnection:)]) {
 			[d machine:m changedConnection:con];
@@ -122,7 +122,7 @@
 -(void)machine:(Machine*)m updatedInfo:(ConnectionInfoType)updateMask{
 	for (id<MachineManagerDelegate> d in delegates){
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"Send machine:updatedInfo to %@", d);
+		DLog(@"Send machine:updatedInfo to %@ (optional)", d);
 #endif
 		if ([d respondsToSelector:@selector(machine:updatedInfo:)]) {
 			[d machine:m updatedInfo:updateMask];
@@ -133,7 +133,7 @@
 -(void)machine:(Machine*)m changedClientTo:(ClientConnection*)cc{
 	for (id<MachineManagerDelegate> d in delegates){
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"Send machine:changedClientTo to %@", d);
+		DLog(@"Send machine:changedClientTo to %@ (optional)", d);
 #endif
 		if ([d respondsToSelector:@selector(machine:changedClientTo:)]) {
 			[d machine:m changedClientTo:cc];
@@ -144,7 +144,7 @@
 -(void)machine:(Machine*)m receivedInfoForConnection:(MachineConnectionBase*)con updated:(ConnectionInfoType)updateMask{
 	for (id<MachineManagerDelegate> d in delegates){
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"Send machine:receivedInfoForConnection to %@", d);
+		DLog(@"Send machine:receivedInfoForConnection to %@ (optional)", d);
 #endif
 		if ([d respondsToSelector:@selector(machine:receivedInfoForConnection:updated:)]) {
 			[d machine:m receivedInfoForConnection:con updated:updateMask];
