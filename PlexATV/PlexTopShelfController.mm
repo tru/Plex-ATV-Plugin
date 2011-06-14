@@ -35,6 +35,7 @@
 #pragma mark -
 #pragma mark PlexTopShelfController Implementation
 @implementation PlexTopShelfController
+@synthesize containerName;
 @synthesize onDeckMediaContainer;
 @synthesize recentlyAddedMediaContainer;
 
@@ -56,7 +57,7 @@
         topShelfView.delegate = self;
         
         BRImageControl *imageControl = [topShelfView productImage];
-        BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[PlexTopShelfController class]] pathForResource:@"PlexLogo" ofType:@"png"]];
+        BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[PlexTopShelfController class]] pathForResource:@"PmsMainMenuLogo" ofType:@"png"]];
         [imageControl setImage:theImage];
         
         shelfView = MSHookIvar<BRMediaShelfView*>(topShelfView, "_shelf");
@@ -68,6 +69,8 @@
 }
 
 - (void)setContentToContainer:(PlexMediaContainer *)aMediaContainer {
+    self.containerName = aMediaContainer.name;
+    
     NSString *onDeckQuery = [NSString stringWithFormat:@"%@/onDeck", aMediaContainer.key];
     PlexMediaContainer *onDeckContainer = [aMediaContainer.request query:onDeckQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
     self.onDeckMediaContainer = onDeckContainer;
@@ -94,7 +97,6 @@
 
 - (BOOL)plexTopShelfView:(PlexTopShelfView *)topShelfView shouldSwitchToState:(int)state {
     BOOL topShelfHasItems = [self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0;
-    DLog(@"allowed switch to banner view");
     if (state == 0) {
         //trying to switch to banner view
         if (topShelfHasItems) {
@@ -147,8 +149,8 @@
 }
 
 -(id)mediaShelf:(BRMediaShelfView *)view titleForSectionAtIndex:(long)section {
-    PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
-    NSString *title = section == 0 ? @"On Deck" : @"Recently Added";
+    //PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+    NSString *title = [NSString stringWithFormat:@"%@ : %@", self.containerName, section == 0 ? @"On Deck" : @"Recently Added"];
     
     BRTextControl *titleControl = [[BRTextControl alloc] init];
     
@@ -160,7 +162,7 @@
     [titleAttributes setValue:(id)[[UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f] CGColor] forKey:@"CTForegroundColor"];
     [titleAttributes setValue:[NSValue valueWithCGSize:CGSizeMake(0, -2)] forKey:@"BRShadowOffset"];
     
-    [titleControl setText:aMediaContainer.name withAttributes:titleAttributes];
+    [titleControl setText:title withAttributes:titleAttributes];
 	return [titleControl autorelease];
 }
 

@@ -62,6 +62,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             [[MachineManager sharedMachineManager] startMonitoringMachineState];
             [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
         }
+        
+        //[self.topShelfController performSelector:@selector(refresh) withObject:nil afterDelay:10.0];
 	} 
     return self;
 }
@@ -90,13 +92,14 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		if (!machineWhoCategoryBelongsTo) return nil;
 		
 		// ====== find the category selected ======
-        if ([categoryName isEqualToString:@"Channels"]) {
-            
-            
-            [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
+        if ([categoryName isEqualToString:@"Refresh"]) {
+            [self.topShelfController refresh];
             
         } else if ([categoryName isEqualToString:@"Search"]) {
             [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
+            
+        } else if ([categoryName isEqualToString:@"Channels"]) {
+                [navigationController navigateToChannelsForMachine:machineWhoCategoryBelongsTo];
             
         } else {
             NSPredicate *categoryPredicate = [NSPredicate predicateWithFormat:@"name == %@ AND key == %@", categoryName, categoryPath];
@@ -130,10 +133,12 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	BRApplianceCategory *appliance;
 	for (int i = 0; i<[self.currentApplianceCategories count]; i++) {
 		appliance = [self.currentApplianceCategories objectAtIndex:i];
-        if ([appliance.name isEqualToString:@"Search"]) {
+        if ([appliance.name isEqualToString:@"Refresh"]) {
             [appliance setPreferredOrder:0];
+        } else if ([appliance.name isEqualToString:@"Search"]) {
+            [appliance setPreferredOrder:1];
         } else {
-            [appliance setPreferredOrder:i+1]; //+1 so we reserve 0 for search
+            [appliance setPreferredOrder:i+2]; //+2 so we reserve 0 for refresh and 1 for search
         }
 	}
 	//other servers appliance category, set it to the second to last
@@ -197,26 +202,30 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		//[allDirectories addObjectsFromArray:machine.rootLevel.directories];
 		
 		//for (PlexMediaObject *pmo in allDirectories) {
-        int totalItems = [allDirectories count] + 2; //channels + search
+        int totalItems = [allDirectories count] + 3; //refresh + search + channels
         for (int i=0; i<totalItems; i++) {
             NSString *categoryPath = nil;
             NSString *categoryName = nil;
-            
+
             if (i == [allDirectories count]) {
-                //add special channels appliance
-                categoryName = @"Channels";
-                categoryPath = @"channels";
+                //add special search appliance
+                categoryName = @"Refresh";
+                categoryPath = @"refresh";
             } else if (i == [allDirectories count]+1) {
                 //add special search appliance
                 categoryName = @"Search";
                 categoryPath = @"search";
+            } else if (i == [allDirectories count]+2) {
+                //add special channels appliance
+                categoryName = @"Channels";
+                categoryPath = @"channels";
             } else {
                 //add all others
                 PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
-                [pmo retain];
                 categoryName = [pmo.name copy];
                 categoryPath = [pmo.key copy];
                 
+                //TODO: should check for most recently selected category name
                 if ([categoryName isEqualToString:@"TV"]) {
                     [self.topShelfController setContentToContainer:[pmo contents]];
                     [self.topShelfController refresh];
@@ -298,9 +307,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	}
 }
 
-- (void)machineWasChanged:(Machine *)m {
-    [self.topShelfController refresh];
-}
+- (void)machineWasChanged:(Machine *)m {}
 
 -(void)machine:(Machine *)m updatedInfo:(ConnectionInfoType)updateMask {
 #if LOCAL_DEBUG_ENABLED
@@ -321,11 +328,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 #if LOCAL_DEBUG_ENABLED
         DLog(@"MachineManager: Machine [%@] recentlyAdded was updated", m);
 #endif
-		//update the shelf
-//		if (!self.topShelfController.recentlyAddedMediaContainer) {
-//            self.topShelfController.recentlyAddedMediaContainer = [m recentlyAddedMedia];
-//            [self.topShelfController refresh];
-//		}
 	}
 }
 @end
