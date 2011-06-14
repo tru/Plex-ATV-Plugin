@@ -63,16 +63,6 @@
 	[super dealloc];
 }
 
-
-#pragma mark -
-#pragma mark Helper Methods
-- (NSDate *)dateFromPlexDateString:(NSString *)dateString {
-	//format is 2001-11-06
-	NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] autorelease];
-	[dateFormat setDateFormat:@"yyyy-MM-dd"];
-	return [dateFormat dateFromString:dateString];
-}
-
 #pragma mark -
 #pragma mark BRMediaAsset
 //- (void *)createMovieWithProperties:(void *)properties count:(long)count {
@@ -163,7 +153,7 @@
 }
 
 - (id)dateAcquired {
-	return [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];
+	return pmo.originallyAvailableAt;
 }
 
 - (id)dateAcquiredString {
@@ -173,7 +163,7 @@
 }
 
 - (id)dateCreated {
-	return [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];
+	return pmo.originallyAvailableAt;
 }
 
 - (id)dateCreatedString {
@@ -183,7 +173,7 @@
 }
 
 - (id)datePublished {
-	return [self dateFromPlexDateString:[pmo.attributes valueForKey:@"originallyAvailableAt"]];
+	return pmo.originallyAvailableAt;
 }
 
 - (id)datePublishedString {
@@ -341,14 +331,17 @@
 
 - (id)mediaType {	
 	NSString *plexMediaType = [pmo.attributes valueForKey:@"type"];
-	BRMediaType *mediaType;
+    DLog(@"mediaType: [%@]", plexMediaType);
+	BRMediaType *mediaType = nil;
 	if ([@"track" isEqualToString:plexMediaType])
 		mediaType = [BRMediaType song];
-	else if ([@"episode" isEqualToString:plexMediaType])
+    else if ([PlexMediaObjectTypeShow isEqualToString:plexMediaType])
+		mediaType = [BRMediaType movie];
+    else if ([PlexMediaObjectTypeSeason isEqualToString:plexMediaType])
 		mediaType = [BRMediaType TVShow];
-	else if (plexMediaType == nil)
-		mediaType = nil;
-	else 
+	else if ([PlexMediaObjectTypeEpisode isEqualToString:plexMediaType])
+		mediaType = [BRMediaType TVShow];
+	else if ([PlexMediaObjectTypeMovie isEqualToString:plexMediaType])
 		mediaType = [BRMediaType movie];
 	return mediaType;
 }
@@ -637,7 +630,19 @@
 }
 
 - (NSString *)year {
-	return [pmo.attributes valueForKey:@"year"];
+    NSString *year;
+	BRMediaType *mediaType = [self mediaType];
+	if ([mediaType isEqual:[BRMediaType movie]]) {
+        year = [pmo.attributes valueForKey:@"year"];
+    } else {
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"yyyy"];
+        
+        NSDate *date = pmo.originallyAvailableAt;
+        year = [dateFormat stringFromDate:date];
+        [dateFormat release];
+    }
+	return year;
 }
 
 //-(NSDictionary *)orderedDictionary {

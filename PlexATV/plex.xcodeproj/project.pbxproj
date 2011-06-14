@@ -146,10 +146,10 @@
 		72296418139094E800CE19CC /* PmsLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PmsLogo.png; path = Resources/PmsLogo.png; sourceTree = "<group>"; };
 		72296419139094E800CE19CC /* PmsMainMenuLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PmsMainMenuLogo.png; path = Resources/PmsMainMenuLogo.png; sourceTree = "<group>"; };
 		7229641C1390988A00CE19CC /* Poster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Poster.png; path = Resources/Poster.png; sourceTree = "<group>"; };
-		7229642513916ADD00CE19CC /* PlexMoreInfoMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlexMoreInfoMenuItem.h; sourceTree = "<group>"; };
-		7229642613916ADD00CE19CC /* PlexMoreInfoMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlexMoreInfoMenuItem.m; sourceTree = "<group>"; };
-		7247BC7D1374C34B00170427 /* Plex_SMFBookcaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Plex_SMFBookcaseController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = Plex_SMFBookcaseController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		7229642513916ADD00CE19CC /* PlexMoreInfoMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexMoreInfoMenuItem.h; path = Classes/PlexMoreInfoMenuItem.h; sourceTree = "<group>"; };
+		7229642613916ADD00CE19CC /* PlexMoreInfoMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexMoreInfoMenuItem.m; path = Classes/PlexMoreInfoMenuItem.m; sourceTree = "<group>"; };
+		7247BC7D1374C34B00170427 /* Plex_SMFBookcaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Plex_SMFBookcaseController.h; path = Classes/Plex_SMFBookcaseController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = Plex_SMFBookcaseController.m; path = Classes/Plex_SMFBookcaseController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7259D3F71347F3C600E878C7 /* PlexTopShelfController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlexTopShelfController.h; sourceTree = "<group>"; };
 		7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlexTopShelfController.mm; sourceTree = "<group>"; };
 		7273929712FA891E008B4C86 /* HWServerDetailsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWServerDetailsController.h; path = Classes/HWServerDetailsController.h; sourceTree = "<group>"; };
@@ -163,10 +163,10 @@
 		7297238312EE81000064E776 /* HWUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWUserDefaults.m; path = Classes/HWUserDefaults.m; sourceTree = "<group>"; };
 		729A877713059CF8003799BE /* PlexPreplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexPreplayController.h; path = Classes/PlexPreplayController.h; sourceTree = "<group>"; };
 		729A877813059CF8003799BE /* PlexPreplayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexPreplayController.m; path = Classes/PlexPreplayController.m; sourceTree = "<group>"; };
-		72A9024313830AA700CD0941 /* UIImage+Tint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Tint.h"; sourceTree = "<group>"; };
-		72A9024413830AA700CD0941 /* UIImage+Tint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Tint.m"; sourceTree = "<group>"; };
-		72A9024D13836AE800CD0941 /* UIImage+ProportionalFill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ProportionalFill.h"; sourceTree = "<group>"; };
-		72A9024E13836AE800CD0941 /* UIImage+ProportionalFill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ProportionalFill.m"; sourceTree = "<group>"; };
+		72A9024313830AA700CD0941 /* UIImage+Tint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Tint.h"; path = "Classes/UIImage+Tint.h"; sourceTree = "<group>"; };
+		72A9024413830AA700CD0941 /* UIImage+Tint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Tint.m"; path = "Classes/UIImage+Tint.m"; sourceTree = "<group>"; };
+		72A9024D13836AE800CD0941 /* UIImage+ProportionalFill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+ProportionalFill.h"; path = "Classes/UIImage+ProportionalFill.h"; sourceTree = "<group>"; };
+		72A9024E13836AE800CD0941 /* UIImage+ProportionalFill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ProportionalFill.m"; path = "Classes/UIImage+ProportionalFill.m"; sourceTree = "<group>"; };
 		72B2C4FC12DBE12800E23F8E /* HWSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWSettingsController.h; path = Classes/HWSettingsController.h; sourceTree = "<group>"; };
 		72B2C4FD12DBE12800E23F8E /* HWSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWSettingsController.m; path = Classes/HWSettingsController.m; sourceTree = "<group>"; };
 		72C421B01319E27700B90041 /* HWTVShowsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = HWTVShowsController.h; path = Classes/HWTVShowsController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -432,6 +432,8 @@
 				C4D558A412D66BE900877755 /* PlexSongListController.m */,
 				C4ADAFA712D46CA9002DA507 /* HWPlexDir.h */,
 				C4ADAFA812D46CA9002DA507 /* HWPlexDir.m */,
+				015D31B812E114CE001A32C1 /* HWAppliance.h */,
+				875A824A126FFF1F00ECADC2 /* HWAppliance.mm */,
 				7205CCE2135A7E7C001EFC55 /* PlexChannelsController.h */,
 				7205CCE3135A7E7C001EFC55 /* PlexChannelsController.m */,
 				72118C25136B800300A8F74B /* PlexSearchController.h */,
