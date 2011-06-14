@@ -561,6 +561,10 @@
     return imageURL;
 }
 
+- (BRImage *)defaultImage {
+    return [[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage] autorelease];
+}
+
 - (NSURL *)fanartUrl {
     NSURL* fanartUrl = nil;
     

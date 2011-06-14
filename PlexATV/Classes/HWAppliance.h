@@ -16,4 +16,6 @@
 @property (nonatomic, retain) BRApplianceCategory *otherServersApplianceCategory;
 @property (nonatomic, retain) BRApplianceCategory *settingsApplianceCategory;
 
+- (void)rebuildCategories;
+
 @end

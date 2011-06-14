@@ -2,15 +2,16 @@
 //  PlexTopShelfView.h
 //  plex
 //
-//  Created by Serendipity on 13/06/2011.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Created by ccjensen on 13/06/2011.
 //
 
 #import <Foundation/Foundation.h>
 
+@class PlexTopShelfView;
+@protocol PlexTopShelfViewDelegate
+- (BOOL)plexTopShelfView:(PlexTopShelfView *)topShelfView shouldSwitchToState:(int)state;
+@end
 
-@interface PlexTopShelfView : BRTopShelfView {
-    
-}
-
+@interface PlexTopShelfView : BRTopShelfView {}
+@property (assign) NSObject <PlexTopShelfViewDelegate> *delegate;
 @end

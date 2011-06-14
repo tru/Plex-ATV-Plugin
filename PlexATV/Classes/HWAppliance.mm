@@ -1,4 +1,4 @@
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 
 #import "HWAppliance.h"
 #import <Foundation/Foundation.h>
@@ -50,7 +50,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         
 		self.topShelfController = [[PlexTopShelfController alloc] init];
 		self.currentApplianceCategories = [[NSMutableArray alloc] init];
-		//_machines = [[NSMutableArray alloc] init];
 		
 		self.otherServersApplianceCategory = [SERVER_LIST_CAT retain];
 		self.settingsApplianceCategory = [SETTINGS_CAT retain];
@@ -157,8 +156,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 - (id)applianceName { return @"Plex"; }
 - (id)moduleName { return @"Plex"; }
 - (id)applianceKey { return @"Plex"; }
+- (void)reloadCategories { [super reloadCategories]; }
 
-- (void)reloadCategories {
+- (void)rebuildCategories {
 	[self.currentApplianceCategories removeAllObjects];
 	
 	NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
@@ -184,12 +184,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			DLog(@"Cannot connect to machine [%@], skipping", machine);
 #endif
 			continue;
-		}
-        
-        if (!self.topShelfController.mediaContainer) {            
-            self.topShelfController.mediaContainer = [machine recentlyAddedMedia];
-//            self.topShelfController.mediaContainer = [machine.request query:@"/library/sections/8/blah" callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
-            [self.topShelfController refresh];
 		}
 
 #if LOCAL_DEBUG_ENABLED
@@ -219,8 +213,14 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             } else {
                 //add all others
                 PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
+                [pmo retain];
                 categoryName = [pmo.name copy];
                 categoryPath = [pmo.key copy];
+                
+                if ([categoryName isEqualToString:@"TV"]) {
+                    [self.topShelfController setContentToContainer:[pmo contents]];
+                    [self.topShelfController refresh];
+                }
             }
             
 #if LOCAL_DEBUG_ENABLED
@@ -273,8 +273,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		[machineID release];
 		[machineName release];
 	}
-	
-	[super reloadCategories];
 }
 
 #pragma mark -
@@ -283,7 +281,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"MachineManager: Removed machine [%@], so reload", m);
 #endif
-    [self reloadCategories];
+    [self rebuildCategories];
 }
 
 -(void)machineWasAdded:(Machine*)m {   
@@ -296,34 +294,38 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 #if LOCAL_DEBUG_ENABLED
         DLog(@"MachineManager: Reload machines as machine [%@] was added", m);
 #endif
-		[self reloadCategories];
+		[self rebuildCategories];
 	}
 }
 
-- (void)machineWasChanged:(Machine *)m {}
+- (void)machineWasChanged:(Machine *)m {
+    [self.topShelfController refresh];
+}
 
 -(void)machine:(Machine *)m updatedInfo:(ConnectionInfoType)updateMask {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"MachineManager: Updated Info with update mask [%d] from machine [%@]", updateMask, m);
 #endif
-	BOOL machinesCategoryListWasUpdated = (updateMask & (ConnectionInfoTypeRootLevel | ConnectionInfoTypeLibrarySections)) != 0;
+	BOOL machinesLibrarySectionsWasUpdated = (updateMask & ConnectionInfoTypeLibrarySections) != 0;
 	BOOL machinesRecentlyAddedWasUpdated = (updateMask & ConnectionInfoTypeRecentlyAddedMedia) != 0;
 	BOOL machineHasEitherGoneOnlineOrOffline = (updateMask & ConnectionInfoTypeCanConnect) != 0;
 	
-	if ( machinesCategoryListWasUpdated || machineHasEitherGoneOnlineOrOffline ) {
+	if ( machinesLibrarySectionsWasUpdated || machineHasEitherGoneOnlineOrOffline ) {
 #if LOCAL_DEBUG_ENABLED
-        DLog(@"MachineManager: Reload machines as machine [%@] list was updated [%@] or came online/offline [%@]", m, machinesCategoryListWasUpdated ? @"YES" : @"NO", machineHasEitherGoneOnlineOrOffline ? @"YES" : @"NO");
+        DLog(@"MachineManager: Reload machines as machine [%@] list was updated [%@] or came online/offline [%@]", m, machinesLibrarySectionsWasUpdated ? @"YES" : @"NO", machineHasEitherGoneOnlineOrOffline ? @"YES" : @"NO");
 #endif
-		[self reloadCategories];
+		[self rebuildCategories];
 	} 
 	
 	if (machinesRecentlyAddedWasUpdated) {
-        DLog(@"*****************RECENTLY UPDATED!!!!*****************");
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"MachineManager: Machine [%@] recentlyAdded was updated", m);
+#endif
 		//update the shelf
-		if (!self.topShelfController.mediaContainer) {
-            self.topShelfController.mediaContainer = [m recentlyAddedMedia];
-            [self.topShelfController refresh];
-		}
+//		if (!self.topShelfController.recentlyAddedMediaContainer) {
+//            self.topShelfController.recentlyAddedMediaContainer = [m recentlyAddedMedia];
+//            [self.topShelfController refresh];
+//		}
 	}
 }
 @end

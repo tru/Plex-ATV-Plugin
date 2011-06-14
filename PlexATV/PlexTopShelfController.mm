@@ -14,6 +14,7 @@
 #import "PlexPreviewAsset.h"
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexMediaObject.h>
+#import <plex-oss/PlexRequest.h>
 #import "PlexMediaObject+Assets.h"
 #import "PlexNavigationController.h"
 
@@ -34,21 +35,25 @@
 #pragma mark -
 #pragma mark PlexTopShelfController Implementation
 @implementation PlexTopShelfController
-@synthesize mediaContainer;
+@synthesize onDeckMediaContainer;
+@synthesize recentlyAddedMediaContainer;
 
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (void)dealloc {
+    topShelfView.delegate = nil;
 	[topShelfView release];
-	self.mediaContainer = nil;
-	
+	self.onDeckMediaContainer = nil;
+	self.recentlyAddedMediaContainer = nil;
+    
 	[super dealloc];
 }
 
 - (BRTopShelfView *)topShelfView {
     if (!topShelfView) {
-        topShelfView = [[BRTopShelfView alloc] init];
+        topShelfView = [[PlexTopShelfView alloc] init];
+        topShelfView.delegate = self;
         
         BRImageControl *imageControl = [topShelfView productImage];
         BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[PlexTopShelfController class]] pathForResource:@"PlexLogo" ofType:@"png"]];
@@ -62,13 +67,60 @@
 	return topShelfView;
 }
 
--(void)refresh {
-    if ([self.mediaContainer.directories count] > 0) {
-		[topShelfView setState:1];
+- (void)setContentToContainer:(PlexMediaContainer *)aMediaContainer {
+    NSString *onDeckQuery = [NSString stringWithFormat:@"%@/onDeck", aMediaContainer.key];
+    PlexMediaContainer *onDeckContainer = [aMediaContainer.request query:onDeckQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    self.onDeckMediaContainer = onDeckContainer;
+    
+    NSString *recentlyAddedQuery = [NSString stringWithFormat:@"%@/recentlyAdded", aMediaContainer.key];
+    PlexMediaContainer *recentlyAddedContainer = [aMediaContainer.request query:recentlyAddedQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    self.recentlyAddedMediaContainer = recentlyAddedContainer;
+}
+
+- (void)refresh {
+    if ([self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0) {
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"Activate shelf");
+#endif
+        [topShelfView setState:1]; //shelf
 		[shelfView reloadData];
 	} else {
-		[topShelfView setState:0];
-	}
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"Activate banner");
+#endif
+		[topShelfView setState:0]; //banner image
+    }
+}
+
+- (BOOL)plexTopShelfView:(PlexTopShelfView *)topShelfView shouldSwitchToState:(int)state {
+    BOOL topShelfHasItems = [self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0;
+    DLog(@"allowed switch to banner view");
+    if (state == 0) {
+        //trying to switch to banner view
+        if (topShelfHasItems) {
+#if LOCAL_DEBUG_ENABLED
+            DLog(@"denied switch to banner view");
+#endif
+            return NO;
+        } else {
+#if LOCAL_DEBUG_ENABLED
+            DLog(@"allowed switch to banner view");
+#endif
+            return YES;
+        }
+    } else {
+        if (topShelfHasItems) {
+#if LOCAL_DEBUG_ENABLED
+            DLog(@"allowed switch to shelf view");
+#endif
+            return YES;
+        } else {
+#if LOCAL_DEBUG_ENABLED
+            DLog(@"denied switch to shelf view");
+#endif
+            return NO;
+        }
+    }
 }
 
 
@@ -76,6 +128,14 @@
 #pragma mark BRMediaShelf Datasource Methods
 -(long)numberOfFlatColumnsInMediaShelf:(BRMediaShelfView *)view {
     return 7;
+}
+
+-(float)horizontalGapForMediaShelf:(BRMediaShelfView *)view {
+    return 30.0f;
+}
+
+-(float)coverflowMarginForMediaShelf:(BRMediaShelfView *)view {
+    return 0.05000000074505806;
 }
 
 -(long)numberOfSectionsInMediaShelf:(BRMediaShelfView *)view {
@@ -87,28 +147,36 @@
 }
 
 -(id)mediaShelf:(BRMediaShelfView *)view titleForSectionAtIndex:(long)section {
-    BRTextControl *title = [[BRTextControl alloc] init];
-    [title setText:@"Recently Added" withAttributes:[[BRThemeInfo sharedTheme] metadataTitleAttributes]];
-	return [title autorelease];
+    PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+    NSString *title = section == 0 ? @"On Deck" : @"Recently Added";
+    
+    BRTextControl *titleControl = [[BRTextControl alloc] init];
+    
+    NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
+    [titleAttributes setValue:@"HelveticaNeueATV" forKey:@"BRFontName"];
+    [titleAttributes setValue:[NSNumber numberWithInt:21] forKey:@"BRFontPointSize"];
+    [titleAttributes setValue:[NSNumber numberWithInt:4] forKey:@"BRLineBreakModeKey"];
+    [titleAttributes setValue:[NSNumber numberWithInt:0] forKey:@"BRTextAlignmentKey"];
+    [titleAttributes setValue:(id)[[UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f] CGColor] forKey:@"CTForegroundColor"];
+    [titleAttributes setValue:[NSValue valueWithCGSize:CGSizeMake(0, -2)] forKey:@"BRShadowOffset"];
+    
+    [titleControl setText:aMediaContainer.name withAttributes:titleAttributes];
+	return [titleControl autorelease];
 }
 
 -(long)mediaShelf:(BRMediaShelfView *)view numberOfColumnsInSection:(long)section {
-    return 10;//[self.mediaContainer.directories count];
+    PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+    return [aMediaContainer.directories count];
 }
 
--(float)horizontalGapForMediaShelf:(BRMediaShelfView *)view {
-    return 30.0f;
-}
-
--(float)coverflowMarginForMediaShelf:(BRMediaShelfView *)view {
-    return 0.05000000074505806;
-}
 
 -(id)mediaShelf:(BRMediaShelfView *)view itemAtIndexPath:(NSIndexPath *)indexPath {
-    //int section = [indexPath indexAtPosition:0];
+    int section = [indexPath indexAtPosition:0];
     int row = [indexPath indexAtPosition:1];
     
-    PlexMediaObject *pmo = [self.mediaContainer.directories objectAtIndex:row];
+    PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+    
+    PlexMediaObject *pmo = [aMediaContainer.directories objectAtIndex:row];
     PlexPreviewAsset *asset = pmo.previewAsset;
 	NSString *title = nil;
     
@@ -139,21 +207,33 @@
 #pragma mark -
 #pragma mark BRMediaShelf Delegate Methods
 - (void)mediaShelf:(id)shelf didSelectItemAtIndexPath:(id)indexPath {
-    DLog(@"select event");
-    //int section = [indexPath indexAtPosition:0];
+    int section = [indexPath indexAtPosition:0];
     int row = [indexPath indexAtPosition:1];
     
-    PlexMediaObject* pmo = [self.mediaContainer.directories objectAtIndex:row];
+    PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+    
+    PlexMediaObject* pmo = [aMediaContainer.directories objectAtIndex:row];
+    
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"selecting [%@]", pmo);
+#endif
+    
     [[SMFThemeInfo sharedTheme] playSelectSound];
     [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:pmo];
 }
 
 - (void)mediaShelf:(id)shelf didPlayItemAtIndexPath:(id)indexPath {
-    DLog(@"play event");
-    //int section = [indexPath indexAtPosition:0];
+    int section = [indexPath indexAtPosition:0];
     int row = [indexPath indexAtPosition:1];
     
-    PlexMediaObject* pmo = [self.mediaContainer.directories objectAtIndex:row];
+    PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+    
+    PlexMediaObject* pmo = [aMediaContainer.directories objectAtIndex:row];
+    
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"playing [%@]", pmo);
+#endif
+    
     if (pmo.hasMedia) {
         //play media
         [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:pmo];
