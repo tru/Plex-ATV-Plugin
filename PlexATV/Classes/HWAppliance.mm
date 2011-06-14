@@ -63,7 +63,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
         }
         
-        //[self.topShelfController performSelector:@selector(refresh) withObject:nil afterDelay:10.0];
+        [self reloadCategories];
 	} 
     return self;
 }
