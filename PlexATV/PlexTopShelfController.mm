@@ -42,13 +42,7 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-- (id)init {
-    DLog(@"INIT!!!!!");
-    return [super init];
-}
-
 - (void)dealloc {
-    topShelfView.delegate = nil;
 	[topShelfView release];
 	self.onDeckMediaContainer = nil;
 	self.recentlyAddedMediaContainer = nil;
@@ -59,7 +53,6 @@
 - (BRTopShelfView *)topShelfView {
     if (!topShelfView) {
         topShelfView = [[BRTopShelfView alloc] init];
-        //topShelfView.delegate = self;
         
         BRImageControl *imageControl = [topShelfView productImage];
         BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[PlexTopShelfController class]] pathForResource:@"PmsMainMenuLogo" ofType:@"png"]];
@@ -90,46 +83,15 @@
 - (void)refresh {
     if ([self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0) {
 #if LOCAL_DEBUG_ENABLED
-        DLog(@"Activate shelf");
+        DLog(@"Activate main menu shelf");
 #endif
         [topShelfView setState:1]; //shelf
 		[shelfView reloadData];
 	} else {
 #if LOCAL_DEBUG_ENABLED
-        DLog(@"Activate banner");
+        DLog(@"Activate main menu banner");
 #endif
 		[topShelfView setState:0]; //banner image
-    }
-}
-
-- (BOOL)plexTopShelfView:(PlexTopShelfView *)topShelfView shouldSwitchToState:(int)state {
-    BOOL topShelfHasItems = [self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0;
-    DLog(@"on deck [%d], recently [%d] results in [%@]", [self.onDeckMediaContainer.directories count], [self.recentlyAddedMediaContainer.directories count], topShelfHasItems ? @"YES" : @"NO");
-    if (state == 0) {
-        //trying to switch to banner view
-        if (topShelfHasItems) {
-#if LOCAL_DEBUG_ENABLED
-            DLog(@"denied switch to banner view");
-#endif
-            return NO;
-        } else {
-#if LOCAL_DEBUG_ENABLED
-            DLog(@"allowed switch to banner view");
-#endif
-            return YES;
-        }
-    } else {
-        if (topShelfHasItems) {
-#if LOCAL_DEBUG_ENABLED
-            DLog(@"allowed switch to shelf view");
-#endif
-            return YES;
-        } else {
-#if LOCAL_DEBUG_ENABLED
-            DLog(@"denied switch to shelf view");
-#endif
-            return NO;
-        }
     }
 }
 

@@ -7,10 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PlexTopShelfView.h"
 @class PlexMediaContainer;
 
-@interface PlexTopShelfController : NSObject <PlexTopShelfViewDelegate> {
+@interface PlexTopShelfController : NSObject {
 	PlexTopShelfView *topShelfView;
     BRMediaShelfView *shelfView;
     int shelfItemCount;
