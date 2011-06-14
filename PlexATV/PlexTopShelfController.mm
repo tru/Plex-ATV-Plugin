@@ -42,6 +42,11 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
+- (id)init {
+    DLog(@"INIT!!!!!");
+    return [super init];
+}
+
 - (void)dealloc {
     topShelfView.delegate = nil;
 	[topShelfView release];
@@ -53,8 +58,8 @@
 
 - (BRTopShelfView *)topShelfView {
     if (!topShelfView) {
-        topShelfView = [[PlexTopShelfView alloc] init];
-        topShelfView.delegate = self;
+        topShelfView = [[BRTopShelfView alloc] init];
+        //topShelfView.delegate = self;
         
         BRImageControl *imageControl = [topShelfView productImage];
         BRImage *theImage = [BRImage imageWithPath:[[NSBundle bundleForClass:[PlexTopShelfController class]] pathForResource:@"PmsMainMenuLogo" ofType:@"png"]];
@@ -64,6 +69,8 @@
         shelfView.scrollable = YES;
         shelfView.dataSource = self;
         shelfView.delegate = self;
+        
+        [self refresh];
     }
 	return topShelfView;
 }
@@ -97,6 +104,7 @@
 
 - (BOOL)plexTopShelfView:(PlexTopShelfView *)topShelfView shouldSwitchToState:(int)state {
     BOOL topShelfHasItems = [self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0;
+    DLog(@"on deck [%d], recently [%d] results in [%@]", [self.onDeckMediaContainer.directories count], [self.recentlyAddedMediaContainer.directories count], topShelfHasItems ? @"YES" : @"NO");
     if (state == 0) {
         //trying to switch to banner view
         if (topShelfHasItems) {
