@@ -70,6 +70,7 @@ PlexMediaProvider* __provider = nil;
 	DLog(@"deallocing player controller for %@", self.mediaObject.name);
     
 	self.mediaObject = nil;
+    [self.playProgressTimer invalidate];
     self.playProgressTimer = nil;
 	[super dealloc];
 }
@@ -99,16 +100,24 @@ PlexMediaProvider* __provider = nil;
 }
 
 - (void)wasExhumed {
-    
 	[super wasExhumed];
+    if (playbackCancelled) {
+        DLog(@"playback cancelled");
+        [self performSelector:@selector(popSelfFromStack) withObject:nil afterDelay:0.0];
+    }
 }
 
 - (void)wasBuried {
 	[super wasBuried];
 }
 
-- (void)controlWasActivated {
-    [super controlWasActivated];
+- (void)controlWasActivated {}
+
+- (void)popSelfFromStack {
+    BRControllerStack *stack = [[BRApplicationStackManager singleton] stack];
+    if ([stack peekController] == self) {
+        [stack popController];
+    }
 }
 
 
@@ -396,6 +405,7 @@ PlexMediaProvider* __provider = nil;
     [option setActionSelector:@selector(optionSelected:) target:self];
     [[[BRApplicationStackManager singleton] stack] pushController:option];
     [option release];
+    playbackCancelled = YES; //will get set to no if user chose a playback option
 }
 
 
@@ -407,13 +417,17 @@ PlexMediaProvider* __provider = nil;
 		NSNumber *viewOffset = [option.userInfo objectForKey:@"viewOffset"];
 		
 		if([[sender selectedText] hasPrefix:@"Resume from"]) {
+            playbackCancelled = NO;
 			[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
 			DLog(@"Resuming from %d ms", [viewOffset intValue]);
 			[self playbackVideoWithOffset:[viewOffset intValue]];
-		} else if ([[sender selectedText] isEqualToString:@"Play from the beginning"]) {
+		
+        } else if ([[sender selectedText] isEqualToString:@"Play from the beginning"]) {
+            playbackCancelled = NO;
 			[[[BRApplicationStackManager singleton] stack] popController]; //need this so we don't go back to option dialog when going back
 			[self playbackVideoWithOffset:0]; //0 offset is beginning, mkay?
-		} else if ([[sender selectedText] isEqualToString:@"Go back"]) {
+		
+        } else if ([[sender selectedText] isEqualToString:@"Go back"]) {
 			//go back to movie listing...
 			[[[BRApplicationStackManager singleton] stack] popController];
 		}

@@ -63,6 +63,14 @@
     }
     
     self.menuItems = newMenuItems;
+    
+    for (int i = 0; i<[self.menuItems count]; i++) {
+        BRControl *control = [self.menuItems objectAtIndex:i];
+        if (![control isKindOfClass:[BRDividerControl class]]) {
+            firstFocusableItemIndex = i;
+            break;
+        }
+    }
 }
 
 - (void)addCreditsSectionToArray:(NSMutableArray *)creditsSectionArray ForKey:(NSString *)key withLabel:(NSString *)label {
@@ -141,7 +149,8 @@
     CATransition *transition = [CATransition animation];
     transition.type = @"push";
     transition.subtype = kCATransitionFromBottom;
-    transition.duration = 0.75f;
+    transition.duration = 0.4f;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
     [[[BRApplicationStackManager singleton] stack] setActions:[NSDictionary dictionaryWithObject:transition forKey:@"sublayers"]];
     
     [super controlWasActivated];
@@ -301,12 +310,13 @@
     switch (remoteAction) {
 		case kBREventRemoteActionUp:
 		case kBREventRemoteActionHoldUp:
-//			if([self getSelection] == 0 && [action value] == 1 && [self focusedControl]==[self list])
-//			{
-//				[self setSelection:itemCount-1];
-//				return YES;
-//			}
-//			break;
+			if([self getSelection] == firstFocusableItemIndex && 
+               [action value] == 1 && 
+               [self focusedControl] == [self list]) {
+				[[[BRApplicationStackManager singleton] stack] popController];
+				return YES;
+			}
+			break;
         case kBREventRemoteActionPlayPause:
             if (self.list.focused) {
                 if([action value] == 1)

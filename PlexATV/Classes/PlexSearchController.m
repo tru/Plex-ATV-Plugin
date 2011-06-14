@@ -235,6 +235,7 @@
             return r;
         }
         case kBREventRemoteActionPlayPause:
+        case kBREventRemoteActionPlayPause2:
             if (self.list.focused) {
                 if([action value] == 1)
                     [self playPauseActionForRow:[self getSelection]];

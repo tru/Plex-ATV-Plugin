@@ -30,13 +30,14 @@ NSString * const MachineNameKey = @"PlexMachineName";
 
 NSString * const CompoundIdentifierDelimiter = @"|||";
 
-+ (void)initialize {}
++ (void)initialize {
+    [PlexPrefs setBaseClassForPlexPrefs:[HWUserDefaults class]];
+}
 
 
 - (id)init {
     self = [super init];
 	if(self) {
-		[PlexPrefs setBaseClassForPlexPrefs:[HWUserDefaults class]];
 		[UIDevice preloadCurrentForMacros];
 		//#warning Please check elan.plexapp.com/2010/12/24/happy-holidays-from-plex/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+osxbmc+%28Plex%29 to get a set of transcoder keys
 		[PlexRequest setStreamingKey:@"k3U6GLkZOoNIoSgjDshPErvqMIFdE0xMTx8kgsrhnC0=" forPublicKey:@"KQMIY6GATPC63AIMC4R2"];
@@ -162,6 +163,10 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	
 	NSArray *machines = [[MachineManager sharedMachineManager] threadSafeMachines];
 	NSArray *machinesExcludedFromServerList = [[HWUserDefaults preferences] objectForKey:PreferencesMachinesExcludedFromServerList];
+    
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"Reloading categories with machines [%@]", machines);
+#endif
 	for (Machine *machine in machines) {
 		NSString *machineID = [machine.machineID copy];
 		NSString *machineName = [machine.serverName copy];
@@ -186,6 +191,10 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 //            self.topShelfController.mediaContainer = [machine.request query:@"/library/sections/8/blah" callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
             [self.topShelfController refresh];
 		}
+
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"Adding categories for machine [%@]", machine);
+#endif
 		
 		//================== add all it's categories to our appliances list ==================
 		//not using machine.request.rootLevel.directories because it might not work,
@@ -215,7 +224,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             }
             
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"Adding category [%@] for machine id [%@]", categoryName, machineID);
+            DLog(@"Adding category [%@] for machine id [%@]", categoryName, machineID);
 #endif
             
             //create the compoundIdentifier for the appliance identifier
@@ -272,18 +281,21 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 #pragma mark Machine Delegate Methods
 -(void)machineWasRemoved:(Machine*)m{
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"MachineManager: Removed machine %@", m);
+	DLog(@"MachineManager: Removed machine [%@], so reload", m);
 #endif
-	[self reloadCategories];
+    [self reloadCategories];
 }
 
 -(void)machineWasAdded:(Machine*)m {   
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"MachineManager: Added machine %@", m);
+	DLog(@"MachineManager: Added machine [%@]", m);
 #endif
 	BOOL machineIsOnlineAndConnectable = m.isComplete;
 	
 	if (machineIsOnlineAndConnectable) {
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"MachineManager: Reload machines as machine [%@] was added", m);
+#endif
 		[self reloadCategories];
 	}
 }
@@ -292,13 +304,16 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 
 -(void)machine:(Machine *)m updatedInfo:(ConnectionInfoType)updateMask {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"MachineManager: Updated Info with update mask %d from machine %@", updateMask, m);
+	DLog(@"MachineManager: Updated Info with update mask [%d] from machine [%@]", updateMask, m);
 #endif
 	BOOL machinesCategoryListWasUpdated = (updateMask & (ConnectionInfoTypeRootLevel | ConnectionInfoTypeLibrarySections)) != 0;
 	BOOL machinesRecentlyAddedWasUpdated = (updateMask & ConnectionInfoTypeRecentlyAddedMedia) != 0;
 	BOOL machineHasEitherGoneOnlineOrOffline = (updateMask & ConnectionInfoTypeCanConnect) != 0;
 	
 	if ( machinesCategoryListWasUpdated || machineHasEitherGoneOnlineOrOffline ) {
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"MachineManager: Reload machines as machine [%@] list was updated [%@] or came online/offline [%@]", m, machinesCategoryListWasUpdated ? @"YES" : @"NO", machineHasEitherGoneOnlineOrOffline ? @"YES" : @"NO");
+#endif
 		[self reloadCategories];
 	} 
 	

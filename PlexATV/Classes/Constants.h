@@ -21,13 +21,21 @@
 
 
 
-#define ScopeBarCurrentItemsIdentifier @"current"
-#define ScopeBarCurrentItemsIndex 0
-#define ScopeBarUnwatchedItemsIdentifier @"unwatched"
-#define ScopeBarUnwatchedItemsIndex 1
-#define ScopeBarOtherFiltersItemsIdentifier @"otherfilters"
-#define ScopeBarOtherFiltersItemsIndex 2
 
+#define PersistedTabBarLastSelections @"PersistedTabBarLastSelections"
+
+
+
+#define TabBarCurrentItemsIdentifier @"current"
+#define TabBarCurrentItemsIndex 0
+#define TabBarUnwatchedItemsIdentifier @"unwatched"
+#define TabBarUnwatchedItemsIndex 1
+#define TabBarOtherFiltersItemsIdentifier @"otherfilters"
+#define TabBarOtherFiltersItemsIndex 2
+
+
+//additional keyboard commands
+#define kBREventRemoteActionPlayPause2 16
 
 typedef enum {
 	kATVPlexViewTypeList = 0,
@@ -35,6 +43,13 @@ typedef enum {
 	kATVPlexViewTypeBookcase,
     FINAL_kATVPlexViewTypeBookcase_MAX
 } ATVPlexViewTypes;
+
+
+typedef enum {
+	kATVPlexTabBarLastSelectionAll = 0,
+	kATVPlexTabBarLastSelectionUnwatched,
+    FINAL_kATVPlexTabBarLastSelection_MAX
+} ATVPlexTabBarLastSelection;
 
 
 typedef enum {

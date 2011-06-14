@@ -72,7 +72,14 @@
         [self.tabBar setAcceptsFocus:NO];
         [self.tabBar setTabControlDelegate:self];
         [self addControl:self.tabBar];
-        [self.tabBar selectTabItemAtIndex:1];
+        
+        //find most recently selected tab item [defaulted to 0]
+        NSString *machineID = self.rootContainer.request.machine.machineID;
+        NSInteger sectionKey = self.rootContainer.sectionKey;
+        NSString *viewGroup = self.rootContainer.viewGroup;
+        NSInteger lastTabBarSelection = [HWUserDefaults lastTabBarSelectionForMachineID:machineID section:sectionKey viewGroup:viewGroup];
+        
+        [self.tabBar selectTabItemAtIndex:lastTabBarSelection];
     }
 	return self;
 }
@@ -102,7 +109,7 @@
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
     
-    //refresh scope bar in case any items have changed
+    //refresh tab bar in case any items have changed
     [self reselectCurrentTabBarItem];
 	[super wasExhumed];
 }
@@ -136,7 +143,7 @@
 -(BOOL)brEventAction:(BREvent *)event {
 	int remoteAction = [event remoteAction];
 #if LOCAL_DEBUG_ENABLED
-    DLog(@"remoteaction [%d]", remoteAction);
+    DLog(@"remoteaction [%d] with event value [%d]", remoteAction, [event value]);
 #endif
 	if ([(BRControllerStack *)[self stack] peekController] != self)
 		remoteAction = 0;
@@ -167,6 +174,7 @@
             }
 			break;
 		case kBREventRemoteActionPlayPause:
+        case kBREventRemoteActionPlayPause2:
 			if([event value] == 1) {
 				[self playPauseActionForRow:[self getSelection]];
             }
@@ -200,21 +208,29 @@
 }
 
 - (void)tabControl:(id)control didSelectTabItem:(id)item {
-    //change scope
-    NSInteger newScopeSelection = [self.tabBar selectedTabItemIndex];
+    //change tab
+    NSInteger newTabSelection = [self.tabBar selectedTabItemIndex];
+    
+    //persist the selection for this section type
+    NSString *machineID = self.rootContainer.request.machine.machineID;
+    NSInteger sectionKey = self.rootContainer.sectionKey;
+    NSString *viewGroup = self.rootContainer.viewGroup;
+    
     
     NSArray *allItems = self.rootContainer.directories;    
-    switch (newScopeSelection) {
-        case ScopeBarCurrentItemsIndex: {
+    switch (newTabSelection) {
+        case TabBarCurrentItemsIndex: {
+            [HWUserDefaults setLastTabBarSelection:TabBarCurrentItemsIndex forMachineID:machineID section:sectionKey viewGroup:viewGroup];
             self.items = allItems;
             break;
         }
-        case ScopeBarUnwatchedItemsIndex: {
+        case TabBarUnwatchedItemsIndex: {
+            [HWUserDefaults setLastTabBarSelection:TabBarUnwatchedItemsIndex forMachineID:machineID section:sectionKey viewGroup:viewGroup];
             NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
             self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
             break;
         }
-        case ScopeBarOtherFiltersItemsIndex: {
+        case TabBarOtherFiltersItemsIndex: {
             PlexMediaContainer *filters = (PlexMediaContainer *)[item identifier];
             self.items = filters.directories;
             break;
@@ -264,7 +280,7 @@
     //we force set the hash so two movies with same title don't end up with the same preview
     [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
     
-    if ([tabBar selectedTabItemIndex] == ScopeBarOtherFiltersItemsIndex) {
+    if ([tabBar selectedTabItemIndex] == TabBarOtherFiltersItemsIndex) {
         //parade
 #if LOCAL_DEBUG_ENABLED
         DLog(@"using parade preview for [%@]", pmo);

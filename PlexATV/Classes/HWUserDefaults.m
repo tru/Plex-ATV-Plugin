@@ -68,6 +68,27 @@
 #pragma mark -
 #pragma mark User Defaults Methods
 
++ (NSInteger)lastTabBarSelectionForMachineID:(NSString *)machineID section:(NSInteger)sectionKey viewGroup:(NSString *)viewGroup {
+    NSInteger lastTabBarSelection = 0; //default
+    NSDictionary *selections = [[[self class] preferences] objectForKey:PersistedTabBarLastSelections];
+    
+    NSString *key = [NSString stringWithFormat:@"%@-%d-%@", machineID, sectionKey, viewGroup];
+    if ([selections valueForKey:key] != nil) {
+        lastTabBarSelection = [[selections objectForKey:key] intValue];
+    }
+    return lastTabBarSelection;
+}
+
++ (void)setLastTabBarSelection:(NSInteger)selectedIndex forMachineID:(NSString *)machineID section:(NSInteger)sectionKey viewGroup:(NSString *)viewGroup {
+    NSDictionary *oldSelections = [[[self class] preferences] objectForKey:PersistedTabBarLastSelections];
+    NSMutableDictionary *selections = [NSMutableDictionary dictionaryWithDictionary:oldSelections];
+    
+    NSString *key = [NSString stringWithFormat:@"%@-%d-%@", machineID, sectionKey, viewGroup];
+    [selections setObject:[NSNumber numberWithInteger:selectedIndex] forKey:key];
+    
+    [[[self class] preferences] setObject:selections forKey:PersistedTabBarLastSelections];
+}
+
 - (void)syncSettings {
 	[[HWUserDefaults preferences] synchronize];
 }
@@ -150,6 +171,7 @@
             [NSNumber numberWithInt:9], PreferencesPlaybackVideoQualityProfile,
             [NSNumber numberWithBool:NO], PreferencesSecuritySettingsLockEnabled,
             [NSNumber numberWithInt:0], PreferencesSecurityPasscode,
+            [NSDictionary dictionary], PersistedTabBarLastSelections,
             nil];
 }
 

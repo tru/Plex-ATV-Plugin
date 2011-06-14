@@ -246,8 +246,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
 - (BRTabControl *)newTabBarForContents:(PlexMediaContainer *)someContents {
     BRTabControl *tabBar = nil;
-    //    DLog(@"tab bar for: [%@]", someContents);
-    //    DLog(@"view group: [%@], [%@]", someContents.viewGroup, PlexViewGroupSecondary);
+
     if (![someContents.viewGroup isEqualToString:PlexViewGroupSecondary]) { 
         //now that we are skipping the filtering menu, this if should always come back true (maybe remove it?)
         tabBar = [[BRTabControl menuTabControl] retain];
@@ -255,23 +254,28 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
         BRTabControlItem *i = [[BRTabControlItem alloc] init];
         NSString *currentlySelectedFilterName;
         if (someContents.parentFilterContainer) {
+            PlexMediaObject *parentMediaObject = someContents.parentObject;
+            //store the selection for future reference
+            NSString *filter = parentMediaObject.lastKeyComponent;
+            [someContents.request.machine setFilter:filter forSection:parentMediaObject.mediaContainer.key];
+            
             //custom name if we are one step below the filters (which we skip)
             //so this would be used in the tv shows listing, movies listing, etc
-            currentlySelectedFilterName = someContents.parentObject.name;
+            currentlySelectedFilterName = parentMediaObject.name;
         } else {
             //the user will not be given the option of other filters (tab item "Other Filters")
             //so we only give them the generic "All" and "Unwatched"
             currentlySelectedFilterName = @"All";
         }
         [i setLabel:currentlySelectedFilterName];
-        [i setIdentifier:ScopeBarCurrentItemsIdentifier];
+        [i setIdentifier:TabBarCurrentItemsIdentifier];
         [tabBar addTabItem:i];
         [i release];
         
         //this one is always added, though perhaps needs to not be included in the music views?
         i = [[BRTabControlItem alloc] init];
         [i setLabel:@"Unwatched"];
-        [i setIdentifier:ScopeBarUnwatchedItemsIdentifier];
+        [i setIdentifier:TabBarUnwatchedItemsIdentifier];
         [tabBar addTabItem:i];
         [i release];
         
@@ -346,12 +350,6 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 		//open "/library/section/x/all or the first item in the list"
 		//bypass the first filter node
 		
-		/*
-		 at some point wou will present the user a selection for the available filters, right?
-		 when the user selects one, you should write to that preference so next time user comes back
-		 ATV will use the last filter
-		 */
-		//[PlexPrefs defaultPreferences] filterForSection]
         //TODO: store filtering selection
 		Machine *currentMachine = container.request.machine;
 		const NSString* filterWeAreLookingFor = [currentMachine filterForSection:pmc.key]; //all, unwatched, recentlyAdded, etc

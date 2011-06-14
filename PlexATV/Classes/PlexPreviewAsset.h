@@ -41,6 +41,7 @@
 - (NSDate *)dateFromPlexDateString:(NSString *)dateString;
 
 //other metadata methods
+@property (readonly) NSURL *coverArtRealURL;
 @property (readonly) NSURL *fanartUrl;
 @property (readonly) BRImage *defaultImage;
 @property (readonly) BOOL hasClosedCaptioning;
