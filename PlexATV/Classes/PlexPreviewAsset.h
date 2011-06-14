@@ -38,7 +38,6 @@
 @property (nonatomic, retain) PlexMediaObject* pmo;
 
 - (id)initWithURL:(NSURL*)url mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)pmo;
-- (NSDate *)dateFromPlexDateString:(NSString *)dateString;
 
 //other metadata methods
 @property (readonly) NSURL *coverArtRealURL;
