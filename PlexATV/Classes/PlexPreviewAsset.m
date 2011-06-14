@@ -331,14 +331,17 @@
 
 - (id)mediaType {	
 	NSString *plexMediaType = [pmo.attributes valueForKey:@"type"];
-	BRMediaType *mediaType;
+    DLog(@"mediaType: [%@]", plexMediaType);
+	BRMediaType *mediaType = nil;
 	if ([@"track" isEqualToString:plexMediaType])
 		mediaType = [BRMediaType song];
-	else if ([@"episode" isEqualToString:plexMediaType])
+    else if ([PlexMediaObjectTypeShow isEqualToString:plexMediaType])
+		mediaType = [BRMediaType movie];
+    else if ([PlexMediaObjectTypeSeason isEqualToString:plexMediaType])
 		mediaType = [BRMediaType TVShow];
-	else if (plexMediaType == nil)
-		mediaType = nil;
-	else 
+	else if ([PlexMediaObjectTypeEpisode isEqualToString:plexMediaType])
+		mediaType = [BRMediaType TVShow];
+	else if ([PlexMediaObjectTypeMovie isEqualToString:plexMediaType])
 		mediaType = [BRMediaType movie];
 	return mediaType;
 }
