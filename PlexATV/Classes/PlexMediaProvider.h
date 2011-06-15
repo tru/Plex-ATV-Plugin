@@ -29,12 +29,10 @@
 @class PlexMediaAsset;
 @interface PlexMediaProvider : NSObject {
 	BRBaseMediaProvider* prov;
-
 }
 
-
-- (int) load;
-- (int) unload;
+- (int)load;
+- (int)unload;
 
 
 @end

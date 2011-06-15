@@ -29,7 +29,6 @@
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/Machine.h>
 #import <plex-oss/PlexImage.h>
-#import <ambertation-plex/Ambertation.h>
 
 @interface BRThemeInfo (PlexExtentions)
 - (id)storeRentalPlaceholderImage;
@@ -40,7 +39,7 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-- (id) initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider  mediaObject:(PlexMediaObject*)o
+- (id)initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider  mediaObject:(PlexMediaObject*)o
 {
     //self = [super initWithMediaProvider:mediaProvider];
     //self = [super streamingMediaAssetWithMediaItem:o];
