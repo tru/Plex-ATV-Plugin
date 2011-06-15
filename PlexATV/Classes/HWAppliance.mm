@@ -93,7 +93,10 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 		
 		// ====== find the category selected ======
         if ([categoryName isEqualToString:@"Refresh"]) {
+            self.topShelfController.onDeckMediaContainer = nil;
+            self.topShelfController.recentlyAddedMediaContainer = nil;
             [self.topShelfController refresh];
+            [self rebuildCategories];
             
         } else if ([categoryName isEqualToString:@"Search"]) {
             [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
@@ -307,7 +310,13 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 	}
 }
 
-- (void)machineWasChanged:(Machine *)m {}
+- (void)machineWasChanged:(Machine *)m {
+    if (m.isOnline && m.canConnect) {
+        //machine is available
+    } else {
+        //machine is not available
+    }
+}
 
 -(void)machine:(Machine *)m updatedInfo:(ConnectionInfoType)updateMask {
 #if LOCAL_DEBUG_ENABLED
