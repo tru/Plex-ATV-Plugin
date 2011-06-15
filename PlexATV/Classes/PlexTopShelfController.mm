@@ -150,13 +150,7 @@
     
     PlexMediaObject *pmo = [aMediaContainer.directories objectAtIndex:row];
     PlexPreviewAsset *asset = pmo.previewAsset;
-	NSString *title = nil;
-    
-	if ([asset.pmo isSeason]) {
-		title = [NSString stringWithFormat:@"%@ - %@", [asset.pmo.attributes objectForKey:@"parentTitle"] , [asset title]];
-	} else {
-		title = [asset title];
-	}
+	NSString *title = [asset title];
     
     BRPosterControl *poster = [[BRPosterControl alloc] init];
     poster.posterStyle = 1;
@@ -169,8 +163,6 @@
     
     poster.titleVerticalOffset = 0.039999999105930328;
     [poster setNonAttributedTitleWithCrossfade:title];
-    
-    //poster.image = [asset coverArt];
     
     return poster;
 }

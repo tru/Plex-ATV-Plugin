@@ -35,30 +35,20 @@
 @end
 
 @implementation PlexPreviewAsset
-@synthesize pmo;
+@synthesize mediaObject;
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-- (id)initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider  mediaObject:(PlexMediaObject*)o
-{
-    //self = [super initWithMediaProvider:mediaProvider];
-    //self = [super streamingMediaAssetWithMediaItem:o];
+- (id)initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)o {
 	self = [super initWithMediaProvider:mediaProvider];
 	if (self != nil) {
-		pmo = [o retain];
-		url = [u retain];
-		//DLog(@"PMO attrs: %@", pmo.attributes);
-		//PlexRequest *req = pmo.request;
-		//DLog(@"PMO request attrs: %@", req);
-		//DLog(@"Ref = %x", [self mediaItemRef]);
+		self.mediaObject = o;
 	}
 	return self;
 }
 
-- (void) dealloc
-{
-	[pmo release];
-	[url release];
+- (void)dealloc {
+    self.mediaObject = nil;
 	[super dealloc];
 }
 
@@ -69,10 +59,10 @@
 //}
 
 - (id)artist {
-	if ([pmo.attributes objectForKey:@"artist"])
-		return [pmo.attributes objectForKey:@"artist"];
+	if ([self.mediaObject.attributes objectForKey:@"artist"])
+		return [self.mediaObject.attributes objectForKey:@"artist"];
 	else
-		return [pmo.mediaContainer.attributes valueForKey:@"title1"];
+		return [self.mediaObject.mediaContainer.attributes valueForKey:@"title1"];
 }
 
 - (id)artistCollection {
@@ -84,7 +74,7 @@
 }
 
 - (id)assetID {
-	return pmo.key;
+	return self.mediaObject.key;
 }
 
 - (id)authorName {
@@ -104,7 +94,7 @@
 - (void)setBookmarkTimeInMS:(unsigned int)fp8 {}
 
 - (id)broadcaster {
-	return [pmo.attributes valueForKey:@"studio"];
+	return [self.mediaObject.attributes valueForKey:@"studio"];
 }
 
 - (BOOL)canBePlayedInShuffle {
@@ -112,7 +102,7 @@
 }
 
 - (id)cast {
-	NSString *result = [pmo listSubObjects:@"Role" usingKey:@"tag"];
+	NSString *result = [self.mediaObject listSubObjects:@"Role" usingKey:@"tag"];
 	return [result componentsSeparatedByString:@", "];
 }
 
@@ -152,7 +142,7 @@
 }
 
 - (id)dateAcquired {
-	return pmo.originallyAvailableAt;
+	return self.mediaObject.originallyAvailableAt;
 }
 
 - (id)dateAcquiredString {
@@ -162,7 +152,7 @@
 }
 
 - (id)dateCreated {
-	return pmo.originallyAvailableAt;
+	return self.mediaObject.originallyAvailableAt;
 }
 
 - (id)dateCreatedString {
@@ -172,7 +162,7 @@
 }
 
 - (id)datePublished {
-	return pmo.originallyAvailableAt;
+	return self.mediaObject.originallyAvailableAt;
 }
 
 - (id)datePublishedString {
@@ -182,7 +172,7 @@
 }
 
 - (id)directors {
-	NSString *result = [pmo listSubObjects:@"Director" usingKey:@"tag"];
+	NSString *result = [self.mediaObject listSubObjects:@"Director" usingKey:@"tag"];
 	return [result componentsSeparatedByString:@", "];
 }
 
@@ -192,11 +182,11 @@
 }
 
 -(long int)duration {
-	return [pmo.attributes integerForKey:@"duration"]/1000;
+	return [self.mediaObject.attributes integerForKey:@"duration"]/1000;
 }
 
 - (unsigned)episode {
-	return [pmo.attributes integerForKey:@"index"];
+	return [self.mediaObject.attributes integerForKey:@"index"];
 }
 
 - (id)episodeNumber {
@@ -208,7 +198,7 @@
 }
 
 - (id)genres {
-	NSString *result = [pmo listSubObjects:@"Genre" usingKey:@"tag"];
+	NSString *result = [self.mediaObject listSubObjects:@"Genre" usingKey:@"tag"];
 	return [result componentsSeparatedByString:@", "];
 }
 
@@ -226,15 +216,15 @@
 }
 
 - (BOOL)hasCoverArt {
-	return pmo.art.hasImage || pmo.thumb.hasImage;
+	return self.mediaObject.art.hasImage || self.mediaObject.thumb.hasImage;
 }
 
 - (BOOL)hasVideoContent {
-	return (pmo.hasMedia || [@"Video" isEqualToString:pmo.containerType]);
+	return (self.mediaObject.hasMedia || [@"Video" isEqualToString:self.mediaObject.containerType]);
 }
 
 - (id)imageProxy {
-    NSURLRequest *request = [pmo.request urlRequestWithAuthenticationHeadersForURL:self.coverArtRealURL];
+    NSURLRequest *request = [self.mediaObject.request urlRequestWithAuthenticationHeadersForURL:self.coverArtRealURL];
     
     NSDictionary *headerFields = [request allHTTPHeaderFields];
     BRURLImageProxy *aImageProxy = [BRURLImageProxy proxyWithURL:[request URL] headerFields:headerFields];
@@ -272,7 +262,7 @@
 }
 
 - (BOOL)isHD{
-	int videoResolution = [[pmo listSubObjects:@"Media" usingKey:@"videoResolution"] intValue];
+	int videoResolution = [[self.mediaObject listSubObjects:@"Media" usingKey:@"videoResolution"] intValue];
 	return videoResolution >= 720;
 }
 
@@ -316,20 +306,20 @@
 }
 
 - (id)mediaDescription {
-	return pmo.summary;
+	return self.mediaObject.summary;
 }
 
 - (id)mediaSummary {
-	if (![pmo.summary empty])
-		return pmo.summary;
-	else if (pmo.mediaContainer != nil)
-		return [pmo.mediaContainer.attributes valueForKey:@"summary"];
+	if (![self.mediaObject.summary empty])
+		return self.mediaObject.summary;
+	else if (self.mediaObject.mediaContainer != nil)
+		return [self.mediaObject.mediaContainer.attributes valueForKey:@"summary"];
 	
 	return nil;
 }
 
 - (id)mediaType {	
-	NSString *plexMediaType = [pmo.attributes valueForKey:@"type"];
+	NSString *plexMediaType = [self.mediaObject.attributes valueForKey:@"type"];
     DLog(@"mediaType: [%@]", plexMediaType);
 	BRMediaType *mediaType = nil;
 	if ([@"track" isEqualToString:plexMediaType])
@@ -383,7 +373,7 @@
 - (void)setPlaybackMetadataValue:(id)value forKey:(id)key {}
 
 - (id)playbackRightsOwner {
-	return [pmo.attributes valueForKey:@"studio"];
+	return [self.mediaObject.attributes valueForKey:@"studio"];
 }
 
 - (void)preparePlaybackContext {}
@@ -391,7 +381,7 @@
 - (id)previewURL {
 	//[super previewURL];
     DLog(@"preview URL");
-	return nil;//[[NSURL fileURLWithPath:[pmo.thumb imagePath]] absoluteString];
+	return nil;//[[NSURL fileURLWithPath:[self.mediaObject.thumb imagePath]] absoluteString];
 }
 
 - (int)primaryCollectionOrder {
@@ -399,10 +389,10 @@
 }
 
 - (id)primaryCollectionTitle {
-	if ([pmo.attributes objectForKey:@"album"] != nil)
-		return [pmo.attributes objectForKey:@"album"];
+	if ([self.mediaObject.attributes objectForKey:@"album"] != nil)
+		return [self.mediaObject.attributes objectForKey:@"album"];
 	else
-		return [pmo.mediaContainer.attributes valueForKey:@"title2"];
+		return [self.mediaObject.mediaContainer.attributes valueForKey:@"title2"];
 }
 
 - (id)primaryCollectionTitleForSorting {
@@ -419,7 +409,7 @@
 }
 
 - (id)producers {
-	NSString *result = [pmo listSubObjects:@"Producer" usingKey:@"tag"];
+	NSString *result = [self.mediaObject listSubObjects:@"Producer" usingKey:@"tag"];
 	return [result componentsSeparatedByString:@", "];
 }
 
@@ -435,23 +425,23 @@
 	NSString *rating;
 	BRMediaType *mediaType = [self mediaType];
 	if ([mediaType isEqual:[BRMediaType TVShow]]) {
-		rating = [pmo.mediaContainer.attributes objectForKey:@"grandparentContentRating"];
+		rating = [self.mediaObject.mediaContainer.attributes objectForKey:@"grandparentContentRating"];
 	} else {
-		rating = [pmo.attributes objectForKey:@"contentRating"];
+		rating = [self.mediaObject.attributes objectForKey:@"contentRating"];
 	}
 	return rating;
 }
 
 - (id)resolution {
-	return [pmo listSubObjects:@"Media" usingKey:@"videoResolution"];
+	return [self.mediaObject listSubObjects:@"Media" usingKey:@"videoResolution"];
 }
 
 - (unsigned)season {
 	int season;
-	if ([pmo.attributes objectForKey:@"parentIndex"] == nil) {
-		season = [pmo.mediaContainer.attributes integerForKey:@"parentIndex"];
+	if ([self.mediaObject.attributes objectForKey:@"parentIndex"] == nil) {
+		season = [self.mediaObject.mediaContainer.attributes integerForKey:@"parentIndex"];
 	} else {
-		season = [pmo.attributes integerForKey:@"parentIndex"];
+		season = [self.mediaObject.attributes integerForKey:@"parentIndex"];
 	}
 	return season;
 }
@@ -459,10 +449,10 @@
 - (id)seriesName {
     //grandparentTitle is usually populated for episodes when coming from dynamic views like "Recently added"
     //whereas mediacontainer.backTitle is used in "All shows->Futurama-Season 1->Episode 4"
-	if ([pmo.attributes objectForKey:@"grandparentTitle"] != nil) {
-		return [pmo.attributes objectForKey:@"grandparentTitle"];    
+	if ([self.mediaObject.attributes objectForKey:@"grandparentTitle"] != nil) {
+		return [self.mediaObject.attributes objectForKey:@"grandparentTitle"];    
 	} else {
-		return pmo.mediaContainer.backTitle;
+		return self.mediaObject.mediaContainer.backTitle;
     }
 }
 
@@ -478,7 +468,7 @@
 
 - (float)starRating {
 	//multiply your rating by 2, then round using Math.Round(rating, MidpointRounding.AwayFromZero), then divide that value by 2.
-	float rating = [[pmo.attributes valueForKey:@"rating"] floatValue];
+	float rating = [[self.mediaObject.attributes valueForKey:@"rating"] floatValue];
 	if (rating > 0) {
 		rating = rating / 2; //plex uses 10 based system, atv uses 5 stars
 		rating = round(rating * 2.0) / 2.0; //atv supports half stars, so round to nearest half
@@ -487,11 +477,11 @@
 }
 
 - (unsigned)startTimeInMS {
-    return [[pmo.attributes valueForKey:@"viewOffset"] intValue];
+    return [[self.mediaObject.attributes valueForKey:@"viewOffset"] intValue];
 }
 
 - (unsigned)startTimeInSeconds {
-	return [[pmo.attributes valueForKey:@"viewOffset"] intValue] / 1000;
+	return [[self.mediaObject.attributes valueForKey:@"viewOffset"] intValue] / 1000;
 }
 
 - (unsigned)stopTimeInMS {
@@ -505,11 +495,11 @@
 }
 
 -(id)title {
-	NSString *agentAttr = [pmo.attributes valueForKey:@"agent"];
+	NSString *agentAttr = [self.mediaObject.attributes valueForKey:@"agent"];
 	if (agentAttr != nil)
 		return nil;
 	else
-		return pmo.name;
+		return self.mediaObject.name;
 }
 
 - (id)titleForSorting {
@@ -539,10 +529,10 @@
 - (NSURL *)coverArtRealURL {
     NSURL *imageURL = nil;
     PlexImage *image = nil;
-    if (pmo.thumb.hasImage) {
-        image = pmo.thumb;
-    } else if (pmo.art.hasImage) {
-        image = pmo.art;
+    if (self.mediaObject.thumb.hasImage) {
+        image = self.mediaObject.thumb;
+    } else if (self.mediaObject.art.hasImage) {
+        image = self.mediaObject.art;
     }
     
     if (image) {
@@ -561,17 +551,17 @@
     NSURL* fanartUrl = nil;
     
     NSString *artPath = nil;
-    if ([pmo.attributes valueForKey:@"art"]) {
+    if ([self.mediaObject.attributes valueForKey:@"art"]) {
         //movie
-        artPath = [pmo.attributes valueForKey:@"art"];
+        artPath = [self.mediaObject.attributes valueForKey:@"art"];
     } else {
         //tv show
-        artPath = [pmo.mediaContainer.attributes valueForKey:@"art"];
+        artPath = [self.mediaObject.mediaContainer.attributes valueForKey:@"art"];
     }
     
     if (artPath) {
-		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",pmo.request.base, artPath];
-        fanartUrl = [pmo.request pathForScaledImage:backgroundImagePath ofSize:[BRWindow interfaceFrame].size];
+		NSString *backgroundImagePath = [NSString stringWithFormat:@"%@%@",self.mediaObject.request.base, artPath];
+        fanartUrl = [self.mediaObject.request pathForScaledImage:backgroundImagePath ofSize:[BRWindow interfaceFrame].size];
 	}
 	return fanartUrl;
 }
@@ -585,9 +575,7 @@
 }
 
 - (NSString *)mediaURL{
-    //url = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
-	//DLog(@"Wanted URL %@", [url description]);	
-	return [url description];
+	return nil;
 }
 
 - (BRImage *)starRatingImage {
@@ -624,7 +612,7 @@
 }
 
 - (NSArray *)writers {
-	NSString *result = [pmo listSubObjects:@"Writer" usingKey:@"tag"];
+	NSString *result = [self.mediaObject listSubObjects:@"Writer" usingKey:@"tag"];
 	return [result componentsSeparatedByString:@", "];
 }
 
@@ -632,12 +620,12 @@
     NSString *year;
 	BRMediaType *mediaType = [self mediaType];
 	if ([mediaType isEqual:[BRMediaType movie]]) {
-        year = [pmo.attributes valueForKey:@"year"];
+        year = [self.mediaObject.attributes valueForKey:@"year"];
     } else {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"yyyy"];
         
-        NSDate *date = pmo.originallyAvailableAt;
+        NSDate *date = self.mediaObject.originallyAvailableAt;
         year = [dateFormat stringFromDate:date];
         [dateFormat release];
     }

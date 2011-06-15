@@ -32,10 +32,8 @@
 
 //needs to be a subclass of photo media asset to enable supercharged grid
 @interface PlexPreviewAsset : BRPhotoMediaAsset<BRMediaAsset> {
-	NSURL* url;
-	PlexMediaObject* pmo;
 }
-@property (nonatomic, retain) PlexMediaObject* pmo;
+@property (nonatomic, retain) PlexMediaObject* mediaObject;
 
 - (id)initWithURL:(NSURL*)url mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)pmo;
 

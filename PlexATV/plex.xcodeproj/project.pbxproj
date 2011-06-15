@@ -62,7 +62,6 @@
 		7229641D1390988A00CE19CC /* Poster.png in Resources */ = {isa = PBXBuildFile; fileRef = 7229641C1390988A00CE19CC /* Poster.png */; };
 		7229642713916ADD00CE19CC /* PlexMoreInfoMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 7229642613916ADD00CE19CC /* PlexMoreInfoMenuItem.m */; };
 		7247BC7F1374C34B00170427 /* Plex_SMFBookcaseController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */; };
-		7259D3F91347F3C600E878C7 /* PlexTopShelfController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */; };
 		7273929912FA891E008B4C86 /* HWServerDetailsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7273929812FA891E008B4C86 /* HWServerDetailsController.m */; };
 		727A3F4912F78FB100994193 /* PlexViewSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 727A3F4812F78FB100994193 /* PlexViewSettingsController.m */; };
 		727D80921374B4CB00FBE23E /* PlexThemeMusicPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 727D80911374B4CA00FBE23E /* PlexThemeMusicPlayer.m */; };
@@ -74,6 +73,7 @@
 		72C421B21319E27700B90041 /* HWTVShowsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72C421B11319E27700B90041 /* HWTVShowsController.m */; };
 		72C4224E131A272200B90041 /* PlexTextLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 72C4224D131A272200B90041 /* PlexTextLogo.png */; };
 		72EA80F712DEB49B00138F7D /* PlexSettings.png in Resources */ = {isa = PBXBuildFile; fileRef = 72EA80F612DEB49B00138F7D /* PlexSettings.png */; };
+		72EB28B813A86A6B005FB447 /* PlexTopShelfController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 72EB28B713A86A6B005FB447 /* PlexTopShelfController.mm */; };
 		72ECCD7A135FEE1A0025D3E2 /* PlexSecuritySettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72ECCD79135FEE1A0025D3E2 /* PlexSecuritySettingsController.m */; };
 		875A824E126FFF1F00ECADC2 /* HWBasicMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 875A824C126FFF1F00ECADC2 /* HWBasicMenu.m */; };
 		875A873412704ACC00ECADC2 /* theos in Resources */ = {isa = PBXBuildFile; fileRef = 875A86EB12704ACC00ECADC2 /* theos */; };
@@ -151,8 +151,6 @@
 		7229642613916ADD00CE19CC /* PlexMoreInfoMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexMoreInfoMenuItem.m; path = Classes/PlexMoreInfoMenuItem.m; sourceTree = "<group>"; };
 		7247BC7D1374C34B00170427 /* Plex_SMFBookcaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Plex_SMFBookcaseController.h; path = Classes/Plex_SMFBookcaseController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7247BC7E1374C34B00170427 /* Plex_SMFBookcaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = Plex_SMFBookcaseController.m; path = Classes/Plex_SMFBookcaseController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		7259D3F71347F3C600E878C7 /* PlexTopShelfController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlexTopShelfController.h; sourceTree = "<group>"; };
-		7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlexTopShelfController.mm; sourceTree = "<group>"; };
 		7273929712FA891E008B4C86 /* HWServerDetailsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWServerDetailsController.h; path = Classes/HWServerDetailsController.h; sourceTree = "<group>"; };
 		7273929812FA891E008B4C86 /* HWServerDetailsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HWServerDetailsController.m; path = Classes/HWServerDetailsController.m; sourceTree = "<group>"; };
 		727A3F4712F78FB100994193 /* PlexViewSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexViewSettingsController.h; path = Classes/PlexViewSettingsController.h; sourceTree = "<group>"; };
@@ -175,6 +173,8 @@
 		72C4224D131A272200B90041 /* PlexTextLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PlexTextLogo.png; path = Resources/PlexTextLogo.png; sourceTree = "<group>"; };
 		72EA80F612DEB49B00138F7D /* PlexSettings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PlexSettings.png; path = Resources/PlexSettings.png; sourceTree = "<group>"; };
 		72EA810712DEB6B500138F7D /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = Classes/Constants.h; sourceTree = "<group>"; };
+		72EB28B613A86A6B005FB447 /* PlexTopShelfController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexTopShelfController.h; path = Classes/PlexTopShelfController.h; sourceTree = "<group>"; };
+		72EB28B713A86A6B005FB447 /* PlexTopShelfController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlexTopShelfController.mm; path = Classes/PlexTopShelfController.mm; sourceTree = "<group>"; };
 		72ECCD78135FEE1A0025D3E2 /* PlexSecuritySettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexSecuritySettingsController.h; path = Classes/PlexSecuritySettingsController.h; sourceTree = "<group>"; };
 		72ECCD79135FEE1A0025D3E2 /* PlexSecuritySettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexSecuritySettingsController.m; path = Classes/PlexSecuritySettingsController.m; sourceTree = "<group>"; };
 		875A824B126FFF1F00ECADC2 /* HWBasicMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HWBasicMenu.h; path = Classes/HWBasicMenu.h; sourceTree = "<group>"; };
@@ -346,8 +346,8 @@
 			children = (
 				7208482E13A83E31004AF327 /* HWAppliance.h */,
 				7208482F13A83E31004AF327 /* HWAppliance.mm */,
-				7259D3F71347F3C600E878C7 /* PlexTopShelfController.h */,
-				7259D3F81347F3C600E878C7 /* PlexTopShelfController.mm */,
+				72EB28B613A86A6B005FB447 /* PlexTopShelfController.h */,
+				72EB28B713A86A6B005FB447 /* PlexTopShelfController.mm */,
 			);
 			name = "Main Menu";
 			sourceTree = "<group>";
@@ -612,7 +612,6 @@
 				C440CFC11311857100015595 /* PlexPlaybackController.m in Sources */,
 				72C421B21319E27700B90041 /* HWTVShowsController.m in Sources */,
 				C4BB1CE6133BD2FC0065A785 /* PlexPlaybackSettingsController.m in Sources */,
-				7259D3F91347F3C600E878C7 /* PlexTopShelfController.mm in Sources */,
 				7217FABE134AC90800408E48 /* Plex_SMFMoviePreviewController.m in Sources */,
 				C4CA22BC134FB4D1006135E6 /* PlexControlFactory.m in Sources */,
 				7205CCE4135A7E7C001EFC55 /* PlexChannelsController.m in Sources */,
@@ -628,6 +627,7 @@
 				66292F84138F60FA00479781 /* PlexMoreInfoController.m in Sources */,
 				7229642713916ADD00CE19CC /* PlexMoreInfoMenuItem.m in Sources */,
 				7208483013A83E31004AF327 /* HWAppliance.mm in Sources */,
+				72EB28B813A86A6B005FB447 /* PlexTopShelfController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
