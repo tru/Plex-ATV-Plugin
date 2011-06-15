@@ -176,21 +176,24 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
 #pragma mark -
 #pragma mark Determine View Type Methods
-- (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject {
+- (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject {    
     BRController *controller = nil;
     
     //play theme music if we're entering a tv show
     if (aMediaObject.isTVShow || aMediaObject.isSeason || aMediaObject.isEpisode) {
         [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
     }
-    // ========== movie, initiate movie pre-play view ============
-    if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
-        return [[PlexPreplayController alloc] initWithPlexMediaObject:aMediaObject];
-    }
+    
     // ============ sound plugin or other type of sound, initiate playback ============
-    else if ([@"Track" isEqualToString:aMediaObject.containerType]){
+    //TODO: initiate playback when aMediaObject is plugin content (as preplay is generally no use)
+    if ([@"Track" isEqualToString:aMediaObject.containerType]){
         return [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];
 	}
+    
+    // ========== movie, initiate movie pre-play view ============
+    else if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
+        return [[PlexPreplayController alloc] initWithPlexMediaObject:aMediaObject];
+    }
     
     PlexMediaContainer *contents = [aMediaObject contents];
     

@@ -204,13 +204,13 @@
 	SMFBaseAsset *asset = [[SMFBaseAsset alloc] init];
 	switch (item) {
         case ViewTypeForMoviesIndex: {
-            [asset setTitle:@"Select the view type for the movies screens"];
-            [asset setSummary:@"Sets the type of view used when navigating movies, choose between list or grid view"];
+            [asset setTitle:@"Select the view type for the Movies screens"];
+            [asset setSummary:@"Sets the type of view used when navigating Movies. Choose between list or grid view"];
             break;
         }
         case ViewTypeForTvShowsIndex: {
-            [asset setTitle:@"Select the view type for the tv shows screens"];
-            [asset setSummary:@"Sets the type of view used when navigating tv shows, choose between list, grid or bookcase view"];
+            [asset setTitle:@"Select the view type for the TV Shows screens"];
+            [asset setSummary:@"Sets the type of view used when navigating TV Shows. Choose between list, grid or bookcase view"];
             break;
         }
 		case ViewThemeMusicEnabledIndex: {
@@ -225,12 +225,12 @@
 		}
 		case ViewListPosterZoomingEnabledIndex: {
 			[asset setTitle:@"Toggles whether to zoom the poster"];
-			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
+			[asset setSummary:@"Enables/Disables the image starting out covering the majority of metadata view and animating to show the metadata"];
 			break;
 		}
 		case ViewPreplayFanartEnabledIndex: {
-			[asset setTitle:@"Toggles whether to zoom the poster"];
-			[asset setSummary:@"Enables/Disables the image starting out full screen and animating to show the metadata"];
+			[asset setTitle:@"Toggles whether to display fanart"];
+			[asset setSummary:@"Enables/Disables fanart used as the background for the Preplay screen"];
 			break;
 		}
 		default:
