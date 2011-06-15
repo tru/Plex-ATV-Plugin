@@ -81,6 +81,10 @@
 }
 
 - (void)refresh {
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"on deck: [%@] count [%d]", self.onDeckMediaContainer, [self.onDeckMediaContainer.directories count]);
+    DLog(@"recently added: [%@] count [%d]", self.recentlyAddedMediaContainer, [self.recentlyAddedMediaContainer.directories count]);
+#endif
     if ([self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0) {
 #if LOCAL_DEBUG_ENABLED
         DLog(@"Activate main menu shelf");

@@ -14,7 +14,7 @@
     BRMediaShelfView *shelfView;
     int shelfItemCount;
 }
-@property (retain) NSString *containerName;
+@property (copy) NSString *containerName;
 @property (retain) PlexMediaContainer *onDeckMediaContainer;
 @property (retain) PlexMediaContainer *recentlyAddedMediaContainer;
 
