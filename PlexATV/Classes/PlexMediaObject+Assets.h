@@ -8,10 +8,10 @@
 #import <Foundation/Foundation.h>
 #import <plex-oss/PlexMediaObject.h>
 
-@class PlexPreviewAsset, PlexMediaAsset, PlexSongAsset;
+@class PlexBaseMetadataAsset, PlexMediaAsset, PlexSongAsset;
 @interface PlexMediaObject (Assets)
 
-@property (readonly) PlexPreviewAsset *previewAsset;
+@property (readonly) PlexBaseMetadataAsset *previewAsset;
 @property (readonly) PlexMediaAsset *mediaAsset;
 //@property (readonly) PlexSongAsset *songAsset;
 

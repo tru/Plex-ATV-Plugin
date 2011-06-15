@@ -290,7 +290,7 @@
         NSArray *subItems = subItemsContainer.directories;
         
         for (PlexMediaObject *pmo in subItems) {
-            PlexPreviewAsset *previewAsset = [pmo previewAsset];
+            PlexBaseMetadataAsset *previewAsset = [pmo previewAsset];
             [imageProxies addObject:[previewAsset imageProxy]];
         }   
         preview = [[[BRMediaParadeControl alloc] init] autorelease];

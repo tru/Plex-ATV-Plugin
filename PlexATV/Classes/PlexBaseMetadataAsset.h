@@ -31,7 +31,7 @@
 @class PlexMediaObject;
 
 //needs to be a subclass of photo media asset to enable supercharged grid
-@interface PlexPreviewAsset : BRPhotoMediaAsset<BRMediaAsset> {
+@interface PlexBaseMetadataAsset : BRPhotoMediaAsset<BRMediaAsset> {
 }
 @property (nonatomic, retain) PlexMediaObject* mediaObject;
 

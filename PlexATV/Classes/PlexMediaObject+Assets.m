@@ -6,7 +6,8 @@
 //
 
 #import "PlexMediaObject+Assets.h"
-#import "PlexPreviewAsset.h"
+#import "PlexBaseMetadataAsset.h"
+#import "PlexTVEpisodeMetadataAsset.h"
 #import "PlexMediaAsset.h"
 #import "PlexSongAsset.h"
 #import "HWUserDefaults.h"
@@ -17,8 +18,19 @@
 
 #pragma mark -
 #pragma mark Assets
-- (PlexPreviewAsset *)previewAsset {
-    return [[[PlexPreviewAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:self] autorelease];
+- (PlexBaseMetadataAsset *)previewAsset {
+    PlexBaseMetadataAsset *asset = nil;
+    NSString *plexMediaType = [self.attributes valueForKey:@"type"];
+    
+    if ([PlexMediaObjectTypeEpisode isEqualToString:plexMediaType]) {
+        //tv show episode
+        asset = [[PlexTVEpisodeMetadataAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:self];
+
+    } else {
+        asset = [[PlexBaseMetadataAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:self];
+    }
+    
+    return [asset autorelease];
 }
 
 - (PlexMediaAsset *)mediaAsset {
@@ -66,7 +78,7 @@
         [menuItem setText:[self name] withAttributes:nil];
 		
         //used to get details about the show, instead of gettings attrs here manually
-        PlexPreviewAsset *previewAsset = [self previewAsset];
+        PlexBaseMetadataAsset *previewAsset = [self previewAsset];
         
 		if ([self.type isEqualToString:PlexMediaObjectTypeEpisode]) {
             NSString *detailedText = [NSString stringWithFormat:@"Season %d, Episode %d (%@)", [previewAsset season], [previewAsset episode], [previewAsset seriesName]];

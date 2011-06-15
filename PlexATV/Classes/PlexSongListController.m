@@ -45,7 +45,7 @@
 #import "PlexSongListController.h"
 #import "PlexMediaProvider.h"
 #import "PlexSongAsset.h"
-#import "PlexPreviewAsset.h"
+#import "PlexBaseMetadataAsset.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMedia.h>
 #import <plex-oss/PlexMediaContainer.h>
@@ -229,7 +229,7 @@
 			return [preview autorelease];	
 		}
 		else {
-			PlexPreviewAsset *album = [[PlexPreviewAsset alloc] initWithURL:mediaObj.mediaStreamURL mediaProvider:nil mediaObject:mediaObj];
+			PlexBaseMetadataAsset *album = [[PlexBaseMetadataAsset alloc] initWithURL:mediaObj.mediaStreamURL mediaProvider:nil mediaObject:mediaObj];
 			BRMetadataPreviewControl *preview =[[BRMetadataPreviewControl alloc] init];
 			[preview setShowsMetadataImmediately:YES];
 			[preview setAsset:album];	

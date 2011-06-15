@@ -34,7 +34,7 @@
 #import <plex-oss/PlexImage.h>
 #import <plex-oss/PlexMedia.h>
 #import "PlexMediaObject+Assets.h"
-#import "PlexPreviewAsset.h"
+#import "PlexBaseMetadataAsset.h"
 #import "PlexMoreInfoController.h"
 
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
@@ -321,43 +321,66 @@ typedef enum {
 }
 
 -(NSArray *)headers {
-	return [NSArray arrayWithObjects:@"Details",@"Actors",@"Directors",@"Writers",nil];
+    
+    if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
+        return [NSArray arrayWithObjects:@"Details",@"Show",@"Directors",@"Writers",nil];
+    } else {
+        return [NSArray arrayWithObjects:@"Details",@"Actors",@"Directors",@"Writers",nil];
+    }
 }
 
 -(NSArray *)columns {
+    PlexBaseMetadataAsset *metadataAsset = self.selectedMediaObject.previewAsset;
+    
     //the table will hold all the columns
 	NSMutableArray *table = [NSMutableArray array];
 	
     // ======= details column ======
 	NSMutableArray *details = [NSMutableArray array];
 	
-	BRGenre *genre = [self.selectedMediaObject.previewAsset primaryGenre];
+	BRGenre *genre = [metadataAsset primaryGenre];
 	[details addObject:[genre displayString]];
 	
-	NSString *released = [NSString stringWithFormat:@"Released %@", [self.selectedMediaObject.previewAsset year]];
+	NSString *released = [NSString stringWithFormat:@"Released %@", [metadataAsset year]];
 	[details addObject:released];
 	
-	NSString *duration = [NSString stringWithFormat:@"%d minutes", [self.selectedMediaObject.previewAsset duration]/60];
+	NSString *duration = [NSString stringWithFormat:@"%d minutes", [metadataAsset duration]/60];
 	[details addObject:duration];
     
 	[table addObject:details];
 	
-	
-    // ======= actors column ======
-    if ([self.selectedMediaObject.previewAsset cast]) {
-        NSArray *actors = [self.selectedMediaObject.previewAsset cast];
-        [table addObject:actors];
-	}
+	if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
+        NSMutableArray *show = [NSMutableArray array];
+        // ======= show column ======
+        if ([metadataAsset seriesName]) {
+            [show addObject:[metadataAsset seriesName]];
+        }
+        if ([metadataAsset season]) {
+            NSString *seasonString = [NSString stringWithFormat:@"Season %d", [metadataAsset season]];
+            [show addObject:seasonString];
+        }
+        if ([metadataAsset episode]) {
+            NSString *episodeString = [NSString stringWithFormat:@"Episode %d", [metadataAsset episode]];
+            [show addObject:episodeString];
+        }
+        [table addObject:show];
+    } else {
+        // ======= actors column ======
+        if ([metadataAsset cast]) {
+            NSArray *actors = [metadataAsset cast];
+            [table addObject:actors];
+        }
+    }
 	
     // ======= directors column ======
-    if ([self.selectedMediaObject.previewAsset directors]) {
-        NSArray *directors = [self.selectedMediaObject.previewAsset directors];
+    if ([metadataAsset directors]) {
+        NSArray *directors = [metadataAsset directors];
         [table addObject:directors];
 	}
     
     // ======= writers column ======
-    if ([self.selectedMediaObject.previewAsset writers]) {
-        NSArray *writers = [self.selectedMediaObject.previewAsset writers];
+    if ([metadataAsset writers]) {
+        NSArray *writers = [metadataAsset writers];
         [table addObject:writers];
 	}
 	

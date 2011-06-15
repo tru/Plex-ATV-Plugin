@@ -25,11 +25,11 @@
 #import <Foundation/Foundation.h>
 #import <Backrow/Backrow.h>
 
-@class PlexMediaObject, PlexPreviewAsset;
+@class PlexMediaObject, PlexBaseMetadataAsset;
 @interface PlexMediaAssetOld : BRBaseMediaAsset<BRMediaAsset> {
 	NSURL* url;
 	PlexMediaObject* pmo;
-	PlexPreviewAsset *ppa;
+	PlexBaseMetadataAsset *ppa;
 }
 @property (nonatomic, retain) PlexMediaObject* pmo;
 

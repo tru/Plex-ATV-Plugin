@@ -5,7 +5,7 @@ include theos/makefiles/common.mk
 
 BUNDLE_NAME = plex
 
-PlexATV_FILES = Classes/PlexPreviewAsset.m Classes/PlexSongAsset.m Classes/PlexMediaAsset.m Classes/PlexMediaAssetOld.m
+PlexATV_FILES = Classes/PlexBaseMetadataAsset.m Classes/PlexTVEpisodeMetadataAsset.m Classes/PlexSongAsset.m Classes/PlexMediaAsset.m Classes/PlexMediaAssetOld.m
 
 PlexATV_FILES += Classes/HWSettingsController.m Classes/HWDefaultServerController.m Classes/HWAdvancedSettingsController.m
 PlexATV_FILES += Classes/HWServersController.m Classes/HWServerDetailsController.m

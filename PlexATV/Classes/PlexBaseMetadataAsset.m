@@ -1,5 +1,5 @@
 //
-//  PlexPreviewAsset.m
+//  PlexBaseMetadataAsset.m
 //  atvTwo
 //
 //  Created by Frank Bauer on 27.10.10.
@@ -23,7 +23,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 // 
-#import "PlexPreviewAsset.h"
+#import "PlexBaseMetadataAsset.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexRequest.h>
@@ -34,7 +34,7 @@
 - (id)storeRentalPlaceholderImage;
 @end
 
-@implementation PlexPreviewAsset
+@implementation PlexBaseMetadataAsset
 @synthesize mediaObject;
 
 #pragma mark -
@@ -320,7 +320,6 @@
 
 - (id)mediaType {	
 	NSString *plexMediaType = [self.mediaObject.attributes valueForKey:@"type"];
-    DLog(@"mediaType: [%@]", plexMediaType);
 	BRMediaType *mediaType = nil;
 	if ([@"track" isEqualToString:plexMediaType])
 		mediaType = [BRMediaType song];

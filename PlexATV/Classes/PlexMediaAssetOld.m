@@ -27,7 +27,7 @@
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/Machine.h>
 #import <ambertation-plex/Ambertation.h>
-#import "PlexPreviewAsset.h"
+#import "PlexBaseMetadataAsset.h"
 
 @implementation PlexMediaAssetOld
 @synthesize pmo;
@@ -42,7 +42,7 @@
 	if (self != nil) {
 		pmo = [o retain];
 		url = [u retain];
-		ppa = [[PlexPreviewAsset alloc] initWithURL:url mediaProvider:mediaProvider mediaObject:pmo];
+		ppa = [[PlexBaseMetadataAsset alloc] initWithURL:url mediaProvider:mediaProvider mediaObject:pmo];
 		
 		//DLog(@"PMO attrs: %@", pmo.attributes);
 		//PlexRequest *req = pmo.request;
