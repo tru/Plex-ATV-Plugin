@@ -134,11 +134,11 @@
 }
 
 - (id)coverArt {
-    return [BRImage imageWithURL:self.coverArtRealURL];
+    return [BRImage imageWithURL:[[self imageProxy] url]];
 }
 
 - (NSString *)coverArtURL {
-    return [self.coverArtRealURL description];
+    return [[[self imageProxy] url] absoluteString];
 }
 
 - (id)dateAcquired {
@@ -224,8 +224,7 @@
 }
 
 - (id)imageProxy {
-    NSURLRequest *request = [self.mediaObject.request urlRequestWithAuthenticationHeadersForURL:self.coverArtRealURL];
-    
+    NSURLRequest *request = [self URLRequestForCoverArt];
     NSDictionary *headerFields = [request allHTTPHeaderFields];
     BRURLImageProxy *aImageProxy = [BRURLImageProxy proxyWithURL:[request URL] headerFields:headerFields];
     //aImageProxy.writeToDisk = YES;
@@ -525,8 +524,11 @@
 
 #pragma mark -
 #pragma mark Additional Metadata Methods
-- (NSURL *)coverArtRealURL {
-    NSURL *imageURL = nil;
+- (NSURLRequest *)URLRequestForCoverArt {
+    return [self URLRequestForCoverArtOfMaxSize:CGSizeMake(512, 512)];
+}
+
+- (NSURLRequest *)URLRequestForCoverArtOfMaxSize:(CGSize)imageSize {
     PlexImage *image = nil;
     if (self.mediaObject.thumb.hasImage) {
         image = self.mediaObject.thumb;
@@ -534,12 +536,9 @@
         image = self.mediaObject.art;
     }
     
-    if (image) {
-        image.maxImageSize = CGSizeMake(512, 512);
-        imageURL = image.imageURL;
-    }
+    image.maxImageSize = imageSize;
     
-    return imageURL;
+    return [image imageURLRequest];
 }
 
 - (BRImage *)defaultImage {

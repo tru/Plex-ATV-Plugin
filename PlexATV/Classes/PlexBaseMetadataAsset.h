@@ -38,7 +38,7 @@
 - (id)initWithURL:(NSURL*)url mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)pmo;
 
 //other metadata methods
-@property (readonly) NSURL *coverArtRealURL;
+@property (readonly) NSURLRequest *URLRequestForCoverArt;
 @property (readonly) NSURL *fanartUrl;
 @property (readonly) BRImage *defaultImage;
 @property (readonly) BOOL hasClosedCaptioning;
@@ -47,5 +47,7 @@
 @property (readonly) BRImage *starRatingImage;
 @property (readonly) NSArray *writers;
 @property (readonly) NSString *year;
+
+- (NSURLRequest *)URLRequestForCoverArtOfMaxSize:(CGSize)imageSize;
 
 @end
