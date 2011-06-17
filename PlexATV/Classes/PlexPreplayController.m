@@ -341,8 +341,14 @@ typedef enum {
 	BRGenre *genre = [metadataAsset primaryGenre];
 	[details addObject:[genre displayString]];
 	
-	NSString *released = [NSString stringWithFormat:@"Released %@", [metadataAsset year]];
-	[details addObject:released];
+	NSString *releasedDate = nil;
+	if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
+        releasedDate = [metadataAsset dateCreatedString];
+    } else {
+        releasedDate = [metadataAsset year];
+    }
+    NSString *released = [NSString stringWithFormat:@"Released %@", releasedDate];
+    [details addObject:released];
 	
 	NSString *duration = [NSString stringWithFormat:@"%d minutes", [metadataAsset duration]/60];
 	[details addObject:duration];
