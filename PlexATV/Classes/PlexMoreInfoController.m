@@ -16,6 +16,15 @@
 #import "PlexMoreInfoMenuItem.h"
 #import "PlexControlFactory.h"
 
+@interface NSIndexPath (Private)
+
++ (NSIndexPath *)indexPathForRow:(NSUInteger)row inSection:(NSUInteger)section;
+
+@property(nonatomic,readonly) NSUInteger section;
+@property(nonatomic,readonly) NSUInteger row;
+
+@end
+
 //these are in the AppleTV.framework, but cannot #import <AppleTV/AppleTV.h> due to
 //naming conflicts with Backrow.framework. below is a hack!
 @interface BRThemeInfo (PlexExtentions)
@@ -310,17 +319,28 @@
     switch (remoteAction) {
 		case kBREventRemoteActionUp:
 		case kBREventRemoteActionHoldUp:
-			if([self getSelection] == firstFocusableItemIndex && 
+			if([self getListSelection] == firstFocusableItemIndex && 
                [action value] == 1 && 
-               [self focusedControl] == [self list]) {
+               self.list.focused) {
 				[[[BRApplicationStackManager singleton] stack] popController];
 				return YES;
 			}
 			break;
+        case kBREventRemoteActionPlay:
+            if (self.gridControl.focused) {
+                if([action value] == 1)
+                    [self selectActionForGridIndex:[self getGridSelection]];
+                return YES;
+            }
         case kBREventRemoteActionPlayPause:
             if (self.list.focused) {
                 if([action value] == 1)
-                    [self playPauseActionForRow:[self getSelection]];
+                    [self playPauseActionForRow:[self getListSelection]];
+                return YES;
+                
+            } else if (self.gridControl.focused) {
+                if([action value] == 1)
+                    [self playPauseActionForGridIndex:[self getGridSelection]];
                 return YES;
             }
             break;
@@ -490,7 +510,7 @@
 
 #pragma mark -
 #pragma mark List Action Methods
-- (void)setSelection:(int)selection {
+- (void)setListSelection:(int)selection {
     NSMethodSignature *signature = [self.list methodSignatureForSelector:@selector(setSelection:)];
     NSInvocation *selInv = [NSInvocation invocationWithMethodSignature:signature];
     [selInv setSelector:@selector(setSelection:)];
@@ -507,7 +527,7 @@
     [selInv invokeWithTarget:self.list];
 }
 
--(int)getSelection {
+- (int)getListSelection {
 	int row;
 	NSMethodSignature *signature = [self.list methodSignatureForSelector:@selector(selection)];
 	NSInvocation *selInv = [NSInvocation invocationWithMethodSignature:signature];
@@ -522,6 +542,32 @@
 	else
 		[selInv getReturnValue:&row];
 	return row;
+}
+
+#pragma mark -
+#pragma mark List Action Methods
+- (void)selectActionForGridIndex:(long)selectedIndex {
+    PlexMediaObject *selectedMediaObject = [self.currentGridContent objectAtIndex:selectedIndex];
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"Grid selected at index %ld: [%@]", selectedIndex, selectedMediaObject);
+#endif
+    [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:selectedMediaObject];
+}
+
+- (void)playPauseActionForGridIndex:(long)selectedIndex {
+    PlexMediaObject *selectedMediaObject = [self.currentGridContent objectAtIndex:selectedIndex];
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"Grid play/pause at index %ld: [%@]", selectedIndex, selectedMediaObject);
+#endif
+    [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:selectedMediaObject];
+}
+
+//- (void)setGridSelection:(int)selection {
+//    DLog(@"Not implemented");
+//}
+
+- (long)getGridSelection {
+	return [self.gridControl _indexOfFocusedControl];
 }
 
 @end

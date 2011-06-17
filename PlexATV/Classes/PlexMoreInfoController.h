@@ -44,8 +44,13 @@
 - (void)startRetrievalOfContentsForDirectory:(PlexDirectory *)directory;
 
 //list methods
--(void)playPauseActionForRow:(long)row;
-- (void)setSelection:(int)selection;
-- (int)getSelection;
+- (void)playPauseActionForRow:(long)row;
+- (void)setListSelection:(int)selection;
+- (int)getListSelection;
+
+//grid methods
+- (void)playPauseActionForGridIndex:(long)selectedIndex;
+- (void)selectActionForGridIndex:(long)selectedIndex;
+- (long)getGridSelection;
 
 @end
