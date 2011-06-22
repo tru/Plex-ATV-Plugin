@@ -23,9 +23,9 @@
 
 //----------- audio -----------
 #define PlaybackAudioAC3EnabledIndex        0
-#define PlaybackAudioDTSEnabledIndex        1
+#define PlaybackAudioDTSEnabledIndex        2
 //----------- video -----------
-#define PlaybackVideoQualityProfileIndex    2
+#define PlaybackVideoQualityProfileIndex    1
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -38,7 +38,7 @@
 		[self setupList];
         
         [[self list] addDividerAtIndex:0 withLabel:@"Audio"];
-        [[self list] addDividerAtIndex:2 withLabel:@"Video"];
+        [[self list] addDividerAtIndex:1 withLabel:@"Video"];
 	}	
 	return self;
 }
@@ -86,13 +86,14 @@
 	
 	
 	// =========== dts ===========
-	SMFMenuItem *dtsMenuItem = [SMFMenuItem menuItem];
+	/*
+    SMFMenuItem *dtsMenuItem = [SMFMenuItem menuItem];
 	
    	[dtsMenuItem setTitle:@"DTS™ capable receiver"];
 	NSString *dts = [[HWUserDefaults preferences] boolForKey:PreferencesPlaybackAudioDTSEnabled] ? @"Yes" : @"No";
     [dtsMenuItem setRightText:dts];
 	[_items addObject:dtsMenuItem];
-    
+    */
 
     
     // =========== VIDEO SETTINGS ===========
