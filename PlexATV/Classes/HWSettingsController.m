@@ -24,7 +24,7 @@
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.0.8.0.4"
+#define PlexPluginVersion @"0.8.0"
 
 #define ServersIndex                0
 #define ViewSettingsIndex           1

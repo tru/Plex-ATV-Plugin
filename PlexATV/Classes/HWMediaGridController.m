@@ -356,20 +356,20 @@ void checkNil(NSObject *ctrl)
 		}
 		
 		else if ([_gridControl isFocused]) {
-			_lastFocusedControlIndex = [_gridControl _indexOfFocusedControl];
+			index = [_gridControl _indexOfFocusedControl];
 			mediaObjects = self.gridMediaObjects;
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], _lastFocusedControlIndex);
+			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
 			
 		}
 		
 		if (mediaObjects) {
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"brEventaction. have %d mediaObjects and index %d, showing movie preview ctrl",[mediaObjects count], _lastFocusedControlIndex);
+			DLog(@"brEventaction. have %d mediaObjects and index %d, showing movie preview ctrl",[mediaObjects count], index);
 #endif      
 			
-            [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:[[mediaObjects objectAtIndex:_lastFocusedControlIndex] retain]];
+            [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:[[mediaObjects objectAtIndex:index] retain]];
 		}
 		else {
 			DLog(@"error: no selected mediaObject");
