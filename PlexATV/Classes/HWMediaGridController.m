@@ -43,6 +43,11 @@ void checkNil(NSObject *ctrl)
 - (id)initWithPlexAllMovies:(PlexMediaContainer *)allMovies andRecentMovies:(PlexMediaContainer *)recentMovies {
 	self = [self init];
     if (self) {
+        DLog();
+        _gridWasFocused = NO;
+        _shelfWasFocused = NO;
+        _lastFocusedControlIndex = - 1;
+        
         self.shelfMediaContainer = recentMovies;
         self.gridMediaContainer = allMovies;
         
@@ -55,7 +60,6 @@ void checkNil(NSObject *ctrl)
         
         self.shelfMediaObjects = [fullRecentMovies subarrayWithRange:theRange];
         self.gridMediaObjects = allMovies.directories;
-        _lastFocusedControlIndex = 0; //set inital focused control
     }
 	return self;
 }
@@ -104,6 +108,11 @@ void checkNil(NSObject *ctrl)
 -(void)controlWasActivated
 {
 	DLog(@"controlWasActivated");
+    DLog(@"grid was focused: %@", _gridWasFocused ? @"YES" : @"NO");
+    DLog(@"shelf was focused: %@", _shelfWasFocused ? @"YES" : @"NO");
+    DLog(@"last focused index: %d", _lastFocusedControlIndex);
+    if (_gridWasFocused)
+        [_gridControl set]
     [self _removeAllControls];
 	[self drawSelf];
             
@@ -350,6 +359,8 @@ void checkNil(NSObject *ctrl)
 		if ([_shelfControl isFocused]) {
 			index = [_shelfControl focusedIndex];
 			mediaObjects = self.shelfMediaObjects;
+            _shelfWasFocused = YES;
+            _lastFocusedControlIndex = index;
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"item in shelf selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
@@ -358,6 +369,8 @@ void checkNil(NSObject *ctrl)
 		else if ([_gridControl isFocused]) {
 			index = [_gridControl _indexOfFocusedControl];
 			mediaObjects = self.gridMediaObjects;
+            _gridWasFocused = YES;
+            _lastFocusedControlIndex = index;
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
