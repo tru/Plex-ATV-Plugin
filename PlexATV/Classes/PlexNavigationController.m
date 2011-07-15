@@ -185,13 +185,14 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     }
     
     // ============ sound plugin or other type of sound, initiate playback ============
-    //TODO: initiate playback when aMediaObject is plugin content (as preplay is generally no use)
-    if ([@"Track" isEqualToString:aMediaObject.containerType]){
+    //initiate playback when aMediaObject is plugin content (as preplay is generally no use)
+    if ([@"Track" isEqualToString:aMediaObject.containerType]
+        || [@"clip" isEqualToString:[aMediaObject.attributes valueForKey:@"type"]]){
         return [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];
 	}
     
     // ========== movie, initiate movie pre-play view ============
-    else if (aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) {
+    else if ((aMediaObject.hasMedia || [@"Video" isEqualToString:aMediaObject.containerType]) && aMediaObject.mediaContainer.viewGroup != PlexViewGroupStoreInfo) {
         return [[PlexPreplayController alloc] initWithPlexMediaObject:aMediaObject];
     }
     
@@ -303,7 +304,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 		for (i = 0; i < count; i++) {
 			PlexMediaObject * obj = [tvShowCategory.directories objectAtIndex:i];
 			NSString *key = [obj.attributes objectForKey:@"key"];
-			DLog(@"obj_type: %@",key);
+			//DLog(@"obj_type: %@",key);
 			if ([key isEqualToString:@"all"]) {
 				allTvShows = obj;
 				break;
@@ -327,7 +328,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 		for (i = 0; i < count; i++) {
 			PlexMediaObject * obj = [movieCategory.directories objectAtIndex:i];
 			NSString *key = [obj.attributes objectForKey:@"key"];
-			DLog(@"obj_type: %@",key);
+			//DLog(@"obj_type: %@",key);
 			if ([key isEqualToString:@"all"])
 				allMovies = obj;
 			else if ([key isEqualToString:shelfKey])
