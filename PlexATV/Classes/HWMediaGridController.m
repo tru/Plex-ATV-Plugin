@@ -44,9 +44,6 @@ void checkNil(NSObject *ctrl)
 	self = [self init];
     if (self) {
         DLog();
-        _gridWasFocused = NO;
-        _shelfWasFocused = NO;
-        _lastFocusedControlIndex = - 1;
         
         self.shelfMediaContainer = recentMovies;
         self.gridMediaContainer = allMovies;
@@ -88,11 +85,13 @@ void checkNil(NSObject *ctrl)
 - (void)wasPushed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasPushed];
+    [self _removeAllControls];
+	[self drawSelf];
 }
 
 - (void)wasPopped {
-    _gridControl = nil;
-    _shelfControl = nil;
+    //_gridControl = nil;
+    //_shelfControl = nil;
 	[super wasPopped];
 }
 
@@ -107,15 +106,7 @@ void checkNil(NSObject *ctrl)
 
 -(void)controlWasActivated
 {
-	DLog(@"controlWasActivated");
-    DLog(@"grid was focused: %@", _gridWasFocused ? @"YES" : @"NO");
-    DLog(@"shelf was focused: %@", _shelfWasFocused ? @"YES" : @"NO");
-    DLog(@"last focused index: %d", _lastFocusedControlIndex);
-    if (_gridWasFocused)
-        [_gridControl set]
-    [self _removeAllControls];
-	[self drawSelf];
-            
+          
 	[super controlWasActivated];
 	
 }
@@ -272,9 +263,9 @@ void checkNil(NSObject *ctrl)
 	[_scroller setFollowsFocus:YES];
 	[_scroller setContent:_panelControl]; 
 	[_scroller setAcceptsFocus:YES];
-	
+
 	[self layoutSubcontrols];
-	
+
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"drawSelf done");
 #endif
@@ -357,20 +348,16 @@ void checkNil(NSObject *ctrl)
 		NSArray *mediaObjects;
 		
 		if ([_shelfControl isFocused]) {
-			index = [_shelfControl focusedIndex];
+            index = [_shelfControl focusedIndex];
 			mediaObjects = self.shelfMediaObjects;
-            _shelfWasFocused = YES;
-            _lastFocusedControlIndex = index;
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"item in shelf selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      
 		}
 		
 		else if ([_gridControl isFocused]) {
-			index = [_gridControl _indexOfFocusedControl];
+            index = [_gridControl _indexOfFocusedControl];
 			mediaObjects = self.gridMediaObjects;
-            _gridWasFocused = YES;
-            _lastFocusedControlIndex = index;
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"item in grid selected. mediaObjects: %d, index:%d",[mediaObjects count], index);
 #endif      

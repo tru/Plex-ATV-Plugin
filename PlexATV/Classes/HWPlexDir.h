@@ -33,16 +33,20 @@
 @interface HWPlexDir: SMFMediaMenuController <BRTabControlDelegate> {
 	PlexMediaContainer* rootContainer;
 	PlexMediaObject* playbackItem;
+    NSDictionary* previewControlData;
 }
 
 @property (retain) BRTabControl *tabBar;
 @property (retain) PlexMediaContainer* rootContainer;
 @property (retain) NSArray *items;
+@property (retain) NSDictionary* previewControlData;
 
 - (id)initWithRootContainer:(PlexMediaContainer*)container andTabBar:(BRTabControl *)aTabBar;
 - (void)showModifyViewedStatusViewForRow:(long)row;
 - (void)reselectCurrentTabBarItem;
 
+- (void)createParadeForData:(NSMutableDictionary *)data;
+- (void)finishedCreatingParade:(NSDictionary *)data;
 
 //list provider
 - (float)heightForRow:(long)row;

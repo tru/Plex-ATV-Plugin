@@ -36,13 +36,14 @@
 #import "PlexThemeMusicPlayer.h"
 #import "PlexAudioSubsController.h"
 
-#define LOCAL_DEBUG_ENABLED 0
+#define LOCAL_DEBUG_ENABLED 1
 #define ModifyViewStatusOptionDialog @"ModifyViewStatusOptionDialog"
 
 @implementation HWPlexDir
 @synthesize rootContainer;
 @synthesize tabBar;
 @synthesize items;
+@synthesize previewControlData;
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -131,7 +132,7 @@
         
         //tab bar same width as list
         [self.tabBar setFrame:CGRectMake(listFrame.origin.x+22.f, 567.f, 516.f, 25.f)];
-
+        
     }
 }
 
@@ -267,38 +268,70 @@
 	return pmo.menuItem;
 }
 
+#define kParadeItemIndex @"kParadeItemIndex"
+#define kParadeItem @"kParadeItem"
+#define kParadeControl @"kParadeControl"
 - (id)previewControlForItem:(long)item {    
     id preview = nil;
+    
+    //stop the timer for parade control, which was setup for previously selected item
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    
 	PlexMediaObject* pmo = [self.items objectAtIndex:item];
     
     //we force set the hash so two movies with same title don't end up with the same preview
     [self setValue:[pmo description] forKey:@"_previewControlItemHash"];
     
     if ([tabBar selectedTabItemIndex] == TabBarOtherFiltersItemsIndex) {
-        //parade
-#if LOCAL_DEBUG_ENABLED
-        DLog(@"using parade preview for [%@]", pmo);
-#endif
-        NSMutableArray *imageProxies = [NSMutableArray array];
-        PlexMediaContainer *subItemsContainer = [pmo contents];
-        NSArray *subItems = subItemsContainer.directories;
+        //show parade only after it's been built in the background
+        //see ticket #108 - Tab switching can be slow
         
-        for (PlexMediaObject *pmo in subItems) {
-            PlexPreviewAsset *previewAsset = [pmo previewAsset];
-            [imageProxies addObject:[previewAsset imageProxy]];
-        }   
-        preview = [[[BRMediaParadeControl alloc] init] autorelease];
-        [preview setImageProxies:imageProxies];
+        if (self.previewControlData != nil && [[self.previewControlData objectForKey:kParadeItemIndex] longValue] == item) {
+            //we have already created preview for this item, just return that
+            return [self.previewControlData objectForKey:kParadeControl];
+        }
+        NSNumber *itemIndex = [NSNumber numberWithLong:item]; //need object to be able to store it in dict
+        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:pmo, kParadeItem, itemIndex, kParadeItemIndex, nil];
+        
+        //creating parade in bg, once done this will set self.previewControlData and refresh the preview control
+        [self performSelectorInBackground:@selector(createParadeForData:) withObject:data];
         
     } else {
-#if LOCAL_DEBUG_ENABLED
-        DLog(@"using standard preview for [%@]", pmo);
-#endif
-        
         //single coverart
         preview = pmo.previewControl; //already autoreleased
     }
 	return preview;
+}
+
+- (void)finishedCreatingParade:(NSDictionary *)data {
+    self.previewControlData = data;
+    [self updatePreviewController];
+}
+
+- (void)createParadeForData:(NSMutableDictionary *)data {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    PlexMediaObject *pmo = [data objectForKey:kParadeItem];
+    
+    NSMutableArray *imageProxies = [NSMutableArray array];
+    PlexMediaContainer *subItemsContainer = [pmo contents];
+    NSArray *subItems = subItemsContainer.directories;
+    
+    for (PlexMediaObject *pmo in subItems) {
+        PlexPreviewAsset *previewAsset = [pmo previewAsset];
+        [imageProxies addObject:[previewAsset imageProxy]];
+    }   
+    
+    id preview = [[[BRMediaParadeControl alloc] init] autorelease];
+    [preview setImageProxies:imageProxies];
+    
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"parade control created");
+#endif
+    
+    [data setObject:preview forKey:kParadeControl];
+    [self performSelectorOnMainThread:@selector(finishedCreatingParade:) withObject:data waitUntilDone:NO];
+    
+    [pool drain];
 }
 
 #pragma mark -

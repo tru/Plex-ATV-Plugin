@@ -17,9 +17,6 @@
     BRCursorControl *       _cursorControl;
     BRScrollControl *       _scroller;
     BRPanelControl *        _panelControl;
-    int                     _lastFocusedControlIndex;
-    BOOL                    _shelfWasFocused;
-    BOOL                    _gridWasFocused;
 }
 
 @property (retain) PlexMediaContainer *shelfMediaContainer;

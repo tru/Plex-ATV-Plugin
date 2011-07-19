@@ -94,7 +94,7 @@
 
 + (void)setupPlexClient {
     DLog(@"registering ourselves with the PMS");
-    [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8"];
+    [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8RC1"];
     
     //tell pms we like direct-stream and we will be sending caps to it
     [[PlexPrefs defaultPreferences] setAllowDirectStreaming:YES];
@@ -164,7 +164,7 @@
             [NSNumber numberWithBool:YES], PreferencesViewListPosterZoomingEnabled,
             [NSNumber numberWithBool:NO], PreferencesPlaybackAudioAC3Enabled,
             [NSNumber numberWithBool:NO], PreferencesPlaybackAudioDTSEnabled,
-            [NSNumber numberWithInt:9], PreferencesPlaybackVideoQualityProfile,
+            [NSNumber numberWithInt:8], PreferencesPlaybackVideoQualityProfile,
             [NSNumber numberWithBool:NO], PreferencesSecuritySettingsLockEnabled,
             [NSNumber numberWithInt:0], PreferencesSecurityPasscode,
             [NSDictionary dictionary], PersistedTabBarLastSelections,

@@ -24,7 +24,7 @@
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.8.0"
+#define PlexPluginVersion @"0.8.0 RC1"
 
 #define ServersIndex                0
 #define ViewSettingsIndex           1
@@ -194,7 +194,7 @@
 		case PluginVersionNumberIndex: {
 			// =========== quality setting ===========
 			[asset setTitle:@"Credit to:"];
-			[asset setSummary:@"quequick, b0bben and ccjensen"];
+			[asset setSummary:@"quequick, b0bben and ccjensen, brent112, boots and all the ppl in the forums. <3 you all"];
 			break;
 		}
 		default:
