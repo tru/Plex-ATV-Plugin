@@ -51,24 +51,37 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexThemeMusicPlayer);
         if (![themeUrl isEqual:self.currentlyPlayingThemeUrl]) {
             self.currentlyPlayingThemeUrl = themeUrl;
             
-            //TODO: should this be a user setting or a sensible default?
-            CGFloat requestedVolume = 0.6;
-            if (requestedVolume >= 1.0) {
-                self.themeMusicPlayer = [AVPlayer playerWithURL:self.currentlyPlayingThemeUrl];
-            } else {
-                AVPlayerItem *playerItem = [self playerItemForURL:self.currentlyPlayingThemeUrl withVolumeAt:requestedVolume];
-                self.themeMusicPlayer = [AVPlayer playerWithPlayerItem:playerItem];
+            @try {
+                //sensible default?
+                CGFloat requestedVolume = 0.6;
+                if (requestedVolume >= 1.0) {
+                    self.themeMusicPlayer = [AVPlayer playerWithURL:self.currentlyPlayingThemeUrl];
+                } else {
+                    AVPlayerItem *playerItem = [self playerItemForURL:self.currentlyPlayingThemeUrl withVolumeAt:requestedVolume];
+                    self.themeMusicPlayer = [AVPlayer playerWithPlayerItem:playerItem];
+                }
+                
+                
+                [self.themeMusicPlayer setActionAtItemEnd:AVPlayerActionAtItemEndNone];
+                [self.themeMusicPlayer pause];
+                if ([[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicLoopEnabled]) {
+                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:)
+                                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:[self.themeMusicPlayer currentItem]];
+                }
+                [self.themeMusicPlayer play];
+
+            }
+            @catch (NSException *exception) {
+                DLog(@"exception playing theme music, bogus URL from PMS? Exception: %@ , reason: %@", exception.name, exception.reason)
+            }
+            @finally {
+                if ([self.themeMusicPlayer status] == AVPlayerStatusFailed) {
+                    self.themeMusicPlayer = nil;
+                }
             }
             
             
-            [self.themeMusicPlayer setActionAtItemEnd:AVPlayerActionAtItemEndNone];
-            [self.themeMusicPlayer pause];
-            if ([[HWUserDefaults preferences] boolForKey:PreferencesViewThemeMusicLoopEnabled]) {
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:)
-                                                             name:AVPlayerItemDidPlayToEndTimeNotification object:[self.themeMusicPlayer currentItem]];
-            }
-            [self.themeMusicPlayer play];
-        } else {
+         } else {
             //url is same, so music must be same, so don't do anything
         }
     }

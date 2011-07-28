@@ -329,18 +329,13 @@
 }
 
 - (id)mediaDescription {
-    if ([[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary]) {
-        if ([pmo seenState] != PlexMediaObjectSeenStateSeen) {
-            return @"*** SUMMARY HIDDEN TO PREVENT SPOILERS ***";
-        }
-    }
-	return pmo.summary;
+    return self.mediaSummary;
 }
 
 - (id)mediaSummary {
     
     if ([[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary]) {
-        if ([pmo seenState] != PlexMediaObjectSeenStateSeen) {
+        if ([pmo seenState] != PlexMediaObjectSeenStateSeen && (pmo.isMovie || pmo.isEpisode)) {
             return @"*** SUMMARY HIDDEN TO PREVENT SPOILERS ***";
         }
     }
