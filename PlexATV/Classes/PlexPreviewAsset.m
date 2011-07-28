@@ -30,6 +30,8 @@
 #import <plex-oss/Machine.h>
 #import <plex-oss/PlexImage.h>
 #import <ambertation-plex/Ambertation.h>
+#import "HWUserDefaults.h"
+#import "Constants.h"
 
 @interface BRThemeInfo (PlexExtentions)
 - (id)storeRentalPlaceholderImage;
@@ -327,10 +329,22 @@
 }
 
 - (id)mediaDescription {
+    if ([[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary]) {
+        if ([pmo seenState] != PlexMediaObjectSeenStateSeen) {
+            return @"*** SUMMARY HIDDEN TO PREVENT SPOILERS ***";
+        }
+    }
 	return pmo.summary;
 }
 
 - (id)mediaSummary {
+    
+    if ([[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary]) {
+        if ([pmo seenState] != PlexMediaObjectSeenStateSeen) {
+            return @"*** SUMMARY HIDDEN TO PREVENT SPOILERS ***";
+        }
+    }
+    
 	if (![pmo.summary empty])
 		return pmo.summary;
 	else if (pmo.mediaContainer != nil)

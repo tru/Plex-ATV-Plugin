@@ -294,15 +294,9 @@ typedef enum {
 
 -(NSString *)summary {
 #if LOCAL_DEBUG_ENABLED
-    DLog(@"summary: %@", [self.selectedMediaObject.previewAsset mediaSummary]);
+    //DLog(@"summary: %@", [self.selectedMediaObject.previewAsset mediaSummary]);
 #endif
 
-    if ([[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary]) {
-        if ([self.selectedMediaObject.previewAsset.pmo seenState] != PlexMediaObjectSeenStateSeen) {
-            return @"*** HIDDEN TO PREVENT SPOILERS ***";
-        }
-    }
-    
     return self.selectedMediaObject.previewAsset.mediaSummary;
     
 }

@@ -29,6 +29,7 @@
 #define ViewListPosterZoomingEnabledIndex   4
 //----------- detailed metadata -----------
 #define ViewPreplayFanartEnabledIndex       5
+#define ViewHideSummaryOnUnseen             6
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
@@ -135,7 +136,8 @@
     [fanartMenuItem setRightText:fanart];
 	[_items addObject:fanartMenuItem];
     
-    
+    // =========== Preplay ===========
+    // =========== summary ===========    
     SMFMenuItem *hiddenSummary = [SMFMenuItem menuItem];
     [hiddenSummary setTitle:@"Hide summary on unseen media"];
     NSString *summary = [[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary] ? @"Enabled" : @"Disabled";
@@ -201,6 +203,14 @@
 			[self.list reload];
 			break;
 		}
+            //--------------------- seperator ---------------------
+		case ViewHideSummaryOnUnseen: {
+			BOOL isTurnedOn = [[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary];
+			[[HWUserDefaults preferences] setBool:!isTurnedOn forKey:PreferencesViewHiddenSummary];			
+			[self setupList];
+			[self.list reload];
+			break;
+		}
 		default:
 			break;
 	}
@@ -238,6 +248,11 @@
 		case ViewPreplayFanartEnabledIndex: {
 			[asset setTitle:@"Toggles whether to display fanart"];
 			[asset setSummary:@"Enables/Disables fanart used as the background for the Preplay screen"];
+			break;
+		}
+        case ViewHideSummaryOnUnseen: {
+			[asset setTitle:@"Toggles whether to show summaries when unseen"];
+			[asset setSummary:@"Enables/Disables the summary for movies you have not seen yet"];
 			break;
 		}
 		default:
