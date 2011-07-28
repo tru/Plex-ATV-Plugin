@@ -179,6 +179,9 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 - (BRController *)newControllerForObject:(PlexMediaObject *)aMediaObject {    
     BRController *controller = nil;
     
+    DLog(@"attribute type: %@", [aMediaObject.attributes valueForKey:@"type"]);
+    DLog(@"view group: %@", aMediaObject.mediaContainer.viewGroup);
+    
     //play theme music if we're entering a tv show
     if (aMediaObject.isTVShow || aMediaObject.isSeason || aMediaObject.isEpisode) {
         [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:aMediaObject];
@@ -187,7 +190,8 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
     // ============ sound plugin or other type of sound, initiate playback ============
     //initiate playback when aMediaObject is plugin content (as preplay is generally no use)
     if ([@"Track" isEqualToString:aMediaObject.containerType]
-        || [@"clip" isEqualToString:[aMediaObject.attributes valueForKey:@"type"]]){
+        || [@"clip" isEqualToString:[aMediaObject.attributes valueForKey:@"type"]]
+        || [PlexViewGroupStoreInfo isEqualToString:aMediaObject.mediaContainer.viewGroup]){
         return [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];
 	}
     
