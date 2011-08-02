@@ -333,6 +333,7 @@
 }
 
 - (id)mediaSummary {
+    DLog(@"pmo.summary %@\n attr summary: %@", pmo.summary, [pmo.mediaContainer.attributes valueForKey:@"summary"]);
     
     if ([[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary]) {
         if ([pmo seenState] != PlexMediaObjectSeenStateSeen && (pmo.isMovie || pmo.isEpisode)) {

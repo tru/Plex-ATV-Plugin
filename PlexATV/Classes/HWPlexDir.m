@@ -299,6 +299,7 @@
     } else {
         //single coverart
         preview = pmo.previewControl; //already autoreleased
+        DLog();
     }
 	return preview;
 }
