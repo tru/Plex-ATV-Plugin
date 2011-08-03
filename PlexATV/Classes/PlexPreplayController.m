@@ -382,7 +382,9 @@ typedef enum {
 	BRImage *coverArt = nil;
 	if ([self.selectedMediaObject.previewAsset hasCoverArt]) {
 		coverArt = [self.selectedMediaObject.previewAsset coverArt];
-	}
+	} else {
+        coverArt = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+    }
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"coverArt: %@", coverArt);
 #endif

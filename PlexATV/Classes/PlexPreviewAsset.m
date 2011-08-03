@@ -239,7 +239,7 @@
 }
 
 - (BOOL)hasCoverArt {
-	return pmo.art.hasImage || pmo.thumb.hasImage;
+	return YES; //we will ALWAYS return som kind of cover, be it episode, show or a standard one. we have to, things crash otherwise
 }
 
 - (BOOL)hasVideoContent {
@@ -333,7 +333,7 @@
 }
 
 - (id)mediaSummary {
-    DLog(@"pmo.summary %@\n attr summary: %@", pmo.summary, [pmo.mediaContainer.attributes valueForKey:@"summary"]);
+    //DLog(@"pmo.summary %@\n attr summary: %@", pmo.summary, [pmo.mediaContainer.attributes valueForKey:@"summary"]);
     
     if ([[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary]) {
         if ([pmo seenState] != PlexMediaObjectSeenStateSeen && (pmo.isMovie || pmo.isEpisode)) {
@@ -560,12 +560,19 @@
         image = pmo.thumb;
     } else if (pmo.art.hasImage) {
         image = pmo.art;
+    } else if (pmo.parentObject.thumb.hasImage){
+        //no damn thumb nor art on the item, go for the parent then
+        image = pmo.parentObject.thumb;
+    } else {
+       image = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
     }
+    
     
     NSURL *imageURL = nil;
     if (image) {
         imageURL = [pmo.request pathForScaledImage:[image.imageURL absoluteString] ofSize:CGSizeMake(512, 512)];
     }
+    DLog("imageURL %@", imageURL);
     return imageURL;
 }
 
