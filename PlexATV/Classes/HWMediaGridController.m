@@ -291,6 +291,7 @@ void checkNil(NSObject *ctrl)
 	
     [controlFactory release];
 	[store release];
+    [controlFactory release];
 	return provider;
 	
 }
@@ -320,6 +321,7 @@ void checkNil(NSObject *ctrl)
     BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
     [store release];
+    [controlFactory release];
     
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid_end");
