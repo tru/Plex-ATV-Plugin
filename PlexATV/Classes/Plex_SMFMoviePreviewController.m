@@ -15,10 +15,11 @@
 
 -(void)controlWasActivated
 {
+    DLog();
     //these 2 are called in SMF on controlWasActivated, so don't call them again here...
     //[self reload];
     //[self reloadShelf];
-    [self _removeAllControls];
+    //[self _removeAllControls];
     [super controlWasActivated];
 }
 
@@ -59,6 +60,7 @@
 }
 
 -(void)reload {
+    DLog();
     [super reload];
     
     CGRect masterFrame = [BRWindow interfaceFrame];
