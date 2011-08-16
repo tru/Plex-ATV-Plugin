@@ -94,7 +94,7 @@
 
 + (void)setupPlexClient {
     DLog(@"registering ourselves with the PMS");
-    [PlexRequest setApplicationName:@"Plex-ATV" version:@"0.8.0"];
+    [PlexRequest setApplicationName:@"Plex-ATV" version:kPlexPluginVersion];
     
     //tell pms we like direct-stream and we will be sending caps to it
     [[PlexPrefs defaultPreferences] setAllowDirectStreaming:YES];

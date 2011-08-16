@@ -102,7 +102,8 @@ typedef enum {
         //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
         lastFocusedIndex = newIndex;
-		self._shelfControl.focusedIndex = newIndex;
+        BRMediaShelfControl *ctrl = self._shelfControl;
+		ctrl.focusedIndex = newIndex;
 		self.selectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:currentSelectedIndex];
         //move the shelf if needed to show the new item
         [self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
@@ -230,7 +231,9 @@ typedef enum {
 	} else if (ctrl == self._shelfControl) {
         //user has selected a media item
 		[[SMFThemeInfo sharedTheme] playSelectSound];
-		[self changeMetadataViewToShowDataForIndex:self._shelfControl.focusedIndex];
+        BRMediaShelfControl *ctrl = self._shelfControl;
+
+        [self changeMetadataViewToShowDataForIndex:ctrl.focusedIndex];        
 	}
 }
 
@@ -243,7 +246,8 @@ typedef enum {
 	} else if (newControl == self._shelfControl) {
         //the shelf is now re-focused, load previous focused element
 		shelfIsSelected = YES;
-		self._shelfControl.focusedIndex = lastFocusedIndex;
+        BRMediaShelfControl *ctrl = self._shelfControl;
+		ctrl.focusedIndex = lastFocusedIndex;
 	}
 }
 

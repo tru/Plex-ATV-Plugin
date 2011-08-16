@@ -24,7 +24,7 @@
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.8.0"
+
 
 #define ServersIndex                0
 #define ViewSettingsIndex           1
@@ -109,7 +109,7 @@
 	SMFMenuItem *pluginVersionNumberMenuItem = [SMFMenuItem menuItem];
 	
 	[pluginVersionNumberMenuItem setTitle:@"Version"];
-	[pluginVersionNumberMenuItem setRightText:PlexPluginVersion];
+	[pluginVersionNumberMenuItem setRightText:kPlexPluginVersion];
     [_items addObject:pluginVersionNumberMenuItem];
 	
     
