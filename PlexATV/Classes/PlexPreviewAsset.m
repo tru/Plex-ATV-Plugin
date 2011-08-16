@@ -157,7 +157,13 @@
 }
 
 - (id)coverArt {
-    return [BRImage imageWithURL:self.coverArtRealURL];
+    BRImage *coverImg = [BRImage imageWithURL:self.coverArtRealURL];
+    if (coverImg) {
+        return coverImg;
+    }
+    else
+        return [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+
 }
 
 - (NSString *)coverArtURL {
@@ -563,8 +569,6 @@
     } else if (pmo.parentObject.thumb.hasImage){
         //no damn thumb nor art on the item, go for the parent then
         image = pmo.parentObject.thumb;
-    } else {
-       image = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
     }
     
     

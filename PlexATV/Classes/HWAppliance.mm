@@ -97,8 +97,32 @@ NSString * const MachineNameKey = @"PlexMachineName";
             [[MachineManager sharedMachineManager] startMonitoringMachineState];
             [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
         }
+        
+        //stop the MM from sending WOL packets to PMS when AppleTV is going to sleep...
+        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotifications:) name:nil object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseMachineMonitoring:) name:@"BRStopBackgroundProcessing" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeMachineMonitoring:) name:@"BRResumeBackgroundProcessing" object:nil];
+
+
 	} 
     return self;
+}
+
+- (void)logNotifications:(NSNotification *)notification {
+    DLog(@"NOT: %@", [notification name]);
+}
+
+- (void)pauseMachineMonitoring:(NSNotification *)notification {
+    DLog(@"little black thingy going to sleep, tell MM to chill");
+	[[MachineManager sharedMachineManager] stopAutoDetection];
+	[[MachineManager sharedMachineManager] stopMonitoringMachineState];
+}
+
+- (void)resumeMachineMonitoring:(NSNotification *)notification {
+    DLog(@"little black thingy IS ALIVE AGAIN, tell MM to get on with it's business");
+	[[MachineManager sharedMachineManager] startAutoDetection];
+	[[MachineManager sharedMachineManager] startMonitoringMachineState];
 }
 
 - (id)controllerForIdentifier:(id)identifier args:(id)args {
