@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Backrow/BRMediaShelfControl.h"
 
 @protocol Plex_SMFMoviePreviewControllerDatasource <SMFMoviePreviewControllerDatasource>
 - (NSURL *)backgroundImageUrl;

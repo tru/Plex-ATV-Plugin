@@ -22,7 +22,7 @@
 #import "HWTVShowsController.h"
 #import "HWMediaGridController.h"
 #import "PlexPreplayController.h"
-#import <SMFramework/SMFControllerPasscodeController.h>
+#import <SMFControllerPasscodeController.h>
 #import "PlexPlaybackController.h"
 #import "PlexMediaObject+Assets.h"
 
