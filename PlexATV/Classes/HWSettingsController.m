@@ -134,7 +134,7 @@
 		case ServersIndex: {
 			HWServersController* menuController = [[HWServersController alloc] init];
 			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController autorelease];
+			[menuController release];
 			break;
 		}
 		case ViewSettingsIndex: {
