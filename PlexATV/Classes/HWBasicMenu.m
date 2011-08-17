@@ -88,7 +88,7 @@
 	HWPlexDir* menuController = [[HWPlexDir alloc] init];
 	menuController.rootContainer = [m.request rootLevel];
 	[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-	[menuController autorelease];
+	[menuController release];
 }
 
 - (float)heightForRow:(long)row {
