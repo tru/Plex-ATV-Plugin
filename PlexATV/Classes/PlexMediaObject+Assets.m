@@ -71,7 +71,7 @@
 		if ([self.type isEqualToString:PlexMediaObjectTypeEpisode]) {
             NSString *detailedText = [NSString stringWithFormat:@"Season %d, Episode %d (%@)", [previewAsset season], [previewAsset episode], [previewAsset seriesName]];
 			[menuItem setDetailedText:detailedText withAttributes:nil];
-            [menuItem setRightJustifiedText:[previewAsset datePublishedString] withAttributes:nil];
+                
 		} else {
             NSString *detailedText = previewAsset.year ? previewAsset.year : @" ";
 			[menuItem setDetailedText:detailedText withAttributes:nil];
