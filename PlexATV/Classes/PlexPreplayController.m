@@ -427,17 +427,15 @@ typedef enum {
     // previewActionImage, queueActionImage, rateActionImage
 	NSMutableArray *buttons = [NSMutableArray array];
 	BRButtonControl* b = nil;
-    BRImage *playActionHighlighted = [[BRThemeInfo sharedTheme]playActionHighlightedImage];
-    BRImage *moreActionHighlighted = [[BRThemeInfo sharedTheme]moreActionHighlightedImage];
     BRImage *audioSubOFF =[BRImage imageWithPath: [[NSBundle bundleForClass:[self class]] pathForResource:@"PlexAudioSubsON" ofType:@"png"]];
     BRImage *audioSubON =[BRImage imageWithPath: [[NSBundle bundleForClass:[self class]] pathForResource:@"PlexAudioSubsON" ofType:@"png"]];
 
     b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]playActionImage] subtitle:@"Play" badge:nil];
         [b setIdentifier:[NSNumber numberWithInt:kPlayButton]];
-        [b setHighlightedImage:playActionHighlighted];
+        [b setHighlightedImage:[[BRThemeInfo sharedTheme]playActionHighlightedImage]];
         [buttons addObject:b];
     /*
-     b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]previewActionImage] 
+     b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]previewActionImage]
      subtitle:@"Preview" 
      badge:nil];
      [b setIdentifier:[NSNumber numberWithInt:kPreviewButton]];
@@ -449,7 +447,7 @@ typedef enum {
         [buttons addObject:b];
 
     b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]moreActionImage] subtitle:@"More" badge:nil];
-        [b setHighlightedImage:moreActionHighlighted];
+        [b setHighlightedImage:[[BRThemeInfo sharedTheme]moreActionHighlightedImage]];
         [b setIdentifier:[NSNumber numberWithInt:kMoreButton]];
         [buttons addObject:b];
     
