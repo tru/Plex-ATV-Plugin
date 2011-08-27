@@ -1,6 +1,3 @@
-[submodule "_Contrib/ATV2Includes"]
-	path = _Contrib/ATV2Includes
-	url = git://github.com/tomcool420/ATV2Includes.git
 [submodule "_Contrib/libPLEX-iOS"]
 	path = _Contrib/libPLEX-iOS
 	url = git://github.com/quiqueck/libPLEX-iOS.git
