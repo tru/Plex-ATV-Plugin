@@ -4,7 +4,7 @@
 //
 //  Created by ccjensen on 10/01/2011.
 //
-//  Inspired by 
+//  Inspired by
 //
 //		MLoader.m
 //		MextLoader
@@ -24,7 +24,7 @@
 @implementation HWSettingsController
 @synthesize topLevelController;
 
-#define PlexPluginVersion @"0.8.1"
+
 
 #define ServersIndex                0
 #define ViewSettingsIndex           1
@@ -40,14 +40,14 @@
 		topLevelController = nil;
 		[self setLabel:@"Plex Settings"];
 		[self setListTitle:@"Plex Settings"];
-		
+
 		[self setupList];
-	}	
+	}
 	return self;
 }
 
 - (void)dealloc {
-	[super dealloc];	
+	[super dealloc];
 }
 
 - (NSString *)description {
@@ -81,43 +81,43 @@
 
 - (void)setupList {
 	[_items removeAllObjects];
-	
+
 	// =========== servers ===========
 	SMFMenuItem *serversMenuItem = [SMFMenuItem folderMenuItem];
 	[serversMenuItem setTitle:@"Manage server list"];
-	[_items addObject:serversMenuItem];    
-	
+	[_items addObject:serversMenuItem];
+
     // =========== view settings ===========
 	SMFMenuItem *viewSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[viewSettingsMenuItem setTitle:@"View settings"];
 	[_items addObject:viewSettingsMenuItem];
-    
-    
+
+
     // =========== playback settings ===========
 	SMFMenuItem *playbackSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[playbackSettingsMenuItem setTitle:@"Playback settings"];
 	[_items addObject:playbackSettingsMenuItem];
-    
-    
+
+
     // =========== security settings ===========
 	SMFMenuItem *securitySettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[securitySettingsMenuItem setTitle:@"Security settings"];
 	[_items addObject:securitySettingsMenuItem];
-	
-    
+
+
 	// =========== version number ===========
 	SMFMenuItem *pluginVersionNumberMenuItem = [SMFMenuItem menuItem];
-	
+
 	[pluginVersionNumberMenuItem setTitle:@"Version"];
-	[pluginVersionNumberMenuItem setRightText:PlexPluginVersion];
+	[pluginVersionNumberMenuItem setRightText:kPlexPluginVersion];
     [_items addObject:pluginVersionNumberMenuItem];
-	
-    
+
+
 	//this code can be used to find all the accessory types
 //    	for (int i = 0; i<32; i++) {
 //    		BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
 //    		[tempSettingMenuItem addAccessoryOfType:i];
-//    		
+//
 //    		NSString *tempSettingTitle = [[NSString alloc] initWithFormat:@"temp %d", i];
 //    		[tempSettingMenuItem setText:tempSettingTitle withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
 //    		[tempSettingTitle release];
@@ -205,7 +205,7 @@
 	[p setShowsMetadataImmediately:YES];
 	[p setAsset:asset];
 	[asset release];
-	return [p autorelease];  
+	return [p autorelease];
 }
 
 
