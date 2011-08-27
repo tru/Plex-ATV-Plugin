@@ -102,10 +102,10 @@ typedef enum {
         //set both focused and selected to the new index
 		currentSelectedIndex = newIndex;
         lastFocusedIndex = newIndex;
-		ctrl.focusedIndexCompat = newIndex;
+		shelfCtrl.focusedIndexCompat = newIndex;
 		self.selectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:currentSelectedIndex];
         //move the shelf if needed to show the new item
-        [self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
+        [shelfCtrl _scrollIndexToVisible:currentSelectedIndex];
         //refresh metadata, but don't touch the shelf
 		[self reload];
 	}
@@ -129,7 +129,7 @@ typedef enum {
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasExhumed];
-    [self._shelfControl _scrollIndexToVisible:currentSelectedIndex];
+    [shelfCtrl _scrollIndexToVisible:currentSelectedIndex];
 }
 
 - (void)wasBuried {
@@ -227,10 +227,10 @@ typedef enum {
         //none of the buttons do anything, make error sound for now
 		[[SMFThemeInfo sharedTheme] playErrorSound];
 		
-	} else if (ctrl == self._shelfControl) {
+	} else if (ctrl == shelfCtrl) {
         //user has selected a media item
 		[[SMFThemeInfo sharedTheme] playSelectSound];
-        [self changeMetadataViewToShowDataForIndex:ctrl.focusedIndexCompat];        
+        [self changeMetadataViewToShowDataForIndex:shelfCtrl.focusedIndexCompat];        
 	}
 }
 
@@ -240,11 +240,10 @@ typedef enum {
 		if (shelfIsSelected) {
 			shelfIsSelected = NO; //shelf was focused, and now one of the buttons are.
         }
-	} else if (newControl == self._shelfControl) {
+	} else if (newControl == shelfCtrl) {
         //the shelf is now re-focused, load previous focused element
 		shelfIsSelected = YES;
-        PlexMediaShelfView *ctrl = self._shelfControl;
-		ctrl.focusedIndexCompat = lastFocusedIndex;
+        shelfCtrl.focusedIndexCompat = lastFocusedIndex;
 	}
 }
 
