@@ -157,6 +157,7 @@
 }
 
 - (id)coverArt {
+    DLog();
     BRImage *coverImg = [BRImage imageWithURL:self.coverArtRealURL];
     if (coverImg) {
         return coverImg;
@@ -253,16 +254,17 @@
 }
 
 - (id)imageProxy {
+    DLog();
     NSURLRequest *request = [pmo.request urlRequestWithAuthenticationHeadersForURL:self.coverArtRealURL];
     
     NSDictionary *headerFields = [request allHTTPHeaderFields];
     BRURLImageProxy *aImageProxy = [BRURLImageProxy proxyWithURL:[request URL] headerFields:headerFields];
-    //aImageProxy.writeToDisk = YES;
+    aImageProxy.writeToDisk = YES;
 	return aImageProxy;
 }
 
 - (id)imageProxyWithBookMarkTimeInMS:(unsigned int)fp8 {
-	return nil;
+	return self.imageProxy;
 }
 
 - (void)incrementPerformanceCount {

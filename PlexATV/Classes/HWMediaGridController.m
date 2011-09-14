@@ -85,7 +85,7 @@ void checkNil(NSObject *ctrl)
 - (void)wasPushed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
 	[super wasPushed];
-    [self _removeAllControls];
+    //[self _removeAllControls];
 	[self drawSelf];
 }
 
@@ -169,11 +169,11 @@ void checkNil(NSObject *ctrl)
 	 */
 	DLog(@"shelf");
 	_shelfControl = [[PlexMediaShelfView alloc] init];
-	[_shelfControl setProvider:[self getProviderForShelf]];
+	[_shelfControl setProvider:[self providerForShelf]];
 	[_shelfControl setColumnCount:7];
 	[_shelfControl setCentered:NO];
     [_shelfControl setCoverflowMargin:0.05000000074505806f];
-	
+	[_shelfControl layoutSubcontrols];
     
 	
 	DLog(@"box");
@@ -219,7 +219,6 @@ void checkNil(NSObject *ctrl)
 	[_gridControl setRightMargin:0.05000000074505806];
 	[_gridControl setAcceptsFocus:YES];
 	[_gridControl setProviderRequester:_gridControl];
-    //[_gridControl layoutSubcontrols];
     
 	CGRect gridFrame;
 	gridFrame.origin.y = dividerFrame.origin.y-25;
@@ -289,7 +288,7 @@ void checkNil(NSObject *ctrl)
 #endif
     PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
 	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
-	
+    
 	BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
 	
@@ -302,13 +301,34 @@ void checkNil(NSObject *ctrl)
 	
 }
 
--(id)getProviderForGrid
+-(BRPhotoDataStoreProvider *)providerForShelf {
+	NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
+	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
+	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
+	
+	for (PlexMediaObject *pmo in self.shelfMediaObjects) {
+		[store addObject:pmo.previewAsset];
+	}
+	
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
+	//SMFControlFactory *controlFactory = [[SMFControlFactory alloc] initForMainMenu:NO];
+    controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+	
+	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
+	[store release];
+#if LOCAL_DEBUG_ENABLED
+	DLog(@"providerForShelf: %@", provider);
+#endif
+	return provider;
+}
+
+-(BRPhotoDataStoreProvider *)getProviderForGrid
 {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid_start");
 #endif
-	NSSet *_set = [NSSet setWithObject:[BRMediaType movie]];
-	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType movie]];
+	NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
+	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
 	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello2" predicate:_pred mediaTypes:_set];
 	
 	for (int i=0;i<[self.gridMediaObjects count];i++)
@@ -322,12 +342,13 @@ void checkNil(NSObject *ctrl)
     
     
     PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
-	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+	//SMFControlFactory *controlFactory = [[SMFControlFactory alloc] initForMainMenu:NO];
+    controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 	
     BRPhotoDataStoreProvider* provider = [BRPhotoDataStoreProvider providerWithDataStore:store 
 																		  controlFactory:controlFactory];
+
     [store release];
-    
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"getProviderForGrid_end");
 #endif
@@ -346,7 +367,13 @@ void checkNil(NSObject *ctrl)
 		NSArray *mediaObjects;
 		
 		if ([_shelfControl isFocused]) {
-            index = [_shelfControl focusedIndexCompat];
+            DLog(@"focusedIndex: %@", [_shelfControl focusedIndexCompat]);
+            if ([SMF_COMPAT usingFourPointFourPlus]) {
+                index = [[_shelfControl focusedIndexCompat] indexAtPosition:1];
+            } else {
+                index = [_shelfControl focusedIndexCompat];
+            }
+            
 			mediaObjects = self.shelfMediaObjects;
 #if LOCAL_DEBUG_ENABLED
 			DLog(@"item in shelf selected. mediaObjects: %d, index:%d",[mediaObjects count], index);

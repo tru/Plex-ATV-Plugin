@@ -35,6 +35,7 @@
 #import <plex-oss/PlexMedia.h>
 #import "PlexMediaObject+Assets.h"
 #import "PlexPreviewAsset.h"
+#import "PlexControlFactory.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
@@ -44,7 +45,6 @@
 - (id)ccBadge;
 - (id)hdPosterBadge;
 - (id)dolbyDigitalBadge;
-- (id)storeRentalPlaceholderImage;
 - (id)moreActionImage;
 @end
 
@@ -445,10 +445,9 @@ typedef enum {
 		[store addObject:pmo.previewAsset];
 	}
 	
-	BRPosterControlFactory *tcControlFactory = [BRPosterControlFactory factory];
-	[tcControlFactory setDefaultImage:[[BRThemeInfo sharedTheme] storeRentalPlaceholderImage]];
-	
-	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:tcControlFactory];
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
+	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
 	[store release];
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"providerForShelf: %@", provider);
