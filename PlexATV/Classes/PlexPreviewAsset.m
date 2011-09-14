@@ -254,7 +254,6 @@
 }
 
 - (id)imageProxy {
-    DLog();
     NSURLRequest *request = [pmo.request urlRequestWithAuthenticationHeadersForURL:self.coverArtRealURL];
     
     NSDictionary *headerFields = [request allHTTPHeaderFields];
@@ -578,7 +577,7 @@
     if (image) {
         imageURL = [pmo.request pathForScaledImage:[image.imageURL absoluteString] ofSize:CGSizeMake(512, 512)];
     }
-    DLog("imageURL %@", imageURL);
+    //DLog("imageURL %@", imageURL);
     return imageURL;
 }
 

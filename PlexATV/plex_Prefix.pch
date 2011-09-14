@@ -8,7 +8,7 @@
 	#import <plex-oss/Preferences.h>
 	#import "ProxyMachineDelegate.h"
     
-    #define kPlexPluginVersion @"0.9.0-tru"
+    #define kPlexPluginVersion @"0.8.2"
 #endif
 
 #define DEBUG 1
