@@ -37,8 +37,11 @@
     returnObj.titleWidthScale=1.0f;
     returnObj.titleVerticalOffset=0.0f;
     returnObj.reflectionAmount=0.14000000059604645;
-    if ([SMF_COMPAT usingFourPointThreePlus]) { //only needed on 4.3, seems like the method exists on 4.3 only
+    @try {
         [returnObj performSelector:@selector(setIgnoreLoadAndDisplayOnDemand)];
+    }
+    @catch (NSException *exception) {
+        /* silently ignore the exception here */
     }
     
     return [returnObj autorelease];
