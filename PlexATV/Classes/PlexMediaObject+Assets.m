@@ -87,9 +87,9 @@
 		if ([self.type isEqualToString:PlexMediaObjectTypeShow] || [self.type isEqualToString:PlexMediaObjectTypeSeason]) {
 			if ([self.attributes valueForKey:@"agent"] == nil) {
 				if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
-					[menuItem addAccessoryOfType:15];
+					[menuItem addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 16:15];
 				} else if ([self seenState] == PlexMediaObjectSeenStateInProgress) {
-					[menuItem addAccessoryOfType:16];
+					[menuItem addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 17:16];
 				}
 			}
 		}

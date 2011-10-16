@@ -367,11 +367,11 @@ void checkNil(NSObject *ctrl)
 		NSArray *mediaObjects;
 		
 		if ([_shelfControl isFocused]) {
-            DLog(@"focusedIndex: %@", [_shelfControl focusedIndexCompat]);
+            //DLog(@"focusedIndex: %@", [_shelfControl focusedIndexCompat]);
             if ([SMF_COMPAT usingFourPointFourPlus]) {
                 index = [[_shelfControl focusedIndexCompat] indexAtPosition:1];
             } else {
-                index = [_shelfControl focusedIndexCompat];
+                index = [_shelfControl focusedIndex];
             }
             
 			mediaObjects = self.shelfMediaObjects;

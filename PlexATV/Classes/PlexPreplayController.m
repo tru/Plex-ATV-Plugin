@@ -23,7 +23,7 @@
 //  THE SOFTWARE.
 //  
 
-#define LOCAL_DEBUG_ENABLED 0
+#define LOCAL_DEBUG_ENABLED 1
 
 #import "PlexPreplayController.h"
 #import "PlexMediaProvider.h"
@@ -227,10 +227,18 @@ typedef enum {
         //none of the buttons do anything, make error sound for now
 		[[SMFThemeInfo sharedTheme] playErrorSound];
 		
-	} else if (ctrl == shelfCtrl) {
+	} else if (ctrl == self.shelfControl) {
         //user has selected a media item
 		[[SMFThemeInfo sharedTheme] playSelectSound];
-        [self changeMetadataViewToShowDataForIndex:shelfCtrl.focusedIndexCompat];        
+        int focusedIndexCompat;
+        if ([SMF_COMPAT usingFourPointFourPlus]) {
+            focusedIndexCompat =  [[self.shelfControl focusedIndexPath] indexAtPosition:1];
+            DLog(@"using 4.4 index for shelf. %d", focusedIndexCompat);
+        } else {
+            focusedIndexCompat = [(id)self.shelfControl focusedIndex];
+            DLog(@"using 4.2 index for shelf. %d", focusedIndexCompat);
+        }
+        [self changeMetadataViewToShowDataForIndex:focusedIndexCompat];        
 	}
 }
 
@@ -453,6 +461,10 @@ typedef enum {
 	DLog(@"providerForShelf: %@", provider);
 #endif
 	return provider;
+}
+
+-(BRImage *)placeHolderImageForShelf {
+    return [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 }
 
 #pragma mark -
