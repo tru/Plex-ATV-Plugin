@@ -716,7 +716,7 @@
 					"\"$(SRCROOT)/theos/include\"",
 					"\"$(SRCROOT)/../_Contrib/libPLEX-iOS/lib\"",
 				);
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-lPLEX-OSS",
 					"-undefined",
