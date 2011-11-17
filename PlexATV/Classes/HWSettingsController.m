@@ -36,8 +36,8 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-- (id) init {
-	if((self = [super init]) != nil) {
+- (id)init {
+	if( (self = [super init]) != nil ) {
 		topLevelController = nil;
 		[self setLabel:@"Plex Settings"];
 		[self setListTitle:@"Plex Settings"];
@@ -51,8 +51,8 @@
 	[super dealloc];
 }
 
-- (NSString *)description {
-    return @"Plex Settings";
+- (NSString*)description {
+	return @"Plex Settings";
 }
 
 #pragma mark -
@@ -88,19 +88,19 @@
 	[serversMenuItem setTitle:@"Manage server list"];
 	[_items addObject:serversMenuItem];
 
-    // =========== view settings ===========
+	// =========== view settings ===========
 	SMFMenuItem *viewSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[viewSettingsMenuItem setTitle:@"View settings"];
 	[_items addObject:viewSettingsMenuItem];
 
 
-    // =========== playback settings ===========
+	// =========== playback settings ===========
 	SMFMenuItem *playbackSettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[playbackSettingsMenuItem setTitle:@"Playback settings"];
 	[_items addObject:playbackSettingsMenuItem];
 
 
-    // =========== security settings ===========
+	// =========== security settings ===========
 	SMFMenuItem *securitySettingsMenuItem = [SMFMenuItem folderMenuItem];
 	[securitySettingsMenuItem setTitle:@"Security settings"];
 	[_items addObject:securitySettingsMenuItem];
@@ -111,96 +111,95 @@
 
 	[pluginVersionNumberMenuItem setTitle:@"Version"];
 	[pluginVersionNumberMenuItem setRightText:[NSString stringWithFormat:@"%@-%@", kPlexPluginVersion, PLEX_GIT_VERSION]];
-    [_items addObject:pluginVersionNumberMenuItem];
+	[_items addObject:pluginVersionNumberMenuItem];
 
 
 	//this code can be used to find all the accessory types
- /*   	for (int i = 0; i<32; i++) {
-    		BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
-    		[tempSettingMenuItem addAccessoryOfType:i];
+	/*      for (int i = 0; i<32; i++) {
+	               BRMenuItem *tempSettingMenuItem = [[BRMenuItem alloc] init];
+	               [tempSettingMenuItem addAccessoryOfType:i];
 
-    		NSString *tempSettingTitle = [[NSString alloc] initWithFormat:@"temp %d", i];
-    		[tempSettingMenuItem setText:tempSettingTitle withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-    		[tempSettingTitle release];
-    		[_items addObject:tempSettingMenuItem];
-    	}
-  */
+	               NSString *tempSettingTitle = [[NSString alloc] initWithFormat:@"temp %d", i];
+	               [tempSettingMenuItem setText:tempSettingTitle withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
+	               [tempSettingTitle release];
+	               [_items addObject:tempSettingMenuItem];
+	       }
+	 */
 }
 
 #pragma mark -
 #pragma mark List Delegate Methods
 - (void)itemSelected:(long)selected {
 	switch (selected) {
-		case ServersIndex: {
-			HWServersController* menuController = [[HWServersController alloc] init];
-			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController release];
-			break;
-		}
-		case ViewSettingsIndex: {
-			PlexViewSettingsController* menuController = [[PlexViewSettingsController alloc] init];
-			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController release];
-			break;
-		}
-        case PlaybackSettingsIndex: {
-			PlexPlaybackSettingsController* menuController = [[PlexPlaybackSettingsController alloc] init];
-			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController release];
-			break;
-        }
-        case SecuritySettingsIndex: {
-			PlexSecuritySettingsController* menuController = [[PlexSecuritySettingsController alloc] init];
-			[[[BRApplicationStackManager singleton] stack] pushController:menuController];
-			[menuController release];
-			break;
-        }
-		case PluginVersionNumberIndex: {
-			//do nothing
-			break;
-		}
-		default:
-			break;
+	case ServersIndex: {
+		HWServersController *menuController = [[HWServersController alloc] init];
+		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+		[menuController release];
+		break;
+	}
+	case ViewSettingsIndex: {
+		PlexViewSettingsController *menuController = [[PlexViewSettingsController alloc] init];
+		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+		[menuController release];
+		break;
+	}
+	case PlaybackSettingsIndex: {
+		PlexPlaybackSettingsController *menuController = [[PlexPlaybackSettingsController alloc] init];
+		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+		[menuController release];
+		break;
+	}
+	case SecuritySettingsIndex: {
+		PlexSecuritySettingsController *menuController = [[PlexSecuritySettingsController alloc] init];
+		[[[BRApplicationStackManager singleton] stack] pushController:menuController];
+		[menuController release];
+		break;
+	}
+	case PluginVersionNumberIndex: {
+		//do nothing
+		break;
+	}
+	default:
+		break;
 	}
 }
 
 
--(id)previewControlForItem:(long)item
-{
+- (id)previewControlForItem:(long)item {
 	SMFBaseAsset *asset = [[SMFBaseAsset alloc] init];
 	switch (item) {
-		case ServersIndex: {
-			// =========== servers ===========
-			[asset setTitle:@"Manage server list"];
-			[asset setSummary:@"Add new or modify current servers, their connections and their 'inclusion in main menu' status"];
-			break;
-		}
-		case ViewSettingsIndex: {
-			// =========== view settings ===========
-			[asset setTitle:@"Modify view settings"];
-			[asset setSummary:@"Alter UI behavior, views to use, etc."];
-			break;
-		}
-		case PlaybackSettingsIndex: {
-			// =========== audio settings ===========
-			[asset setTitle:@"Modify playback settings"];
-			[asset setSummary:@"Setup the kind of multi-channel audio you want to output, video quality, etc"];
-			break;
-		}
-		case SecuritySettingsIndex: {
-			// =========== security settings ===========
-			[asset setTitle:@"Modify security settings"];
-			[asset setSummary:@"Change passcode and activate security measures"];
-			break;
-		}
-		case PluginVersionNumberIndex: {
-			// =========== quality setting ===========
-			[asset setTitle:@"Credit to:"];
-			[asset setSummary:@"quequick, b0bben and ccjensen, brent112, boots2x, tobiashieta, tomcool and all the ppl in the forums. <3 you all"];
-			break;
-		}
-		default:
-			break;
+	case ServersIndex: {
+		// =========== servers ===========
+		[asset setTitle:@"Manage server list"];
+		[asset setSummary:@"Add new or modify current servers, their connections and their 'inclusion in main menu' status"];
+		break;
+	}
+	case ViewSettingsIndex: {
+		// =========== view settings ===========
+		[asset setTitle:@"Modify view settings"];
+		[asset setSummary:@"Alter UI behavior, views to use, etc."];
+		break;
+	}
+	case PlaybackSettingsIndex: {
+		// =========== audio settings ===========
+		[asset setTitle:@"Modify playback settings"];
+		[asset setSummary:@"Setup the kind of multi-channel audio you want to output, video quality, etc"];
+		break;
+	}
+	case SecuritySettingsIndex: {
+		// =========== security settings ===========
+		[asset setTitle:@"Modify security settings"];
+		[asset setSummary:@"Change passcode and activate security measures"];
+		break;
+	}
+	case PluginVersionNumberIndex: {
+		// =========== quality setting ===========
+		[asset setTitle:@"Credit to:"];
+		[asset setSummary:@"quequick, b0bben and ccjensen, brent112, boots2x, tobiashieta, tomcool and all the ppl in the forums. <3 you all"];
+		break;
+	}
+	default:
+		break;
 	}
 	[asset setCoverArt:[BRImage imageWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"PlexSettings" ofType:@"png"]]];
 	SMFMediaPreview *p = [[SMFMediaPreview alloc] init];

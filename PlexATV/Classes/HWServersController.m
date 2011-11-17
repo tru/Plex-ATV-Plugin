@@ -20,31 +20,31 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-- (id) init {
-	if((self = [super init]) != nil) {		
+- (id)init {
+	if( (self = [super init]) != nil ) {
 		[self setListTitle:@"All Servers"];
 		BRImage *sp = [[BRThemeInfo sharedTheme] gearImage];
-		
+
 		[self setListIcon:sp horizontalOffset:0.0 kerningFactor:0.15];
-		
+
 		_machines = [[NSMutableArray alloc] init];
-		
+
 		NSSortDescriptor *firstSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"usersServerName" ascending:YES];
 		NSSortDescriptor *secondSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"serverName" ascending:YES];
 		_machineSortDescriptors = [[NSArray alloc] initWithObjects:firstSortDescriptor, secondSortDescriptor, nil];
 		[firstSortDescriptor release];
-        [secondSortDescriptor release];
-		
+		[secondSortDescriptor release];
+
 		[[self list] setDatasource:self];
- 		[[self list] addDividerAtIndex:1 withLabel:@"List of Servers"];
+		[[self list] addDividerAtIndex:1 withLabel:@"List of Servers"];
 	}
 	return self;
 }
 
--(void)dealloc {	
+- (void)dealloc {
 	self.machines = nil;
 	[_machineSortDescriptors release];
-	
+
 	[super dealloc];
 }
 
@@ -68,7 +68,7 @@
 
 - (void)wasExhumed {
 	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
-    [[self list] reload];
+	[[self list] reload];
 	[super wasExhumed];
 }
 
@@ -85,7 +85,7 @@
 	[serverDetailsController release];
 }
 
-- (void)showEditMachineDetailsViewForMachine:(Machine *)machine {
+- (void)showEditMachineDetailsViewForMachine:(Machine*)machine {
 	HWServerDetailsController *serverDetailsController = [[HWServerDetailsController alloc] initWithMachine:machine];
 	[[self stack] pushController:serverDetailsController];
 	[serverDetailsController release];
@@ -112,7 +112,7 @@
 	if (selected == 0) {
 		[self showAddNewMachineWizard];
 	} else {
-		Machine* m = [self.machines objectAtIndex:selected -1]; //-1 'cause of the "Add remote server" that screws up things
+		Machine *m = [self.machines objectAtIndex:selected - 1]; //-1 'cause of the "Add remote server" that screws up things
 #ifdef LOCAL_DEBUG_ENABLED
 		DLog(@"machine selected: %@", m);
 #endif
@@ -129,15 +129,15 @@
 }
 
 - (id)itemForRow:(long)row {
-	BRMenuItem * result = [[BRMenuItem alloc] init];
-	
-	if(row == 0){
+	BRMenuItem *result = [[BRMenuItem alloc] init];
+
+	if(row == 0) {
 		[result setText:@"Add new server" withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
 		[result addAccessoryOfType:0];
 	} else {
-		Machine *m = [self.machines objectAtIndex:row-1];
+		Machine *m = [self.machines objectAtIndex:row - 1];
 		NSString *serverName;
-		
+
 		if (m.usersServerName && [m.usersServerName length] > 0) {
 			serverName = m.usersServerName;
 		} else if (m.serverName && [m.serverName length] > 0) {
@@ -147,16 +147,16 @@
 		}
 
 		[result setText:serverName withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		
+
 		[result addAccessoryOfType:1]; //folder
 		if (m.canConnect) {
-            [result addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 19: 18]; //online
+			[result addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 19:18]; //online
 		} else {
-            [result addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 20: 19]; //online
+			[result addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 20:19]; //online
 		}
-		
-	}	
-	
+
+	}
+
 	return [result autorelease];
 }
 
@@ -165,13 +165,13 @@
 }
 
 - (id)titleForRow:(long)row {
-	if (row >= [self.machines count] || row<0)
+	if (row >= [self.machines count] || row < 0)
 		return @"";
-	Machine* m = [self.machines objectAtIndex:row];
+	Machine *m = [self.machines objectAtIndex:row];
 	return m.serverName;
 }
 
--(void)setNeedsUpdate{
+- (void)setNeedsUpdate {
 #ifdef LOCAL_DEBUG_ENABLED
 	DLog(@"Updating UI");
 #endif
@@ -180,7 +180,7 @@
 
 #pragma mark -
 #pragma mark Machine Delegate Methods
--(void)machineWasRemoved:(Machine*)m{
+- (void)machineWasRemoved:(Machine*)m {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"MachineManager: Removed machine %@", m);
 #endif
@@ -189,7 +189,7 @@
 	[self.list reload];
 }
 
--(void)machineWasAdded:(Machine*)m {	
+- (void)machineWasAdded:(Machine*)m {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"MachineManager: Added machine %@", m);
 #endif
@@ -198,18 +198,19 @@
 	[self.list reload];
 }
 
--(void)machine:(Machine*)m receivedInfoForConnection:(MachineConnectionBase*)con updated:(ConnectionInfoType)updateMask {
+- (void)machine:(Machine*)m receivedInfoForConnection:(MachineConnectionBase*)con updated:(ConnectionInfoType)updateMask {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"MachineManager: Received Info For connection %@ from machine %@", con, m);
 #endif
 }
 
--(void)machineWasChanged:(Machine*)m {
-	if (m==nil) return;	
+- (void)machineWasChanged:(Machine*)m {
+	if (m == nil) return;
 	//something changed, refresh
 	[self.list reload];
 }
 
--(void)machine:(Machine*)m changedClientTo:(ClientConnection*)cc{}
+- (void)machine:(Machine*)m changedClientTo:(ClientConnection*)cc {
+}
 
 @end

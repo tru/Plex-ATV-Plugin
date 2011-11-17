@@ -17,7 +17,7 @@
 
 //custom methods
 - (void)showAddNewMachineWizard;
-- (void)showEditMachineDetailsViewForMachine:(Machine *)machine;
+- (void)showEditMachineDetailsViewForMachine:(Machine*)machine;
 
 //list provider
 - (float)heightForRow:(long)row;

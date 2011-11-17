@@ -13,15 +13,15 @@
 @interface HWTVShowsController : Plex_SMFBookcaseController <Plex_SMFBookcaseControllerDatasource, Plex_SMFBookcaseControllerDelegate> {
 	PlexMediaContainer *tvShows;
 	NSMutableArray *allTvShowsSeasonsPlexMediaContainer;
-    
-    BOOL allShelvesLoaded;
-    BOOL shouldPlayInitialThemeSong;
+
+	BOOL allShelvesLoaded;
+	BOOL shouldPlayInitialThemeSong;
 }
 @property (nonatomic, retain) PlexMediaContainer *seasonsForSelectedTVShow;
 @property (nonatomic, retain) NSTimer *themeMusicTimer;
 
-- (id)initWithPlexAllTVShows:(PlexMediaContainer *)allTVShows;
+- (id)initWithPlexAllTVShows:(PlexMediaContainer*)allTVShows;
 
-- (void)playThemeMusicForMediaObjectInTimer:(NSTimer *)theTimer;
+- (void)playThemeMusicForMediaObjectInTimer:(NSTimer*)theTimer;
 
 @end

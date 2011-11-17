@@ -9,10 +9,10 @@
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 //  copies of the Software, and to permit persons to whom the Software is
 //  furnished to do so, subject to the following conditions:
-//  
+//
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
-//  
+//
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,20 +20,20 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
-//  
+//
 
 #import "PlexMediaProvider.h"
 #import "PlexMediaAsset.h"
 #import "PlexMediaAssetOld.h"
 enum
 {
-  kBRMediaProviderNetworkWaitingState = 440,
-  kBRMediaProviderNetworkDoneState,
-  kBRMediaProviderLoadingState,
-  kBRMediaProviderLoadedState,
-  kBRMediaProviderUnloadingState,
-  kBRMediaProviderUnloadedState
-	
+	kBRMediaProviderNetworkWaitingState = 440,
+	kBRMediaProviderNetworkDoneState,
+	kBRMediaProviderLoadingState,
+	kBRMediaProviderLoadedState,
+	kBRMediaProviderUnloadingState,
+	kBRMediaProviderUnloadedState
+
 };
 
 @interface BRMediaType (PlexExtentions)
@@ -45,112 +45,106 @@ enum
 #pragma mark Object/Class Lifecycle
 
 - (id)init {
-    self = [super init];
-    if (self) {
-        prov = [[BRBaseMediaProvider alloc] init];
-        [self load];
-    }
-    return self;
+	self = [super init];
+	if (self) {
+		prov = [[BRBaseMediaProvider alloc] init];
+		[self load];
+	}
+	return self;
 }
 
-- (void) dealloc
-{
+- (void)dealloc {
 	[prov release];
-  [super dealloc];
+	[super dealloc];
 }
 
 
-- (long)countOfObjectsWithMediaType:(id)mediaType{
+- (long)countOfObjectsWithMediaType:(id)mediaType {
 	DLog(@"Retuning Count");
 	return 1;
 }
 
 
-- (NSSet *) mediaTypes
-{
-  NSMutableArray * types = [[NSMutableArray alloc] init];
-	
-  // types handled by MEITunesMediaProvider
-  [types addObject: [BRMediaType movie]];
-  [types addObject: [BRMediaType sedonaMovie]];
-  [types addObject: [BRMediaType TVShow]];
-  [types addObject: [BRMediaType song]];
-	
-  NSSet * result = [NSSet setWithArray: types];
-  [types release];
-	
+- (NSSet*)mediaTypes {
+	NSMutableArray *types = [[NSMutableArray alloc] init];
+
+	// types handled by MEITunesMediaProvider
+	[types addObject:[BRMediaType movie]];
+	[types addObject:[BRMediaType sedonaMovie]];
+	[types addObject:[BRMediaType TVShow]];
+	[types addObject:[BRMediaType song]];
+
+	NSSet *result = [NSSet setWithArray:types];
+	[types release];
+
 	//DLog(@"Returning Types %@", result);
-	
-  return ( result );
+
+	return (result);
 }
 
-- (id)objectsWithEntityName:(id)entityName qualifiedByPredicate:(id)predicate sortDescriptors:(id)descriptors excludeHiddenObjects:(BOOL)objects error:(id *)error{
+- (id)objectsWithEntityName:(id)entityName qualifiedByPredicate:(id)predicate sortDescriptors:(id)descriptors excludeHiddenObjects:(BOOL)objects error:(id*)error {
 	DLog(@"entityName=%@, pred=%@, desc=%@", entityName, predicate, descriptors);
-  if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.1"]){
-    PlexMediaAssetOld* pma = [[PlexMediaAssetOld alloc] initWithURL:nil mediaProvider:self mediaObject:nil];
-    return [pma autorelease];
-  } else {
-    PlexMediaAsset* pma = [[PlexMediaAsset alloc] initWithURL:nil mediaProvider:self mediaObject:nil];
-    return [pma autorelease];
-  }
+	if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.1"]) {
+		PlexMediaAssetOld *pma = [[PlexMediaAssetOld alloc] initWithURL:nil mediaProvider:self mediaObject:nil];
+		return [pma autorelease];
+	} else {
+		PlexMediaAsset *pma = [[PlexMediaAsset alloc] initWithURL:nil mediaProvider:self mediaObject:nil];
+		return [pma autorelease];
+	}
 }
 
-- (id)objectsWithEntityName:(id)entityName qualifiedByPredicate:(id)predicate sortDescriptors:(id)descriptors error:(id *)error{
-	return [self objectsWithEntityName:entityName 
-                qualifiedByPredicate:predicate 
-                     sortDescriptors:descriptors 
-                excludeHiddenObjects:YES 
-                               error:error];
+- (id)objectsWithEntityName:(id)entityName qualifiedByPredicate:(id)predicate sortDescriptors:(id)descriptors error:(id*)error {
+	return [self objectsWithEntityName:entityName
+	        qualifiedByPredicate:predicate
+	        sortDescriptors:descriptors
+	        excludeHiddenObjects:YES
+	        error:error];
 }
 
 
 
 
 
-- (id)providerID{
+- (id)providerID {
 	return @"com.myplex.atv.movies.provider";
 }
 
-- (void)reset{
+- (void)reset {
 	DLog(@"Did Reset Provider");
 	[self unload];
-  [self load];
+	[self load];
 }
 
 
 
-- (int) load
-{
-  [prov setStatus: kBRMediaProviderLoadingState];
-  [NSTimer scheduledTimerWithTimeInterval: 0.5
-                                   target: self
-                                 selector: @selector(_loadTimerCallback:)
-                                 userInfo: nil
-                                  repeats: NO];
-  return ( kBRMediaProviderLoadingState );
+- (int)load {
+	[prov setStatus:kBRMediaProviderLoadingState];
+	[NSTimer scheduledTimerWithTimeInterval:0.5
+	 target:self
+	 selector:@selector(_loadTimerCallback:)
+	 userInfo:nil
+	 repeats:NO];
+	return (kBRMediaProviderLoadingState);
 }
 
-- (int) unload
-{
-  [prov setStatus: kBRMediaProviderUnloadingState];
-  [NSTimer scheduledTimerWithTimeInterval: 0.5
-                                   target: self
-                                 selector: @selector(_unloadTimerCallback:)
-                                 userInfo: nil
-                                  repeats: NO];
-  return ( kBRMediaProviderUnloadingState );
+- (int)unload {
+	[prov setStatus:kBRMediaProviderUnloadingState];
+	[NSTimer scheduledTimerWithTimeInterval:0.5
+	 target:self
+	 selector:@selector(_unloadTimerCallback:)
+	 userInfo:nil
+	 repeats:NO];
+	return (kBRMediaProviderUnloadingState);
 }
 
 
-- (void) _loadTimerCallback: (NSTimer *) timer
-{
+- (void)_loadTimerCallback:(NSTimer*)timer {
 	DLog(@"Finished load");
-  [prov setStatus: kBRMediaProviderLoadedState];
+	[prov setStatus:kBRMediaProviderLoadedState];
 }
 
-- (void) _unloadTimerCallback: (NSTimer *) timer
-{
+- (void)_unloadTimerCallback:(NSTimer*)timer {
 	DLog(@"Finished unload");
-  [prov setStatus: kBRMediaProviderUnloadedState];
+	[prov setStatus:kBRMediaProviderUnloadedState];
 }
 @end

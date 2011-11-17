@@ -13,17 +13,16 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-+(ProxyMachineDelegate*)shared {
-	static ProxyMachineDelegate* _proxyMachineDelegate = nil;
-	if (_proxyMachineDelegate==nil){
++ (ProxyMachineDelegate*)shared {
+	static ProxyMachineDelegate *_proxyMachineDelegate = nil;
+	if (_proxyMachineDelegate == nil) {
 		_proxyMachineDelegate = [[ProxyMachineDelegate alloc] init];
 	}
-	
+
 	return _proxyMachineDelegate;
 }
 
-- (id) init
-{
+- (id)init {
 	self = [super init];
 	if (self != nil) {
 		delegates = [[NSMutableArray alloc] initWithCapacity:3];
@@ -31,43 +30,42 @@
 	return self;
 }
 
-- (void) dealloc
-{
+- (void)dealloc {
 	[delegates release];
 	[super dealloc];
 }
 
--(void)registerDelegate:(id<MachineManagerDelegate>)del{
+- (void)registerDelegate:(id<MachineManagerDelegate>)del {
 	if ([MachineManager sharedMachineManager].delegate != self) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Hooking up machine Delegate");
 #endif
 		[[MachineManager sharedMachineManager] setDelegate:self];
 	}
-	
-	if (![delegates containsObject:del] && del!=nil){
+
+	if (![delegates containsObject:del] && del != nil) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Added machine Delegate %@", del);
 #endif
 		[delegates addObject:del];
-		
-		NSArray* mc = [[MachineManager sharedMachineManager] threadSafeMachines];
-		for (Machine* m in mc){
+
+		NSArray *mc = [[MachineManager sharedMachineManager] threadSafeMachines];
+		for (Machine*m in mc) {
 			[del machineWasAdded:m];
 		}
 	}
-	
-	
+
+
 }
 
--(void)removeAllDelegates{
+- (void)removeAllDelegates {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"Removing all machine Delegates");
 #endif
 	[delegates removeAllObjects];
 }
 
--(void)removeDelegate:(id<MachineManagerDelegate>)del{
+- (void)removeDelegate:(id<MachineManagerDelegate>)del {
 #if LOCAL_DEBUG_ENABLED
 	DLog(@"Removed machine Delegate %@", del);
 #endif
@@ -77,8 +75,8 @@
 
 
 //required
--(void)machineWasAdded:(Machine*)m;{
-	for (id<MachineManagerDelegate> d in delegates){
+- (void)machineWasAdded:(Machine*)m; {
+	for (id<MachineManagerDelegate> d in delegates) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Send machineWasAdded to %@", d);
 #endif
@@ -86,8 +84,8 @@
 	}
 }
 
--(void)machineWasRemoved:(Machine*)m{
-	for (id<MachineManagerDelegate> d in delegates){
+- (void)machineWasRemoved:(Machine*)m {
+	for (id<MachineManagerDelegate> d in delegates) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Send machineWasRemoved to %@", d);
 #endif
@@ -97,8 +95,8 @@
 
 
 //optional
--(void)machineWasChanged:(Machine*)m{
-	for (id<MachineManagerDelegate> d in delegates){
+- (void)machineWasChanged:(Machine*)m {
+	for (id<MachineManagerDelegate> d in delegates) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Send machineWasChanged to %@", d);
 #endif
@@ -108,8 +106,8 @@
 	}
 }
 
--(void)machine:(Machine*)m changedConnection:(MachineConnectionBase*)con{
-	for (id<MachineManagerDelegate> d in delegates){
+- (void)machine:(Machine*)m changedConnection:(MachineConnectionBase*)con {
+	for (id<MachineManagerDelegate> d in delegates) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Send machine:changedConnection to %@", d);
 #endif
@@ -119,8 +117,8 @@
 	}
 }
 
--(void)machine:(Machine*)m updatedInfo:(ConnectionInfoType)updateMask{
-	for (id<MachineManagerDelegate> d in delegates){
+- (void)machine:(Machine*)m updatedInfo:(ConnectionInfoType)updateMask {
+	for (id<MachineManagerDelegate> d in delegates) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Send machine:updatedInfo to %@", d);
 #endif
@@ -130,8 +128,8 @@
 	}
 }
 
--(void)machine:(Machine*)m changedClientTo:(ClientConnection*)cc{
-	for (id<MachineManagerDelegate> d in delegates){
+- (void)machine:(Machine*)m changedClientTo:(ClientConnection*)cc {
+	for (id<MachineManagerDelegate> d in delegates) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Send machine:changedClientTo to %@", d);
 #endif
@@ -141,8 +139,8 @@
 	}
 }
 
--(void)machine:(Machine*)m receivedInfoForConnection:(MachineConnectionBase*)con updated:(ConnectionInfoType)updateMask{
-	for (id<MachineManagerDelegate> d in delegates){
+- (void)machine:(Machine*)m receivedInfoForConnection:(MachineConnectionBase*)con updated:(ConnectionInfoType)updateMask {
+	for (id<MachineManagerDelegate> d in delegates) {
 #if LOCAL_DEBUG_ENABLED
 		DLog(@"Send machine:receivedInfoForConnection to %@", d);
 #endif

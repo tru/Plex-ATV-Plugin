@@ -9,10 +9,10 @@
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 //  copies of the Software, and to permit persons to whom the Software is
 //  furnished to do so, subject to the following conditions:
-//  
+//
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
-//  
+//
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,7 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
-//  
+//
 #import "PlexMediaAssetOld.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
@@ -34,8 +34,7 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-- (id) initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider  mediaObject:(PlexMediaObject*)o
-{
+- (id)initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)o {
 	//self = [super initWithMediaProvider:mediaProvider];
 	//self = [super streamingMediaAssetWithMediaItem:o];
 	self = [super initWithMediaProvider:mediaProvider];
@@ -43,7 +42,7 @@
 		pmo = [o retain];
 		url = [u retain];
 		ppa = [[PlexPreviewAsset alloc] initWithURL:url mediaProvider:mediaProvider mediaObject:pmo];
-		
+
 		//DLog(@"PMO attrs: %@", pmo.attributes);
 		//PlexRequest *req = pmo.request;
 		//DLog(@"PMO request attrs: %@", req);
@@ -52,8 +51,7 @@
 	return self;
 }
 
-- (void) dealloc
-{
+- (void)dealloc {
 	[pmo release];
 	[url release];
 	[ppa release];
@@ -64,7 +62,7 @@
 #pragma mark -
 #pragma mark BRMediaAsset
 //- (void *)createMovieWithProperties:(void *)properties count:(long)count {
-//	
+//
 //}
 
 - (id)artistCollection {
@@ -171,7 +169,7 @@
 	return [ppa dolbyDigital];
 }
 
--(long int)duration {
+- (long int)duration {
 	return [ppa duration];
 }
 
@@ -239,7 +237,7 @@
 	return [ppa isExplicit];
 }
 
-- (BOOL)isHD{
+- (BOOL)isHD {
 	return [ppa isHD];
 }
 
@@ -292,7 +290,7 @@
 	return [BRMediaType movie];
 }
 
-- (NSString *)mediaURL{
+- (NSString*)mediaURL {
 	return [ppa mediaURL];
 }
 
@@ -316,7 +314,7 @@
 	return [ppa playable];
 }
 
--(id)playbackMetadata {
+- (id)playbackMetadata {
 	return [ppa playbackMetadata];
 }
 
@@ -408,7 +406,7 @@
 	return [ppa stopTimeInSeconds];
 }
 
--(id)title {
+- (id)title {
 	return [ppa title];
 }
 
