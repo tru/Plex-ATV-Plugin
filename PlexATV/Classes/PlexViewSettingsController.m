@@ -139,7 +139,7 @@
 	// =========== Preplay ===========
 	// =========== summary ===========
 	SMFMenuItem *hiddenSummary = [SMFMenuItem menuItem];
-	[hiddenSummary setTitle:@"Hide summary on unseen media"];
+	[hiddenSummary setTitle:@"Hide summary on unseen TV Series"];
 	NSString *summary = [[HWUserDefaults preferences] boolForKey:PreferencesViewHiddenSummary] ? @"Enabled" : @"Disabled";
 	[hiddenSummary setRightText:summary];
 	[_items addObject:hiddenSummary];
