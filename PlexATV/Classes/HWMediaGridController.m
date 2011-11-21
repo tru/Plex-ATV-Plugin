@@ -226,14 +226,9 @@ void checkNil(NSObject *ctrl){
     [gridBox setDivider:div2];
     [div2 release];
     [gridBox setFrame:gridFrame];
-
-
-
     [gridBox layoutSubcontrols];
-
     [_panelControl addControl:gridBox];
-
-
+    [gridBox release];
 
     BRSpacerControl *spacerBottom = [BRSpacerControl spacerWithPixels:44.f];
     CGRect spacerFrame = CGRectMake(0, 0, 0, 44.f);
