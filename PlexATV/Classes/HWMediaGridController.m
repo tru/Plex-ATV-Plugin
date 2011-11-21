@@ -181,6 +181,7 @@ void checkNil(NSObject *ctrl){
     [shelfBox setDividerMargin:0.05000000074505806f];
     [shelfBox setContent:_shelfControl];
     [shelfBox setDivider:div1];
+    [div1 release];
     [shelfBox layoutSubcontrols];
     CGRect boxFrame = shelfBox.frame;
     boxFrame.size.height = 261.0f;
