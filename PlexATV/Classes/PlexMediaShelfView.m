@@ -39,6 +39,7 @@
         [_adapter setProviders:[NSArray arrayWithObjects:provider, nil]];
         [self setDelegate:_adapter];
         [self setDataSource:_adapter];
+        [_adapter release];
         self.adapter = adapter;
     } else {
         [(id) self setProvider:provider];
