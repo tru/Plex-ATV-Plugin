@@ -49,10 +49,10 @@
 @end
 
 typedef enum {
-	kPreviewButton = 0,
-	kPlayButton,
-	kAudioSubsButton,
-	kMoreButton
+    kPreviewButton = 0,
+    kPlayButton,
+    kAudioSubsButton,
+    kMoreButton
 } ActionButton;
 
 @implementation PlexPreplayController
@@ -62,78 +62,78 @@ typedef enum {
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id)init {
-	self = [super init];
-	if (self) {
-		self.datasource = self;
-		self.delegate = self;
+    self = [super init];
+    if (self) {
+        self.datasource = self;
+        self.delegate = self;
 
-		//create the popup
-		listDropShadowControl = [[SMFListDropShadowControl alloc] init];
-		[listDropShadowControl setCDelegate:self];
-		[listDropShadowControl setCDatasource:self];
-	}
-	return self;
+        //create the popup
+        listDropShadowControl = [[SMFListDropShadowControl alloc] init];
+        [listDropShadowControl setCDelegate:self];
+        [listDropShadowControl setCDatasource:self];
+    }
+    return self;
 }
 
 - (id)initWithPlexMediaObject:(PlexMediaObject*)aMediaObject {
-	self = [self init];
-	if (self) {
-		self.selectedMediaObject = aMediaObject;
-		self.relatedMediaContainer = self.selectedMediaObject.mediaContainer;
-		currentSelectedIndex = [self.relatedMediaContainer.directories indexOfObject:self.selectedMediaObject];
+    self = [self init];
+    if (self) {
+        self.selectedMediaObject = aMediaObject;
+        self.relatedMediaContainer = self.selectedMediaObject.mediaContainer;
+        currentSelectedIndex = [self.relatedMediaContainer.directories indexOfObject:self.selectedMediaObject];
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"init with media object:%@", self.selectedMediaObject);
+        DLog(@"init with media object:%@", self.selectedMediaObject);
 #endif
-	}
-	return self;
+    }
+    return self;
 }
 
 - (void)dealloc {
-	self.selectedMediaObject = nil;
-	self.relatedMediaContainer = nil;
+    self.selectedMediaObject = nil;
+    self.relatedMediaContainer = nil;
 
-	[listDropShadowControl release];
-	[super dealloc];
+    [listDropShadowControl release];
+    [super dealloc];
 }
 
 - (void)changeMetadataViewToShowDataForIndex:(int)newIndex {
-	//check that it is a new one, otherwise don't refresh
-	if (currentSelectedIndex != newIndex) {
-		//set both focused and selected to the new index
-		currentSelectedIndex = newIndex;
-		lastFocusedIndex = newIndex;
-		shelfCtrl.focusedIndexCompat = newIndex;
-		self.selectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:currentSelectedIndex];
-		//move the shelf if needed to show the new item
-		[shelfCtrl _scrollIndexToVisible:currentSelectedIndex];
-		//refresh metadata, but don't touch the shelf
-		[self reload];
-	}
+    //check that it is a new one, otherwise don't refresh
+    if (currentSelectedIndex != newIndex) {
+        //set both focused and selected to the new index
+        currentSelectedIndex = newIndex;
+        lastFocusedIndex = newIndex;
+        shelfCtrl.focusedIndexCompat = newIndex;
+        self.selectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:currentSelectedIndex];
+        //move the shelf if needed to show the new item
+        [shelfCtrl _scrollIndexToVisible:currentSelectedIndex];
+        //refresh metadata, but don't touch the shelf
+        [self reload];
+    }
 }
 
 
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
-	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
-	[super wasPushed];
+    [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+    [super wasPushed];
 }
 
 - (void)wasPopped {
-	self.datasource = nil;
-	self.selectedMediaObject = nil;
-	self.relatedMediaContainer = nil;
-	[super wasPopped];
+    self.datasource = nil;
+    self.selectedMediaObject = nil;
+    self.relatedMediaContainer = nil;
+    [super wasPopped];
 }
 
 - (void)wasExhumed {
-	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
-	[super wasExhumed];
-	[shelfCtrl _scrollIndexToVisible:currentSelectedIndex];
+    [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+    [super wasExhumed];
+    [shelfCtrl _scrollIndexToVisible:currentSelectedIndex];
 }
 
 - (void)wasBuried {
-	[super wasBuried];
+    [super wasBuried];
 }
 
 
@@ -142,142 +142,142 @@ typedef enum {
 #define ArrowSwitchDelay 0.7f
 
 - (BOOL)controllerCanSwitchToPrevious:(SMFMoviePreviewController*)c {
-	return YES;
+    return YES;
 }
 
 - (void)controllerSwitchToPrevious:(SMFMoviePreviewController*)ctrl {
-	[ctrl switchPreviousArrowOn];
-	[ctrl performSelector:@selector(switchPreviousArrowOff)withObject:nil afterDelay:ArrowSwitchDelay];
+    [ctrl switchPreviousArrowOn];
+    [ctrl performSelector:@selector(switchPreviousArrowOff)withObject:nil afterDelay:ArrowSwitchDelay];
 
-	[[SMFThemeInfo sharedTheme] playNavigateSound];
-	int newIndex;
-	if (currentSelectedIndex - 1 < 0) {
-		//we have reached the beginning, loop around
-		newIndex = [self.relatedMediaContainer.directories count] - 1;
-	} else {
-		//go to previous one
-		newIndex = currentSelectedIndex - 1;
-	}
+    [[SMFThemeInfo sharedTheme] playNavigateSound];
+    int newIndex;
+    if (currentSelectedIndex - 1 < 0) {
+        //we have reached the beginning, loop around
+        newIndex = [self.relatedMediaContainer.directories count] - 1;
+    } else {
+        //go to previous one
+        newIndex = currentSelectedIndex - 1;
+    }
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"switching from item %d to previous one %d", currentSelectedIndex, newIndex);
+    DLog(@"switching from item %d to previous one %d", currentSelectedIndex, newIndex);
 #endif
-	lastFocusedIndex = newIndex;
-	[self changeMetadataViewToShowDataForIndex:lastFocusedIndex];
-	[self setFocusedControl:[self._buttons objectAtIndex:0]];
+    lastFocusedIndex = newIndex;
+    [self changeMetadataViewToShowDataForIndex:lastFocusedIndex];
+    [self setFocusedControl:[self._buttons objectAtIndex:0]];
 }
 
 - (BOOL)controllerCanSwitchToNext:(SMFMoviePreviewController*)c {
-	return YES;
+    return YES;
 }
 
 - (void)controllerSwitchToNext:(SMFMoviePreviewController*)ctrl {
-	[ctrl switchNextArrowOn];
-	[ctrl performSelector:@selector(switchNextArrowOff)withObject:nil afterDelay:ArrowSwitchDelay];
+    [ctrl switchNextArrowOn];
+    [ctrl performSelector:@selector(switchNextArrowOff)withObject:nil afterDelay:ArrowSwitchDelay];
 
-	[[SMFThemeInfo sharedTheme] playNavigateSound];
-	int newIndex;
-	if (currentSelectedIndex + 1 < [self.relatedMediaContainer.directories count]) {
-		//go to next one
-		newIndex = currentSelectedIndex + 1;
-	} else {
-		//we have reached the end, loop around
-		newIndex = 0;
-	}
+    [[SMFThemeInfo sharedTheme] playNavigateSound];
+    int newIndex;
+    if (currentSelectedIndex + 1 < [self.relatedMediaContainer.directories count]) {
+        //go to next one
+        newIndex = currentSelectedIndex + 1;
+    } else {
+        //we have reached the end, loop around
+        newIndex = 0;
+    }
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"switching from item %d to next one %d", currentSelectedIndex, newIndex);
+    DLog(@"switching from item %d to next one %d", currentSelectedIndex, newIndex);
 #endif
-	lastFocusedIndex = newIndex;
-	[self changeMetadataViewToShowDataForIndex:lastFocusedIndex];
-	[self setFocusedControl:[self._buttons lastObject]];
+    lastFocusedIndex = newIndex;
+    [self changeMetadataViewToShowDataForIndex:lastFocusedIndex];
+    [self setFocusedControl:[self._buttons lastObject]];
 
 }
 
 - (void)controller:(SMFMoviePreviewController*)c selectedControl:(BRControl*)ctrl {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"controller selected %@", ctrl);
+    DLog(@"controller selected %@", ctrl);
 #endif
 
-	if ([ctrl isKindOfClass:[BRButtonControl class]]) {
-		//one of the buttons have been pushed
-		BRButtonControl *buttonControl = (BRButtonControl*)ctrl;
+    if ([ctrl isKindOfClass:[BRButtonControl class]]) {
+        //one of the buttons have been pushed
+        BRButtonControl *buttonControl = (BRButtonControl*)ctrl;
 #if LOCAL_DEBUG_ENABLED
-		DLog(@"button chosen: %@", buttonControl.identifier);
+        DLog(@"button chosen: %@", buttonControl.identifier);
 #endif
 
-		int buttonId = [buttonControl.identifier intValue];
-		switch (buttonId) {
-		case kPlayButton: {
-			DLog(@"initiate movie playback");
-			[[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
-			break;
-		}
-		case kMoreButton: {
-			[listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
-			break;
-		}
-		case kAudioSubsButton: {
-			PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaObject];
-			[[[BRApplicationStackManager singleton] stack] pushController:subCtrl];
-			[subCtrl release];
-		}
-		default:
-			break;
-		}
+        int buttonId = [buttonControl.identifier intValue];
+        switch (buttonId) {
+        case kPlayButton: {
+            DLog(@"initiate movie playback");
+            [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
+            break;
+        }
+        case kMoreButton: {
+            [listDropShadowControl addToController:self]; //show popup for marking movie as watched/unwatched
+            break;
+        }
+        case kAudioSubsButton: {
+            PlexAudioSubsController *subCtrl = [[PlexAudioSubsController alloc] initWithMediaObject:self.selectedMediaObject];
+            [[[BRApplicationStackManager singleton] stack] pushController:subCtrl];
+            [subCtrl release];
+        }
+        default:
+            break;
+        }
 
-		//none of the buttons do anything, make error sound for now
-		[[SMFThemeInfo sharedTheme] playErrorSound];
+        //none of the buttons do anything, make error sound for now
+        [[SMFThemeInfo sharedTheme] playErrorSound];
 
-	} else if (ctrl == self.shelfControl) {
-		//user has selected a media item
-		[[SMFThemeInfo sharedTheme] playSelectSound];
-		int focusedIndexCompat;
-		if ([SMF_COMPAT usingFourPointFourPlus]) {
-			focusedIndexCompat =  [[self.shelfControl focusedIndexPath] indexAtPosition:1];
-			DLog(@"using 4.4 index for shelf. %d", focusedIndexCompat);
-		} else {
-			focusedIndexCompat = [(id)self.shelfControl focusedIndex];
-			DLog(@"using 4.2 index for shelf. %d", focusedIndexCompat);
-		}
-		[self changeMetadataViewToShowDataForIndex:focusedIndexCompat];
-	}
+    } else if (ctrl == self.shelfControl) {
+        //user has selected a media item
+        [[SMFThemeInfo sharedTheme] playSelectSound];
+        int focusedIndexCompat;
+        if ([SMF_COMPAT usingFourPointFourPlus]) {
+            focusedIndexCompat =  [[self.shelfControl focusedIndexPath] indexAtPosition:1];
+            DLog(@"using 4.4 index for shelf. %d", focusedIndexCompat);
+        } else {
+            focusedIndexCompat = [(id)self.shelfControl focusedIndex];
+            DLog(@"using 4.2 index for shelf. %d", focusedIndexCompat);
+        }
+        [self changeMetadataViewToShowDataForIndex:focusedIndexCompat];
+    }
 }
 
 - (void)controller:(SMFMoviePreviewController*)c switchedFocusTo:(BRControl*)newControl {
-	if ([newControl isKindOfClass:[BRButtonControl class]]) {
-		//one of the buttons is now focused
-		if (shelfIsSelected) {
-			shelfIsSelected = NO; //shelf was focused, and now one of the buttons are.
-		}
-	} else if (newControl == shelfCtrl) {
-		//the shelf is now re-focused, load previous focused element
-		shelfIsSelected = YES;
-		shelfCtrl.focusedIndexCompat = lastFocusedIndex;
-	}
+    if ([newControl isKindOfClass:[BRButtonControl class]]) {
+        //one of the buttons is now focused
+        if (shelfIsSelected) {
+            shelfIsSelected = NO; //shelf was focused, and now one of the buttons are.
+        }
+    } else if (newControl == shelfCtrl) {
+        //the shelf is now re-focused, load previous focused element
+        shelfIsSelected = YES;
+        shelfCtrl.focusedIndexCompat = lastFocusedIndex;
+    }
 }
 
 - (void)controller:(SMFMoviePreviewController*)c shelfLastIndex:(long)index {
-	//check if the shelf is currently selected
-	//we perform this check because this delegate method is called every time
-	//the user focuses a new control in the view
-	if (shelfIsSelected) {
-		lastFocusedIndex = index;
-	}
+    //check if the shelf is currently selected
+    //we perform this check because this delegate method is called every time
+    //the user focuses a new control in the view
+    if (shelfIsSelected) {
+        lastFocusedIndex = index;
+    }
 }
 
 - (void)controller:(SMFMoviePreviewController*)c playButtonEventOnButtonAtIndex:(int)index {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"play button on button at index [%d]", index);
+    DLog(@"play button on button at index [%d]", index);
 #endif
-	[[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
+    [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:self.selectedMediaObject];
 }
 
 - (void)controller:(SMFMoviePreviewController*)c playButtonEventInShelf:(PlexMediaShelfView*)shelfControl {
-	int selectedIndex = [shelfControl focusedIndex];
-	PlexMediaObject *shelfSelectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:selectedIndex];
+    int selectedIndex = [shelfControl focusedIndex];
+    PlexMediaObject *shelfSelectedMediaObject = [self.relatedMediaContainer.directories objectAtIndex:selectedIndex];
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"play button in shelf at index [%d]: %@", selectedIndex, shelfSelectedMediaObject);
+    DLog(@"play button in shelf at index [%d]: %@", selectedIndex, shelfSelectedMediaObject);
 #endif
-	[[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:shelfSelectedMediaObject];
+    [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:shelfSelectedMediaObject];
 }
 
 
@@ -285,201 +285,201 @@ typedef enum {
 #pragma mark datasource methods
 - (NSString*)title {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"title: %@", [self.selectedMediaObject.previewAsset title]);
+    DLog(@"title: %@", [self.selectedMediaObject.previewAsset title]);
 #endif
-	if (self.selectedMediaObject.isEpisode) {
-		return [NSString stringWithFormat:@"%d. %@", [self.selectedMediaObject.previewAsset episode], [self.selectedMediaObject.previewAsset title]];
-	} else {
-		return [self.selectedMediaObject.previewAsset title];
-	}
+    if (self.selectedMediaObject.isEpisode) {
+        return [NSString stringWithFormat:@"%d. %@", [self.selectedMediaObject.previewAsset episode], [self.selectedMediaObject.previewAsset title]];
+    } else {
+        return [self.selectedMediaObject.previewAsset title];
+    }
 }
 - (NSString*)subtitle {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"subtitle: %@", [self.selectedMediaObject.previewAsset broadcaster]);
+    DLog(@"subtitle: %@", [self.selectedMediaObject.previewAsset broadcaster]);
 #endif
 
-	//If we selected a Movie show studio underneath title, if we selected a TVShow then display the season/episode information.
-	if (self.selectedMediaObject.isMovie && [self.selectedMediaObject.previewAsset broadcaster] != nil) {
-		return ([self.selectedMediaObject.previewAsset broadcaster]);
-	}
-	else if ([self.selectedMediaObject.previewAsset season]) {
-		return [NSString stringWithFormat:@"%@, Season %d", [self.selectedMediaObject.previewAsset seriesName], [self.selectedMediaObject.previewAsset season]];
-	}
-	else {
-		return @"";
-	}
+    //If we selected a Movie show studio underneath title, if we selected a TVShow then display the season/episode information.
+    if (self.selectedMediaObject.isMovie && [self.selectedMediaObject.previewAsset broadcaster] != nil) {
+        return ([self.selectedMediaObject.previewAsset broadcaster]);
+    }
+    else if ([self.selectedMediaObject.previewAsset season]) {
+        return [NSString stringWithFormat:@"%@, Season %d", [self.selectedMediaObject.previewAsset seriesName], [self.selectedMediaObject.previewAsset season]];
+    }
+    else {
+        return @"";
+    }
 }
 
 - (NSString*)summary {
 #if LOCAL_DEBUG_ENABLED
-	//DLog(@"summary: %@", [self.selectedMediaObject.previewAsset mediaSummary]);
+    //DLog(@"summary: %@", [self.selectedMediaObject.previewAsset mediaSummary]);
 #endif
 
-	return self.selectedMediaObject.previewAsset.mediaSummary;
+    return self.selectedMediaObject.previewAsset.mediaSummary;
 
 }
 
 - (NSArray*)headers {
-	return [NSArray arrayWithObjects:@"Details",@"Actors",@"Directors",@"Writers",nil];
+    return [NSArray arrayWithObjects:@"Details",@"Actors",@"Directors",@"Writers",nil];
 }
 
 - (NSArray*)columns {
-	//the table will hold all the columns
-	NSMutableArray *table = [NSMutableArray array];
+    //the table will hold all the columns
+    NSMutableArray *table = [NSMutableArray array];
 
-	// ======= details column ======
-	NSMutableArray *details = [NSMutableArray array];
+    // ======= details column ======
+    NSMutableArray *details = [NSMutableArray array];
 
-	BRGenre *genre = [self.selectedMediaObject.previewAsset primaryGenre];
-	[details addObject:[genre displayString]];
+    BRGenre *genre = [self.selectedMediaObject.previewAsset primaryGenre];
+    [details addObject:[genre displayString]];
 
-	if ([self.selectedMediaObject.previewAsset year] != nil) {
-		NSString *released = [NSString stringWithFormat:@"Released %@", [self.selectedMediaObject.previewAsset year]];
-		[details addObject:released];
-	}
-	else {
-		NSString *released =  @"";
-		[details addObject:released];
-	}
+    if ([self.selectedMediaObject.previewAsset year] != nil) {
+        NSString *released = [NSString stringWithFormat:@"Released %@", [self.selectedMediaObject.previewAsset year]];
+        [details addObject:released];
+    }
+    else {
+        NSString *released =  @"";
+        [details addObject:released];
+    }
 
-	NSString *duration = [NSString stringWithFormat:@"%d minutes", [self.selectedMediaObject.previewAsset duration] / 60];
-	[details addObject:duration];
+    NSString *duration = [NSString stringWithFormat:@"%d minutes", [self.selectedMediaObject.previewAsset duration] / 60];
+    [details addObject:duration];
 
-	[table addObject:details];
+    [table addObject:details];
 
 
-	// ======= actors column ======
-	if ([self.selectedMediaObject.previewAsset cast]) {
-		NSArray *actors = [self.selectedMediaObject.previewAsset cast];
-		[table addObject:actors];
-	}
+    // ======= actors column ======
+    if ([self.selectedMediaObject.previewAsset cast]) {
+        NSArray *actors = [self.selectedMediaObject.previewAsset cast];
+        [table addObject:actors];
+    }
 
-	// ======= directors column ======
-	if ([self.selectedMediaObject.previewAsset directors]) {
-		NSArray *directors = [self.selectedMediaObject.previewAsset directors];
-		[table addObject:directors];
-	}
+    // ======= directors column ======
+    if ([self.selectedMediaObject.previewAsset directors]) {
+        NSArray *directors = [self.selectedMediaObject.previewAsset directors];
+        [table addObject:directors];
+    }
 
-	// ======= writers column ======
-	if ([self.selectedMediaObject.previewAsset writers]) {
-		NSArray *writers = [self.selectedMediaObject.previewAsset writers];
-		[table addObject:writers];
-	}
+    // ======= writers column ======
+    if ([self.selectedMediaObject.previewAsset writers]) {
+        NSArray *writers = [self.selectedMediaObject.previewAsset writers];
+        [table addObject:writers];
+    }
 
-	// ======= done building table ======
+    // ======= done building table ======
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"table: %@", table);
+    DLog(@"table: %@", table);
 #endif
-	return table;
+    return table;
 }
 
 - (NSArray*)flags {
-	NSMutableArray *flags = [NSMutableArray array];
+    NSMutableArray *flags = [NSMutableArray array];
 
-	if ([self.selectedMediaObject.previewAsset starRatingImage])
-		[flags addObject:[self.selectedMediaObject.previewAsset starRatingImage]];
+    if ([self.selectedMediaObject.previewAsset starRatingImage])
+        [flags addObject:[self.selectedMediaObject.previewAsset starRatingImage]];
 
-	NSDictionary *mediaAttributes = self.selectedMediaObject.mediaResource.attributes;
+    NSDictionary *mediaAttributes = self.selectedMediaObject.mediaResource.attributes;
 
-	NSArray *flagAttributes = [NSArray arrayWithObjects:PlexFlagTypeContentVideoResolution, PlexFlagTypeContentVideoCodec, PlexFlagTypeContentAudioCodec, PlexFlagTypeContentAudioChannels, nil];
-	for (PlexFlagTypes attribute in flagAttributes) {
-		if ([mediaAttributes valueForKey:attribute]) {
-			PlexImage *flagImage = [self.selectedMediaObject.mediaContainer flagForType:attribute named:[mediaAttributes valueForKey:attribute]];
-			[flags addObject:[BRImage imageWithURL:flagImage.imageURL]];
-		}
-	}
+    NSArray *flagAttributes = [NSArray arrayWithObjects:PlexFlagTypeContentVideoResolution, PlexFlagTypeContentVideoCodec, PlexFlagTypeContentAudioCodec, PlexFlagTypeContentAudioChannels, nil];
+    for (PlexFlagTypes attribute in flagAttributes) {
+        if ([mediaAttributes valueForKey:attribute]) {
+            PlexImage *flagImage = [self.selectedMediaObject.mediaContainer flagForType:attribute named:[mediaAttributes valueForKey:attribute]];
+            [flags addObject:[BRImage imageWithURL:flagImage.imageURL]];
+        }
+    }
 
-	if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
-		[flags addObject:[[BRThemeInfo sharedTheme] ccBadge]];
+    if ([self.selectedMediaObject.previewAsset hasClosedCaptioning])
+        [flags addObject:[[BRThemeInfo sharedTheme] ccBadge]];
 
-	return flags;
+    return flags;
 }
 
 - (NSString*)rating {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"rating: %@", [self.selectedMediaObject.previewAsset rating]);
+    DLog(@"rating: %@", [self.selectedMediaObject.previewAsset rating]);
 #endif
-	return [self.selectedMediaObject.previewAsset rating];
+    return [self.selectedMediaObject.previewAsset rating];
 }
 
 - (BRImage*)coverArt {
-	BRImage *coverArt = nil;
-	if ([self.selectedMediaObject.previewAsset hasCoverArt] && self.selectedMediaObject.isMovie) {
-		coverArt = [self.selectedMediaObject.previewAsset coverArt];
-	}
-	else {
-		//TODO: Why does this say seasoncCoverArt not found??
-		coverArt = [self.selectedMediaObject.previewAsset seasonCoverArt];
-	}
+    BRImage *coverArt = nil;
+    if ([self.selectedMediaObject.previewAsset hasCoverArt] && self.selectedMediaObject.isMovie) {
+        coverArt = [self.selectedMediaObject.previewAsset coverArt];
+    }
+    else {
+        //TODO: Why does this say seasoncCoverArt not found??
+        coverArt = [self.selectedMediaObject.previewAsset seasonCoverArt];
+    }
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"coverArt: %@", coverArt);
+    DLog(@"coverArt: %@", coverArt);
 #endif
-	return coverArt;
+    return coverArt;
 }
 
 - (NSURL*)backgroundImageUrl {
-	return [self.selectedMediaObject.previewAsset fanartUrl];
+    return [self.selectedMediaObject.previewAsset fanartUrl];
 }
 
 - (NSArray*)buttons {
-	// built-in images:
-	// deleteActionImage, menuActionUnfocusedImage, playActionImage,
-	// previewActionImage, queueActionImage, rateActionImage
-	NSMutableArray *buttons = [NSMutableArray array];
-	BRButtonControl *b = nil;
-	BRImage *audioSubOFF = [BRImage imageWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"PlexAudioSubsOFF" ofType:@"png"]];
-	BRImage *audioSubON = [BRImage imageWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"PlexAudioSubsON" ofType:@"png"]];
+    // built-in images:
+    // deleteActionImage, menuActionUnfocusedImage, playActionImage,
+    // previewActionImage, queueActionImage, rateActionImage
+    NSMutableArray *buttons = [NSMutableArray array];
+    BRButtonControl *b = nil;
+    BRImage *audioSubOFF = [BRImage imageWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"PlexAudioSubsOFF" ofType:@"png"]];
+    BRImage *audioSubON = [BRImage imageWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"PlexAudioSubsON" ofType:@"png"]];
 
-	b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme] playActionImage] subtitle:@"Play" badge:nil];
-	[b setIdentifier:[NSNumber numberWithInt:kPlayButton]];
-	[b setHighlightedImage:[[BRThemeInfo sharedTheme] playActionHighlightedImage]];
-	[buttons addObject:b];
-	/*
-	   b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]previewActionImage]
-	   subtitle:@"Preview"
-	   badge:nil];
-	   [b setIdentifier:[NSNumber numberWithInt:kPreviewButton]];
-	   [buttons addObject:b];
-	 */
-	b = [BRButtonControl actionButtonWithImage:audioSubOFF subtitle:@"Audio/Subs" badge:nil];
-	[b setIdentifier:[NSNumber numberWithInt:kAudioSubsButton]];
-	[b setHighlightedImage:audioSubON];
-	[buttons addObject:b];
+    b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme] playActionImage] subtitle:@"Play" badge:nil];
+    [b setIdentifier:[NSNumber numberWithInt:kPlayButton]];
+    [b setHighlightedImage:[[BRThemeInfo sharedTheme] playActionHighlightedImage]];
+    [buttons addObject:b];
+    /*
+       b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme]previewActionImage]
+       subtitle:@"Preview"
+       badge:nil];
+       [b setIdentifier:[NSNumber numberWithInt:kPreviewButton]];
+       [buttons addObject:b];
+     */
+    b = [BRButtonControl actionButtonWithImage:audioSubOFF subtitle:@"Audio/Subs" badge:nil];
+    [b setIdentifier:[NSNumber numberWithInt:kAudioSubsButton]];
+    [b setHighlightedImage:audioSubON];
+    [buttons addObject:b];
 
-	b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme] moreActionImage] subtitle:@"More" badge:nil];
-	[b setHighlightedImage:[[BRThemeInfo sharedTheme] moreActionHighlightedImage]];
-	[b setIdentifier:[NSNumber numberWithInt:kMoreButton]];
-	[buttons addObject:b];
+    b = [BRButtonControl actionButtonWithImage:[[BRThemeInfo sharedTheme] moreActionImage] subtitle:@"More" badge:nil];
+    [b setHighlightedImage:[[BRThemeInfo sharedTheme] moreActionHighlightedImage]];
+    [b setIdentifier:[NSNumber numberWithInt:kMoreButton]];
+    [buttons addObject:b];
 
 
-	return buttons;
+    return buttons;
 }
 
 - (NSString*)shelfTitle {
-	return self.relatedMediaContainer.name;
+    return self.relatedMediaContainer.name;
 }
 
 - (BRPhotoDataStoreProvider*)providerForShelf {
-	NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
-	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
-	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
+    NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
+    NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
+    BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
 
-	for (PlexMediaObject*pmo in self.relatedMediaContainer.directories) {
-		[store addObject:pmo.previewAsset];
-	}
+    for (PlexMediaObject*pmo in self.relatedMediaContainer.directories) {
+        [store addObject:pmo.previewAsset];
+    }
 
-	PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
-	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
-	id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
-	[store release];
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
+    controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+    id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
+    [store release];
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"providerForShelf: %@", provider);
+    DLog(@"providerForShelf: %@", provider);
 #endif
-	return provider;
+    return provider;
 }
 
 - (BRImage*)placeHolderImageForShelf {
-	return [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+    return [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 }
 
 #pragma mark -
@@ -489,56 +489,56 @@ typedef enum {
 #define MarkAsUnwatchedOption 1
 
 - (float)popupHeightForRow:(long)row {
-	return 0.0f;
+    return 0.0f;
 }
 
 - (BOOL)popupRowSelectable:(long)row {
-	return YES;
+    return YES;
 }
 
 - (long)popupItemCount {
-	return 3;
+    return 3;
 }
 
 - (id)popupItemForRow:(long)row {
-	SMFMenuItem *it = [SMFMenuItem menuItem];
-	switch (row) {
-	case MarkAsWatchedOption: {
-		[it setTitle:@"Mark as watched"];
-		break;
-	}
-	case MarkAsUnwatchedOption: {
-		[it setTitle:@"Mark as unwatched"];
-		break;
-	}
-	default:
-		[it setTitle:@"Go back"];
-		break;
-	}
-	return it;
+    SMFMenuItem *it = [SMFMenuItem menuItem];
+    switch (row) {
+    case MarkAsWatchedOption: {
+        [it setTitle:@"Mark as watched"];
+        break;
+    }
+    case MarkAsUnwatchedOption: {
+        [it setTitle:@"Mark as unwatched"];
+        break;
+    }
+    default:
+        [it setTitle:@"Go back"];
+        break;
+    }
+    return it;
 }
 
 - (long)popupDefaultIndex {
-	return 0;
+    return 0;
 }
 
 - (void)popup:(id)p itemSelected:(long)row {
-	[p removeFromParent];
-	switch (row) {
-	case MarkAsWatchedOption: {
-		DLog(@"marking movie as watched");
-		[self.selectedMediaObject markSeen];
-		break;
-	}
-	case MarkAsUnwatchedOption: {
-		DLog(@"marking movie as un-watched");
-		[self.selectedMediaObject markUnseen];
-		break;
-	}
-	default:
-		DLog(@"going back");
-		break;
-	}
+    [p removeFromParent];
+    switch (row) {
+    case MarkAsWatchedOption: {
+        DLog(@"marking movie as watched");
+        [self.selectedMediaObject markSeen];
+        break;
+    }
+    case MarkAsUnwatchedOption: {
+        DLog(@"marking movie as un-watched");
+        [self.selectedMediaObject markUnseen];
+        break;
+    }
+    default:
+        DLog(@"going back");
+        break;
+    }
 }
 
 

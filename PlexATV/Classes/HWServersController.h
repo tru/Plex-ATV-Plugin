@@ -9,8 +9,8 @@
 #import <plex-oss/Machine.h>
 
 @interface HWServersController : SMFMediaMenuController<MachineManagerDelegate> {
-	NSMutableArray *_machines;
-	NSArray *_machineSortDescriptors;
+    NSMutableArray *_machines;
+    NSArray *_machineSortDescriptors;
 }
 
 @property (assign) NSMutableArray *machines;

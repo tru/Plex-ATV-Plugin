@@ -27,10 +27,10 @@
 
 @class PlexMediaObject, PlexPreviewAsset;
 @interface PlexMediaAsset : BRXMLMediaAsset { //BRBaseMediaAsset<BRMediaAsset> {
-	//BRBaseMediaAsset* bma;
-	NSURL *url;
-	PlexMediaObject *pmo;
-	PlexPreviewAsset *ppa;
+    //BRBaseMediaAsset* bma;
+    NSURL *url;
+    PlexMediaObject *pmo;
+    PlexPreviewAsset *ppa;
 }
 @property (nonatomic, retain) PlexMediaObject *pmo;
 

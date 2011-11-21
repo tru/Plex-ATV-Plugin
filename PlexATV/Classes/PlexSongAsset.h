@@ -27,9 +27,9 @@
 
 @class PlexMediaObject;
 @interface PlexSongAsset : BRBaseMediaAsset<BRMediaAsset> {
-	//BRBaseMediaAsset* bma;
-	NSURL *url;
-	PlexMediaObject *pmo;
+    //BRBaseMediaAsset* bma;
+    NSURL *url;
+    PlexMediaObject *pmo;
 }
 @property (nonatomic, retain) PlexMediaObject *pmo;
 

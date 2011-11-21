@@ -10,7 +10,7 @@
 
 @class Machine;
 @interface ProxyMachineDelegate : NSObject<MachineManagerDelegate> {
-	NSMutableArray *delegates;
+    NSMutableArray *delegates;
 }
 
 + (ProxyMachineDelegate*)shared;

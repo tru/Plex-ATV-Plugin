@@ -11,34 +11,34 @@
 #import <plex-oss/MachineConnectionBase.h>
 
 @interface HWServerDetailsController : SMFMediaMenuController <TestAndConditionallyAddConnectionProtocol, MachineManagerDelegate, SMFListDropShadowDatasource,SMFListDropShadowDelegate> {
-	Machine *_machine;
-	BRWaitPromptControl *waitPromptControl;
-	SMFListDropShadowControl *listDropShadowControl; //popup
+    Machine *_machine;
+    BRWaitPromptControl *waitPromptControl;
+    SMFListDropShadowControl *listDropShadowControl; //popup
 
-	//add new machine flags
-	BOOL isCreatingNewMachine;
-	BOOL hasCompletedAddNewMachineWithConnectionWizardStep1; //if completed proceed to step 2
-	BOOL hasCompletedAddNewMachineWithConnectionWizardStep2; //if completed proceed to step 3
+    //add new machine flags
+    BOOL isCreatingNewMachine;
+    BOOL hasCompletedAddNewMachineWithConnectionWizardStep1; //if completed proceed to step 2
+    BOOL hasCompletedAddNewMachineWithConnectionWizardStep2; //if completed proceed to step 3
 
-	//editing machine specific flags
-	BOOL isEditingServerName;
-	BOOL isEditingUserName;
-	BOOL isEditingPassword;
-	BOOL isDeletingMachine;
+    //editing machine specific flags
+    BOOL isEditingServerName;
+    BOOL isEditingUserName;
+    BOOL isEditingPassword;
+    BOOL isDeletingMachine;
 
-	//add new connection flags
-	BOOL isCreatingNewConnection;
-	BOOL hasCompletedAddNewConnectionWizardStep1; //if completed proceed to step 2
+    //add new connection flags
+    BOOL isCreatingNewConnection;
+    BOOL hasCompletedAddNewConnectionWizardStep1; //if completed proceed to step 2
 
-	//editing connection specific variables
-	BOOL isDeletingConnection;
-	MachineConnectionBase *_selectedConnection;
+    //editing connection specific variables
+    BOOL isDeletingConnection;
+    MachineConnectionBase *_selectedConnection;
 
-	NSString *_serverName;
-	NSString *_userName;
-	NSString *_password;
-	NSString *_hostName;
-	uint _portNumber;
+    NSString *_serverName;
+    NSString *_userName;
+    NSString *_password;
+    NSString *_hostName;
+    uint _portNumber;
 }
 @property (retain) Machine *machine;
 @property (copy) NSString *serverName;

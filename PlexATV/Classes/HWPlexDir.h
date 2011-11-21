@@ -31,9 +31,9 @@
 
 @class PlexMediaObject;
 @interface HWPlexDir : SMFMediaMenuController <BRTabControlDelegate> {
-	PlexMediaContainer *rootContainer;
-	PlexMediaObject *playbackItem;
-	NSDictionary *previewControlData;
+    PlexMediaContainer *rootContainer;
+    PlexMediaObject *playbackItem;
+    NSDictionary *previewControlData;
 }
 
 @property (retain) BRTabControl *tabBar;

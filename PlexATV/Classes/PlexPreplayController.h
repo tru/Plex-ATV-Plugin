@@ -31,11 +31,11 @@
 #import "PlexMediaShelfView.h"
 
 @interface PlexPreplayController : Plex_SMFMoviePreviewController<Plex_SMFMoviePreviewControllerDatasource, Plex_SMFMoviePreviewControllerDelegate, SMFListDropShadowDatasource, SMFListDropShadowDelegate> {
-	BOOL shelfIsSelected;
-	int currentSelectedIndex;
-	int lastFocusedIndex;
-	SMFListDropShadowControl *listDropShadowControl; //popup
-	PlexMediaShelfView *shelfCtrl;
+    BOOL shelfIsSelected;
+    int currentSelectedIndex;
+    int lastFocusedIndex;
+    SMFListDropShadowControl *listDropShadowControl; //popup
+    PlexMediaShelfView *shelfCtrl;
 }
 @property (retain) PlexMediaContainer *relatedMediaContainer;
 @property (retain) PlexMediaObject *selectedMediaObject;

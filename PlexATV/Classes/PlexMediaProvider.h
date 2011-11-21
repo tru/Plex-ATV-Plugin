@@ -28,7 +28,7 @@
 
 @class PlexMediaAsset;
 @interface PlexMediaProvider : NSObject {
-	BRBaseMediaProvider *prov;
+    BRBaseMediaProvider *prov;
 
 }
 

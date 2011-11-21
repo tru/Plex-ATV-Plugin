@@ -11,8 +11,8 @@
 @class PlexMediaObject;
 
 @interface PlexChannelsController : SMFMediaMenuController {
-	PlexMediaContainer *rootContainer;
-	PlexMediaObject *playbackItem;
+    PlexMediaContainer *rootContainer;
+    PlexMediaObject *playbackItem;
 }
 
 @property (readwrite, retain) PlexMediaContainer *rootContainer;

@@ -44,8 +44,8 @@
 @class PlexMediaContainer;
 
 @interface PlexSongListController : BRMediaMenuController {
-	PlexMediaContainer *rootContainer;
-	NSArray *songs;
+    PlexMediaContainer *rootContainer;
+    NSArray *songs;
 }
 
 @property (nonatomic, retain) NSArray *songs;

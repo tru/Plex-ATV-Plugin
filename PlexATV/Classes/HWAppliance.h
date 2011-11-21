@@ -11,11 +11,11 @@
 @class TopShelfController, PlexMediaContainer;
 
 @interface PlexAppliance : BRBaseAppliance <MachineManagerDelegate> {
-	TopShelfController *_topShelfController;
-	NSMutableArray *_applianceCategories;
+    TopShelfController *_topShelfController;
+    NSMutableArray *_applianceCategories;
 
-	BRApplianceCategory *otherServersApplianceCategory;
-	BRApplianceCategory *settingsApplianceCategory;
+    BRApplianceCategory *otherServersApplianceCategory;
+    BRApplianceCategory *settingsApplianceCategory;
 }
 @property (nonatomic, readonly, retain) id topShelfController;
 @property (retain) NSMutableArray *applianceCat;

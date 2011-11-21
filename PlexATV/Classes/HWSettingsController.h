@@ -15,7 +15,7 @@
 
 
 @interface HWSettingsController : SMFMediaMenuController {
-	BRBaseAppliance *topLevelController;
+    BRBaseAppliance *topLevelController;
 }
 
 @property (readwrite, assign) BRBaseAppliance *topLevelController;

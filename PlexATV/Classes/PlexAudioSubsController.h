@@ -28,8 +28,8 @@
 
 @class PlexMediaObject;
 @interface PlexAudioSubsController : SMFMenuController {
-	PlexMediaObject *playbackItem;
-	PlexMediaObject *detailedItem;
+    PlexMediaObject *playbackItem;
+    PlexMediaObject *detailedItem;
 }
 
 @property (retain) PlexMediaObject *playbackItem;

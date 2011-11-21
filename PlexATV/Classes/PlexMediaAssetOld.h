@@ -27,9 +27,9 @@
 
 @class PlexMediaObject, PlexPreviewAsset;
 @interface PlexMediaAssetOld : BRBaseMediaAsset<BRMediaAsset> {
-	NSURL *url;
-	PlexMediaObject *pmo;
-	PlexPreviewAsset *ppa;
+    NSURL *url;
+    PlexMediaObject *pmo;
+    PlexPreviewAsset *ppa;
 }
 @property (nonatomic, retain) PlexMediaObject *pmo;
 

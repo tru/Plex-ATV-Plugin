@@ -27,212 +27,212 @@
 
 // this is a hack to make sure all the shelfs are loaded correctly
 - (BOOL)brEventAction:(BREvent*)action {
-	if (!allShelvesLoaded) {
-		NSArray *shelves = [self valueForKey:@"_shelfControls"];
-		int shelfCount = [shelves count];
-		int firstShelfToReload = [shelves count];
+    if (!allShelvesLoaded) {
+        NSArray *shelves = [self valueForKey:@"_shelfControls"];
+        int shelfCount = [shelves count];
+        int firstShelfToReload = [shelves count];
 
-		//we only need to reload ~ the last half of the shelves
-		if (shelfCount > 4) {
-			firstShelfToReload = ceil(shelfCount / 2);
-			//examples:
-			// ceil(5/2)   =   firstShelfToReload=3
-			// ceil(6/2)   =   firstShelfToReload=3
-		} else {
-			//allShelvesLoaded = YES;
+        //we only need to reload ~ the last half of the shelves
+        if (shelfCount > 4) {
+            firstShelfToReload = ceil(shelfCount / 2);
+            //examples:
+            // ceil(5/2)   =   firstShelfToReload=3
+            // ceil(6/2)   =   firstShelfToReload=3
+        } else {
+            //allShelvesLoaded = YES;
 #if LOCAL_DEBUG_ENABLED
-			DLog(@"Shelf count is %d. No reloading needed", shelfCount);
+            DLog(@"Shelf count is %d. No reloading needed", shelfCount);
 #endif
-		}
-		//if 4 or less, then this won't loop at all
-		int startIndex = firstShelfToReload - 2; // -2 since we are wish to reload i+2
-		for (int i = startIndex; i < shelfCount; i++) {
-			PlexMediaShelfView *shelf = [shelves objectAtIndex:i];
-			if ([shelf isFocused]) {
-				if (i + 2 == shelfCount) {
-					//last item, all prior ones will have been re-layout too.
-					//Will not need to redo this hack again until view is reloaded
-					allShelvesLoaded = YES;
+        }
+        //if 4 or less, then this won't loop at all
+        int startIndex = firstShelfToReload - 2; // -2 since we are wish to reload i+2
+        for (int i = startIndex; i < shelfCount; i++) {
+            PlexMediaShelfView *shelf = [shelves objectAtIndex:i];
+            if ([shelf isFocused]) {
+                if (i + 2 == shelfCount) {
+                    //last item, all prior ones will have been re-layout too.
+                    //Will not need to redo this hack again until view is reloaded
+                    allShelvesLoaded = YES;
 #if LOCAL_DEBUG_ENABLED
-					DLog(@"Reloaded last shelf. Our work here is done");
+                    DLog(@"Reloaded last shelf. Our work here is done");
 #endif
-				} else {
+                } else {
 #if LOCAL_DEBUG_ENABLED
-					DLog(@"Reloading shelf at index %d/%d", i + 2, shelfCount - 1);
+                    DLog(@"Reloading shelf at index %d/%d", i + 2, shelfCount - 1);
 #endif
-					[[shelves objectAtIndex:i + 2] setNeedsLayout];
-				}
-				break; //only need to refresh one
-			}
-		}
-	}
-	return [super brEventAction:action];
+                    [[shelves objectAtIndex:i + 2] setNeedsLayout];
+                }
+                break; //only need to refresh one
+            }
+        }
+    }
+    return [super brEventAction:action];
 }
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id)initWithPlexAllTVShows:(PlexMediaContainer*)allTVShows {
-	if ( (self = [super init]) ) {
-		tvShows = [allTVShows retain];
-		allTvShowsSeasonsPlexMediaContainer = [[NSMutableArray alloc] init];
-		self.datasource = self;
-		self.delegate = self;
-		shouldPlayInitialThemeSong = YES;
-	}
-	return self;
+    if ( (self = [super init]) ) {
+        tvShows = [allTVShows retain];
+        allTvShowsSeasonsPlexMediaContainer = [[NSMutableArray alloc] init];
+        self.datasource = self;
+        self.delegate = self;
+        shouldPlayInitialThemeSong = YES;
+    }
+    return self;
 }
 
 - (void)dealloc {
-	self.datasource = nil;
-	self.delegate = nil;
-	self.seasonsForSelectedTVShow = nil;
-	[self.themeMusicTimer invalidate];
-	self.themeMusicTimer = nil;
+    self.datasource = nil;
+    self.delegate = nil;
+    self.seasonsForSelectedTVShow = nil;
+    [self.themeMusicTimer invalidate];
+    self.themeMusicTimer = nil;
 
-	[allTvShowsSeasonsPlexMediaContainer release];
-	[tvShows release];
+    [allTvShowsSeasonsPlexMediaContainer release];
+    [tvShows release];
 
-	[super dealloc];
+    [super dealloc];
 }
 
 - (void)rebuildBookcase {
-	NSDate *startTime = [NSDate date];
+    NSDate *startTime = [NSDate date];
 
-	[super rebuildBookcase];
+    [super rebuildBookcase];
 
-	NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow];
-	DLog(@"Elapsed time: %f", -elapsedTime);
+    NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow];
+    DLog(@"Elapsed time: %f", -elapsedTime);
 }
 
 
 #pragma mark -
 #pragma mark Controller Lifecycle behaviour
 - (void)wasPushed {
-	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
-	[super wasPushed];
+    [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+    [super wasPushed];
 }
 
 - (void)wasPopped {
-	[[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil];
-	[super wasPopped];
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:nil];
+    [super wasPopped];
 }
 
 - (void)wasExhumed {
-	[[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
-	[super wasExhumed];
+    [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
+    [super wasExhumed];
 }
 
 - (void)wasBuried {
-	[super wasBuried];
+    [super wasBuried];
 }
 
 #pragma mark -
 #pragma mark Plex_SMFBookcaseController Datasource Methods
 - (NSString*)headerTitleForBookcaseController:(Plex_SMFBookcaseController*)bookcaseController {
-	return @"TV Shows";
+    return @"TV Shows";
 }
 
 - (BRImage*)headerIconForBookcaseController:(Plex_SMFBookcaseController*)bookcaseController {
-	NSString *headerIcon = [[NSBundle bundleForClass:[HWTVShowsController class]] pathForResource:@"PlexTextLogo" ofType:@"png"];
-	return [BRImage imageWithPath:headerIcon];
+    NSString *headerIcon = [[NSBundle bundleForClass:[HWTVShowsController class]] pathForResource:@"PlexTextLogo" ofType:@"png"];
+    return [BRImage imageWithPath:headerIcon];
 }
 
 - (NSInteger)numberOfShelfsInBookcaseController:(Plex_SMFBookcaseController*)bookcaseController {
-	[allTvShowsSeasonsPlexMediaContainer removeAllObjects];
+    [allTvShowsSeasonsPlexMediaContainer removeAllObjects];
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"tvShows.directories: %d",[tvShows.directories count]);
+    DLog(@"tvShows.directories: %d",[tvShows.directories count]);
 #endif
-	return [tvShows.directories count];
+    return [tvShows.directories count];
 }
 
 - (NSString*)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController titleForShelfAtIndex:(NSInteger)index {
-	PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
-	if (shouldPlayInitialThemeSong && index == 0) {
-		[[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:tvshow];
-		shouldPlayInitialThemeSong = NO;
-	}
-	return tvshow.name;
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
+    if (shouldPlayInitialThemeSong && index == 0) {
+        [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:tvshow];
+        shouldPlayInitialThemeSong = NO;
+    }
+    return tvshow.name;
 }
 
 - (BRPhotoDataStoreProvider*)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController datastoreProviderForShelfAtIndex:(NSInteger)index {
-	NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
-	NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
-	BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
+    NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
+    NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
+    BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
 
 
-	PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
-	PlexMediaContainer *seasonsContainer = [tvshow contents];
-	[allTvShowsSeasonsPlexMediaContainer addObject:seasonsContainer];
-	NSArray *seasons = [seasonsContainer directories];
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
+    PlexMediaContainer *seasonsContainer = [tvshow contents];
+    [allTvShowsSeasonsPlexMediaContainer addObject:seasonsContainer];
+    NSArray *seasons = [seasonsContainer directories];
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"index: %d, seasons: %d", index, [seasons count]);
+    DLog(@"index: %d, seasons: %d", index, [seasons count]);
 #endif
-	for (PlexMediaObject*season in seasons) {
-		[store addObject:season.previewAsset];
-	}
+    for (PlexMediaObject*season in seasons) {
+        [store addObject:season.previewAsset];
+    }
 
-	PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
-	controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
+    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
+    controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 
-	BRPhotoDataStoreProvider *provider = [BRPhotoDataStoreProvider providerWithDataStore:store
-	                                      controlFactory:controlFactory];
-	[controlFactory release];
-	[store release];
-	return provider;
+    BRPhotoDataStoreProvider *provider = [BRPhotoDataStoreProvider providerWithDataStore:store
+                                          controlFactory:controlFactory];
+    [controlFactory release];
+    [store release];
+    return provider;
 }
 
 - (void)playThemeMusicForMediaObjectInTimer:(NSTimer*)theTimer {
-	PlexMediaObject *mediaObject = [[theTimer userInfo] objectForKey:PlexMediaObjectTvShowKey];
-	[[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:mediaObject];
+    PlexMediaObject *mediaObject = [[theTimer userInfo] objectForKey:PlexMediaObjectTvShowKey];
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] startPlayingThemeMusicIfAppropiateForMediaObject:mediaObject];
 }
 
 #pragma mark -
 #pragma mark Plex_SMFBookcaseController Delegate Methods
 - (void)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController shelf:(PlexMediaShelfView*)shelfControl noLongerFocusedAtIndex:(NSInteger)index {
-	PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
-	[[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:tvshow];
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
+    [[PlexThemeMusicPlayer sharedPlexThemeMusicPlayer] stopPlayingThemeMusicForMediaObject:tvshow];
 }
 
 - (void)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController shelf:(PlexMediaShelfView*)shelfControl focusedAtIndex:(NSInteger)index {
-	PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
-	[self.themeMusicTimer invalidate]; //cancel the old timer if it hasn't already fired
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObject:tvshow forKey:PlexMediaObjectTvShowKey];
-	self.themeMusicTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(playThemeMusicForMediaObjectInTimer:)userInfo:userInfo repeats:NO];
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
+    [self.themeMusicTimer invalidate]; //cancel the old timer if it hasn't already fired
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:tvshow forKey:PlexMediaObjectTvShowKey];
+    self.themeMusicTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(playThemeMusicForMediaObjectInTimer:)userInfo:userInfo repeats:NO];
 }
 
 - (BOOL)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController allowSelectionForShelf:(id)shelfControl atIndex:(NSInteger)index {
-	return YES;
+    return YES;
 }
 
 - (void)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController selectionWillOccurInShelf:(id)shelfControl atIndex:(NSInteger)index {
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"select will occur");
+    DLog(@"select will occur");
 #endif
 }
 
 - (void)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController selectionDidOccurInShelf:(id)shelfControl atIndex:(NSInteger)index {
-	NSUInteger focusedIndex;
+    NSUInteger focusedIndex;
 
-	if ([SMF_COMPAT usingFourPointFourPlus]) {
-		focusedIndex = [[shelfControl focusedIndexPath] indexAtPosition:1];
-	} else {
-		focusedIndex = [shelfControl focusedIndex];
-	}
+    if ([SMF_COMPAT usingFourPointFourPlus]) {
+        focusedIndex = [[shelfControl focusedIndexPath] indexAtPosition:1];
+    } else {
+        focusedIndex = [shelfControl focusedIndex];
+    }
 
 
 #if LOCAL_DEBUG_ENABLED
-	DLog(@"select did occur at index: %d and shelfindex: %ld",index, focusedIndex);
+    DLog(@"select did occur at index: %d and shelfindex: %ld",index, focusedIndex);
 #endif
 
-	PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
+    PlexMediaObject *tvshow = [tvShows.directories objectAtIndex:index];
 
-	self.seasonsForSelectedTVShow = [tvshow contents];
+    self.seasonsForSelectedTVShow = [tvshow contents];
 
-	PlexMediaObject *season = [self.seasonsForSelectedTVShow.directories objectAtIndex:focusedIndex];
+    PlexMediaObject *season = [self.seasonsForSelectedTVShow.directories objectAtIndex:focusedIndex];
 
-	if ([[season contents] hasOnlyEpisodes]) {
-		[[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:season];
-	}
+    if ([[season contents] hasOnlyEpisodes]) {
+        [[PlexNavigationController sharedPlexNavigationController] navigateToObjectsContents:season];
+    }
 }
 
 @end

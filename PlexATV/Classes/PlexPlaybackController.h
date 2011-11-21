@@ -26,7 +26,7 @@
 @class PlexMediaObject;
 
 @interface PlexPlaybackController : BRController {
-	BOOL playbackCancelled;
+    BOOL playbackCancelled;
 }
 @property (retain) PlexMediaObject *mediaObject;
 @property (retain) NSTimer *playProgressTimer;

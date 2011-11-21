@@ -13,12 +13,12 @@
 @class PlexMediaContainer;
 
 @interface HWMediaGridController : BRController {
-	BRGridControl *_gridControl;
-	PlexMediaShelfView *_shelfControl;
-	BRWaitSpinnerControl *_spinner;
-	BRCursorControl *_cursorControl;
-	BRScrollControl *_scroller;
-	BRPanelControl *_panelControl;
+    BRGridControl *_gridControl;
+    PlexMediaShelfView *_shelfControl;
+    BRWaitSpinnerControl *_spinner;
+    BRCursorControl *_cursorControl;
+    BRScrollControl *_scroller;
+    BRPanelControl *_panelControl;
 }
 
 @property (retain) PlexMediaContainer *shelfMediaContainer;

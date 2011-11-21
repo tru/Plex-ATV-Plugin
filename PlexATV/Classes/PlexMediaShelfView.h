@@ -11,7 +11,7 @@
 
 @interface PlexMediaShelfView : BRMediaShelfView
 {
-	id adapter;
+    id adapter;
 }
 
 @property (retain) id provider;

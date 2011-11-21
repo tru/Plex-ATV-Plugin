@@ -54,21 +54,21 @@
 @end
 
 @interface Plex_SMFBookcaseController : BRController {
-	NSObject<Plex_SMFBookcaseControllerDatasource> *datasource;
-	NSObject<Plex_SMFBookcaseControllerDelegate> *delegate;
+    NSObject<Plex_SMFBookcaseControllerDatasource> *datasource;
+    NSObject<Plex_SMFBookcaseControllerDelegate> *delegate;
 
-	@private
-	//datasource variables
-	NSInteger numberOfShelfControls;
-	NSMutableArray *_shelfTitles;
+    @private
+    //datasource variables
+    NSInteger numberOfShelfControls;
+    NSMutableArray *_shelfTitles;
 
-	//delegate variables
-	int focusedShelfIndex;
-	PlexMediaShelfView *focusedShelf;
+    //delegate variables
+    int focusedShelfIndex;
+    PlexMediaShelfView *focusedShelf;
 
-	//ui controls
-	NSMutableArray *_shelfControls;
-	BRPanelControl *_panelControl;
+    //ui controls
+    NSMutableArray *_shelfControls;
+    BRPanelControl *_panelControl;
 }
 @property (retain) NSObject <Plex_SMFBookcaseControllerDatasource> *datasource;
 @property (retain) NSObject <Plex_SMFBookcaseControllerDelegate> *delegate;
