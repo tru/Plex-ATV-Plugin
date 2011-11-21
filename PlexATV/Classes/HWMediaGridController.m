@@ -187,8 +187,7 @@ void checkNil(NSObject *ctrl){
     boxFrame.size.height = 261.0f;
     [shelfBox setFrame:boxFrame];
     [_panelControl addControl:shelfBox];
-
-
+    [shelfBox release];
 
 
     /*
