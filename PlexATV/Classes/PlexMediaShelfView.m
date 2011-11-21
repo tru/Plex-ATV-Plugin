@@ -28,7 +28,7 @@
 }
 
 - (void)dealloc {
-    [self.adapter release];
+    [adapter release];
     [super dealloc];
 }
 
