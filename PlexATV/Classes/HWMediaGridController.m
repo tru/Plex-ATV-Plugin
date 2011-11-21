@@ -225,6 +225,7 @@ void checkNil(NSObject *ctrl){
     [gridBox setDividerMargin:0.05f];
     [gridBox setContent:_gridControl];
     [gridBox setDivider:div2];
+    [div2 release];
     [gridBox setFrame:gridFrame];
 
 
