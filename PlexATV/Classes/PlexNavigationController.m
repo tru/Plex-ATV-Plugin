@@ -49,6 +49,9 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 }
 
 - (void)dealloc {
+    self.targetController = nil;
+    self.waitControl = nil;
+    DLog(@"********* PlexNavigationController dealloced");
     [super dealloc];
 }
 
@@ -70,6 +73,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 
     DLog(@"Navigating using controller type: [%@]", [self.targetController class]);
     [[[BRApplicationStackManager singleton] stack] swapController:self.targetController];
+    self.targetController = nil;
 }
 
 - (void)wasPopped {
@@ -97,7 +101,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 - (void)initiatePlaybackOfMediaObject:(PlexMediaObject*)aMediaObject {
     DLog(@"Navigating to: [Playback of %@]", aMediaObject);
     self.targetController = nil;
-    self.targetMediaObject = nil;
+    self.targetMediaObject = aMediaObject;
     self.promptText = [NSString stringWithFormat:@"Loading playback of \"%@\"...", self.targetMediaObject.name];
 
     PlexPlaybackController *playbackController = [[PlexPlaybackController alloc] initWithPlexMediaObject:aMediaObject];
