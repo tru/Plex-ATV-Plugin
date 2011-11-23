@@ -37,7 +37,11 @@
     float height;
 
     if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
-        height = 70.0f;
+        if (self.isEpisode && (self.parentObject && self.parentObject.isSeason)) {
+            height = 50.0f;
+        } else {
+            height = 70.0f;
+        }
     } else {
         height = 0.0f;
     }
@@ -67,9 +71,15 @@
         PlexPreviewAsset *previewAsset = [self previewAsset];
 
         if ([self.type isEqualToString:PlexMediaObjectTypeEpisode]) {
-            NSString *setText = [NSString stringWithFormat:@"%@. %@",[previewAsset episodeNumber],[self name]];
+            NSString *setText;
+            setText = [NSString stringWithFormat:@"%@. %@",[previewAsset episodeNumber],[self name]];
+            if (!self.parentObject || !self.parentObject.isSeason) {
+                NSString *str = [NSString stringWithFormat:@"%@ (%@)", previewAsset.seriesName, previewAsset.datePublishedString];
+                [menuItem setDetailedText:str withAttributes:nil];
+            } else {
+                [menuItem setRightJustifiedText:[previewAsset datePublishedString] withAttributes:nil];
+            }
             [menuItem setText:setText withAttributes:[[BRThemeInfo sharedTheme] metadataTitleAttributes]];
-            [menuItem setRightJustifiedText:[previewAsset datePublishedString] withAttributes:nil];
         } else {
             NSString *detailedText = previewAsset.year ? previewAsset.year : @" ";
             if ([previewAsset isHD]) {
