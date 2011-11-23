@@ -91,8 +91,11 @@ typedef enum {
 - (void)dealloc {
     self.selectedMediaObject = nil;
     self.relatedMediaContainer = nil;
+    self.datasource = nil;
+    self.delegate = nil;
 
     [listDropShadowControl release];
+    DLog(@"********** PlexPrePlayController is dealloced");
     [super dealloc];
 }
 
@@ -120,9 +123,15 @@ typedef enum {
 }
 
 - (void)wasPopped {
+    DLog(@"PlexPreplayController - was popped!");
     self.datasource = nil;
+    self.delegate = nil;
     self.selectedMediaObject = nil;
     self.relatedMediaContainer = nil;
+    
+    [listDropShadowControl setCDelegate:nil];
+    [listDropShadowControl setCDatasource:nil];
+    
     [super wasPopped];
 }
 

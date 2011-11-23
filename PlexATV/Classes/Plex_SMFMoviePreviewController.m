@@ -173,7 +173,7 @@
 }
 
 - (void)dealloc {
-    self.flags = nil;
+/*    self.flags = nil;*/
     self.datasource = nil;
 
     [super dealloc];
