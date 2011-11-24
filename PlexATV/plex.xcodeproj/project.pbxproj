@@ -200,6 +200,14 @@
 		C440CFC01311857100015595 /* PlexPlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexPlaybackController.m; path = Classes/PlexPlaybackController.m; sourceTree = "<group>"; };
 		C46EDBB7147EFC1B007AAF09 /* PmsLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PmsLogo.png; path = Resources/PmsLogo.png; sourceTree = "<group>"; };
 		C46EDBB8147EFC1B007AAF09 /* PmsMainMenuLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PmsMainMenuLogo.png; path = Resources/PmsMainMenuLogo.png; sourceTree = "<group>"; };
+		C46EDBD3147F0309007AAF09 /* PlexMoreInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexMoreInfoController.h; path = Classes/PlexMoreInfoController.h; sourceTree = "<group>"; };
+		C46EDBD4147F0309007AAF09 /* PlexMoreInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexMoreInfoController.m; path = Classes/PlexMoreInfoController.m; sourceTree = "<group>"; };
+		C46EDBD5147F0309007AAF09 /* PlexMoreInfoMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexMoreInfoMenuItem.h; path = Classes/PlexMoreInfoMenuItem.h; sourceTree = "<group>"; };
+		C46EDBD6147F0309007AAF09 /* PlexMoreInfoMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexMoreInfoMenuItem.m; path = Classes/PlexMoreInfoMenuItem.m; sourceTree = "<group>"; };
+		C46EDBD7147F0309007AAF09 /* PlexTopShelfController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexTopShelfController.h; path = Classes/PlexTopShelfController.h; sourceTree = "<group>"; };
+		C46EDBD8147F0309007AAF09 /* PlexTopShelfController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlexTopShelfController.mm; path = Classes/PlexTopShelfController.mm; sourceTree = "<group>"; };
+		C46EDBD9147F0309007AAF09 /* PlexTVEpisodeMetadataAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlexTVEpisodeMetadataAsset.h; path = Classes/PlexTVEpisodeMetadataAsset.h; sourceTree = "<group>"; };
+		C46EDBDA147F0309007AAF09 /* PlexTVEpisodeMetadataAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlexTVEpisodeMetadataAsset.m; path = Classes/PlexTVEpisodeMetadataAsset.m; sourceTree = "<group>"; };
 		C47432EF141FE486000258F3 /* BackRowExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackRowExtras.h; path = Classes/BackRowExtras.h; sourceTree = "<group>"; };
 		C47432F0141FE49A000258F3 /* UIImage+ProportionalFill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+ProportionalFill.h"; path = "Classes/UIImage+ProportionalFill.h"; sourceTree = "<group>"; };
 		C47432F1141FE49A000258F3 /* UIImage+ProportionalFill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ProportionalFill.m"; path = "Classes/UIImage+ProportionalFill.m"; sourceTree = "<group>"; };
@@ -426,6 +434,12 @@
 		72B2C4FB12DBE0EE00E23F8E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C46EDBD3147F0309007AAF09 /* PlexMoreInfoController.h */,
+				C46EDBD4147F0309007AAF09 /* PlexMoreInfoController.m */,
+				C46EDBD5147F0309007AAF09 /* PlexMoreInfoMenuItem.h */,
+				C46EDBD6147F0309007AAF09 /* PlexMoreInfoMenuItem.m */,
+				C46EDBD7147F0309007AAF09 /* PlexTopShelfController.h */,
+				C46EDBD8147F0309007AAF09 /* PlexTopShelfController.mm */,
 				6124E32814018273001D5F8D /* PlexMediaShelfView.h */,
 				6124E32914018274001D5F8D /* PlexMediaShelfView.m */,
 				727A3F4A12F7914000994193 /* Settings */,
@@ -458,6 +472,8 @@
 		C4EA913312DCD74600DCC798 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				C46EDBD9147F0309007AAF09 /* PlexTVEpisodeMetadataAsset.h */,
+				C46EDBDA147F0309007AAF09 /* PlexTVEpisodeMetadataAsset.m */,
 				720EC07F1370F017009AA4F9 /* PlexMediaObject+Assets.h */,
 				720EC0801370F017009AA4F9 /* PlexMediaObject+Assets.m */,
 				C4EA913412DCD77700DCC798 /* PlexPreviewAsset.h */,

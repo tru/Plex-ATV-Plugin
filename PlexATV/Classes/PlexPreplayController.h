@@ -34,6 +34,7 @@
     BOOL shelfIsSelected;
     int currentSelectedIndex;
     int lastFocusedIndex;
+    BOOL moreInfoSelected;
     SMFListDropShadowControl *listDropShadowControl; //popup
     PlexMediaShelfView *shelfCtrl;
 }

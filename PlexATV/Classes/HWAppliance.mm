@@ -38,6 +38,8 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 - (id)init {
     self = [super init];
 	if(self) {
+        [self XBMCfixUIDevice]; //fix for ios 5
+        
 		[UIDevice preloadCurrentForMacros];
 		//#warning Please check elan.plexapp.com/2010/12/24/happy-holidays-from-plex/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+osxbmc+%28Plex%29 to get a set of transcoder keys
 		[PlexRequest setStreamingKey:@"k3U6GLkZOoNIoSgjDshPErvqMIFdE0xMTx8kgsrhnC0=" forPublicKey:@"KQMIY6GATPC63AIMC4R2"];
@@ -365,4 +367,35 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 #endif
 	}
 }
+
+// thx to awesome ppl at xmbc project for finding this one. you guys rule!
+-(void)XBMCfixUIDevice
+{
+    // iOS 5.x has removed the internal load of UIKit in AppleTV app
+    // and there is an overlap of some UIKit and AppleTV methods.
+    // This voodoo seems to clear up the wonkiness. :)
+    Class cls = NSClassFromString(@"ATVVersionInfo");
+    if (cls != nil && [[cls currentOSVersion] isEqualToString:@"5.0"])
+    {
+        id cd = nil;
+        
+        @try
+        {
+            cd = [UIDevice currentDevice];
+        }
+        
+        @catch (NSException *e)
+        {
+            NSLog(@"exception: %@", e);
+        }
+        
+        @finally
+        {
+            //NSLog(@"will it work the second try?");
+            cd = [UIDevice currentDevice];
+            NSLog(@"current device fixed: %@", cd);
+        }
+    }
+}
+
 @end

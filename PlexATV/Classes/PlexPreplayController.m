@@ -36,6 +36,7 @@
 #import "PlexMediaObject+Assets.h"
 #import "PlexPreviewAsset.h"
 #import "PlexControlFactory.h"
+#import "PlexMoreInfoController.h"
 #import "HWUserDefaults.h"
 #import "Constants.h"
 
@@ -360,7 +361,7 @@ typedef enum {
 }
 
 -(NSArray *)columns {
-    PlexBaseMetadataAsset *metadataAsset = self.selectedMediaObject.previewAsset;
+    PlexPreviewAsset *metadataAsset = self.selectedMediaObject.previewAsset;
     
     //the table will hold all the columns
     NSMutableArray *table = [NSMutableArray array];

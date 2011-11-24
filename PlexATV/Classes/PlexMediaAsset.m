@@ -27,7 +27,7 @@
 #import <plex-oss/PlexRequest.h>
 #import <plex-oss/Machine.h>
 #import <ambertation-plex/Ambertation.h>
-#import "PlexBaseMetadataAsset.h"
+#import "PlexPreviewAsset.h"
 
 @interface BRMediaType (PlexExtentions)
 + (id)streamingVideo;
