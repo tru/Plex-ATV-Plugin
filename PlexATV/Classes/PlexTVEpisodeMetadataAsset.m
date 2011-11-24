@@ -17,8 +17,8 @@
 
 #pragma mark -
 #pragma mark Object/Class Lifecycle
-- (id)initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)pmo {
-	self = [super initWithURL:u mediaProvider:mediaProvider mediaObject:pmo];
+- (id)initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)obj {
+	self = [super initWithURL:u mediaProvider:mediaProvider mediaObject:obj];
 	if (self) {
         [self setupTvshowObject];
 	}
@@ -31,17 +31,17 @@
 }
 
 - (void)setupTvshowObject {
-    NSString *grandparentKey = [self.mediaObject.attributes objectForKey:@"grandparentKey"];
+    NSString *grandparentKey = [self.pmo.attributes objectForKey:@"grandparentKey"];
     if (grandparentKey) {
         //mixed
-        PlexMediaContainer *tvshowContainer = [self.mediaObject.request query:grandparentKey callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
+        PlexMediaContainer *tvshowContainer = [self.pmo.request query:grandparentKey callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
         if ([tvshowContainer.directories count] == 1) {
             self.tvshowObject = [tvshowContainer.directories objectAtIndex:0];
         }
     } else {
         //hierarchial
-        if ([self.mediaObject.parentObject isKindOfClass:[PlexMediaObject class]]) {
-            PlexMediaObject *parent = self.mediaObject.parentObject;
+        if ([self.pmo.parentObject isKindOfClass:[PlexMediaObject class]]) {
+            PlexMediaObject *parent = self.pmo.parentObject;
             if ([parent.parentObject isKindOfClass:[PlexMediaObject class]]) {
                 self.tvshowObject = parent.parentObject;
             }

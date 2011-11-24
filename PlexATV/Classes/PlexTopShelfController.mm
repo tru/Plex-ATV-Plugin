@@ -11,7 +11,7 @@
 #import "PlexTopShelfController.h"
 #import "HWAppliance.h"
 #import "BackRowExtras.h"
-#import "PlexBaseMetadataAsset.h"
+#import "PlexPreviewAsset.h"
 #import <plex-oss/PlexMediaContainer.h>
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexRequest.h>
@@ -153,7 +153,7 @@
     PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
     
     PlexMediaObject *pmo = [aMediaContainer.directories objectAtIndex:row];
-    PlexBaseMetadataAsset *asset = pmo.previewAsset;
+    PlexPreviewAsset *asset = pmo.previewAsset;
 	NSString *title = [asset title];
     
     BRPosterControl *poster = [[BRPosterControl alloc] init];

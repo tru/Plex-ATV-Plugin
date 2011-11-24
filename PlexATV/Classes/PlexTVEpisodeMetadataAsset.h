@@ -6,9 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PlexBaseMetadataAsset.h"
+#import "PlexPreviewAsset.h"
 
-@interface PlexTVEpisodeMetadataAsset : PlexBaseMetadataAsset {}
+@interface PlexTVEpisodeMetadataAsset : PlexPreviewAsset {}
 @property (nonatomic, retain) PlexMediaObject* tvshowObject;
 
 - (void)setupTvshowObject;
