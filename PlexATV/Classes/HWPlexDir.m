@@ -75,8 +75,11 @@
         [self.tabBar setTabControlDelegate:self];
         [self addControl:self.tabBar];
 
-        //find last selected tab item [defaulted to 0]
-        NSInteger lastTabBarSelection = [HWUserDefaults lastTabBarSelectionForViewGroup:self.rootContainer.viewGroup];
+        //find most recently selected tab item [defaulted to 0]
+        NSString *machineID = self.rootContainer.request.machine.machineID;
+        NSInteger sectionKey = self.rootContainer.sectionKey;
+        NSString *viewGroup = self.rootContainer.viewGroup;
+        NSInteger lastTabBarSelection = [HWUserDefaults lastTabBarSelectionForMachineID:machineID section:sectionKey viewGroup:viewGroup];
         [self.tabBar selectTabItemAtIndex:lastTabBarSelection];
     }
     return self;
@@ -209,31 +212,31 @@
 - (void)tabControl:(id)control didSelectTabItem:(id)item {
     //change tab
     NSInteger newTabSelection = [self.tabBar selectedTabItemIndex];
-
+    
     //persist the selection for this section type
     NSString *machineID = self.rootContainer.request.machine.machineID;
     NSInteger sectionKey = self.rootContainer.sectionKey;
     NSString *viewGroup = self.rootContainer.viewGroup;
-
-
-    NSArray *allItems = self.rootContainer.directories;
+    
+    
+    NSArray *allItems = self.rootContainer.directories;    
     switch (newTabSelection) {
-    case TabBarCurrentItemsIndex: {
-        [HWUserDefaults setLastTabBarSelection:TabBarCurrentItemsIndex forViewGroup:viewGroup];
-        self.items = allItems;
-        break;
-    }
-    case TabBarUnwatchedItemsIndex: {
-        [HWUserDefaults setLastTabBarSelection:TabBarUnwatchedItemsIndex forViewGroup:viewGroup];
-        NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
-        self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
-        break;
-    }
-    case TabBarOtherFiltersItemsIndex: {
-        PlexMediaContainer *filters = (PlexMediaContainer*)[item identifier];
-        self.items = filters.directories;
-        break;
-    }
+        case TabBarCurrentItemsIndex: {
+            [HWUserDefaults setLastTabBarSelection:TabBarCurrentItemsIndex forMachineID:machineID section:sectionKey viewGroup:viewGroup];
+            self.items = allItems;
+            break;
+        }
+        case TabBarUnwatchedItemsIndex: {
+            [HWUserDefaults setLastTabBarSelection:TabBarUnwatchedItemsIndex forMachineID:machineID section:sectionKey viewGroup:viewGroup];
+            NSPredicate *unwatchedItemsPredicate = [NSPredicate predicateWithFormat:@"seenState != %d", PlexMediaObjectSeenStateSeen];
+            self.items = [allItems filteredArrayUsingPredicate:unwatchedItemsPredicate];
+            break;
+        }
+        case TabBarOtherFiltersItemsIndex: {
+            PlexMediaContainer *filters = (PlexMediaContainer *)[item identifier];
+            self.items = filters.directories;
+            break;
+        }
     }
     [self.list reload];
 }
