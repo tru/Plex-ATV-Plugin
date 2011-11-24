@@ -4,9 +4,21 @@ export COPY_EXTENDED_ATTRIBUTES_DISABLE=1
 find PLEX.frapplication -name .svn -exec rm -rf {} \;
 find PLEX.frapplication -name .DS_Store -exec rm -rf {} \;
 find . -name "._*" -exec rm -rf {} \;
+
+#set verison in the control file
+BASE_VERSION=`grep kPlexPluginVersion ../plex_Prefix.pch | awk -F\" '{print $2}'`
+GIT_VERSION=`git rev-parse --verify HEAD --short=8`
+B=${BUILD_NUMBER:=0}
+VERSION=$BASE_VERSION.$BUILD_NUMBER-$GIT_VERSION
+
+echo "Building $VERSION"
+
+cat debian_control | sed "s/\*\*VERSION\*\*/$VERSION/" > PLEX.frapplication/DEBIAN/control
+
 dpkg-deb -b PLEX.frapplication
-mv PLEX.frapplication.deb REPO/PLEX.frapplication${1}.deb
-cd REPO
-./dpkg-scanpackages.pl -m . /dev/null /downloads/PLEX/ >Packages
-rm Packages.bz2
-bzip2 Packages
+mv PLEX.frapplication.deb plex_atv_plugin-$VERSION.deb
+
+#cd REPO
+#./dpkg-scanpackages.pl -m . /dev/null /downloads/PLEX/ >Packages
+#rm Packages.bz2
+#bzip2 Packages

@@ -4,9 +4,10 @@
 
 #ifdef __OBJC__
     #import <UIKit/UIKit.h>
-	#import <SMFramework/SMFramework.h>
+	#import <SMFramework.h>
 	#import <plex-oss/Preferences.h>
 	#import "ProxyMachineDelegate.h"
+    #define kPlexPluginVersion @"0.9.0"
 #endif
 
 #define DEBUG 1

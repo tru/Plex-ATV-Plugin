@@ -6,8 +6,7 @@
 //
 
 #import "PlexMediaObject+Assets.h"
-#import "PlexBaseMetadataAsset.h"
-#import "PlexTVEpisodeMetadataAsset.h"
+#import "PlexPreviewAsset.h"
 #import "PlexMediaAsset.h"
 #import "PlexSongAsset.h"
 #import "HWUserDefaults.h"
@@ -18,27 +17,16 @@
 
 #pragma mark -
 #pragma mark Assets
-- (PlexBaseMetadataAsset *)previewAsset {
-    PlexBaseMetadataAsset *asset = nil;
-    NSString *plexMediaType = [self.attributes valueForKey:@"type"];
-    
-    if ([PlexMediaObjectTypeEpisode isEqualToString:plexMediaType]) {
-        //tv show episode
-        asset = [[PlexTVEpisodeMetadataAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:self];
-
-    } else {
-        asset = [[PlexBaseMetadataAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:self];
-    }
-    
-    return [asset autorelease];
+- (PlexPreviewAsset*)previewAsset {
+    return [[[PlexPreviewAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:self] autorelease];
 }
 
-- (PlexMediaAsset *)mediaAsset {
+- (PlexMediaAsset*)mediaAsset {
     return [[[PlexMediaAsset alloc] initWithURL:nil mediaProvider:nil mediaObject:self] autorelease];
 }
 
 //- (PlexSongAsset *)songAsset {
-//    
+//
 //}
 
 
@@ -46,82 +34,91 @@
 #pragma mark List Items
 
 - (float)heightForMenuItem {
-	float height;
-	
-	if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
-		height = 70.0f;
-	} else {
-		height = 0.0f;
-	}
-	return height;
+    float height;
+
+    if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
+        if (self.isEpisode && (self.parentObject && self.parentObject.isSeason)) {
+            height = 50.0f;
+        } else {
+            height = 70.0f;
+        }
+    } else {
+        height = 0.0f;
+    }
+    return height;
 }
 
-- (BRMenuItem *)menuItem {
+- (BRMenuItem*)menuItem {
     BRMenuItem *menuItem = nil;
-    
-	if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
-		menuItem = [[NSClassFromString(@"BRPlayButtonEnabledMenuItem") alloc] init];
-        
-		if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
+
+    if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
+        menuItem = [[NSClassFromString (@"BRPlayButtonEnabledMenuItem")alloc] init];
+
+        if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
             [menuItem setImage:[[BRThemeInfo sharedTheme] unplayedVideoImage]];
-		} else if ([self seenState] == PlexMediaObjectSeenStateInProgress) {
+        } else if ([self seenState] == PlexMediaObjectSeenStateInProgress) {
             [menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
-		} else {
+        } else {
             //image will be invisible, but we need it to get the text to line up with ones who have a
             //visible image
-			[menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
+            [menuItem setImage:[[BRThemeInfo sharedTheme] partiallyplayedVideoImage]];
             BRImageControl *imageControl = [menuItem valueForKey:@"_imageControl"];
             [imageControl setHidden:YES];
-		}
+        }
         [menuItem setImageAspectRatio:0.5];
-		
-        [menuItem setText:[self name] withAttributes:nil];
-		
+
         //used to get details about the show, instead of gettings attrs here manually
-        PlexBaseMetadataAsset *previewAsset = [self previewAsset];
-        
-		if ([self.type isEqualToString:PlexMediaObjectTypeEpisode]) {
-            NSString *detailedText = [NSString stringWithFormat:@"Season %d, Episode %d (%@)", [previewAsset season], [previewAsset episode], [previewAsset seriesName]];
-			[menuItem setDetailedText:detailedText withAttributes:nil];
-            [menuItem setRightJustifiedText:[previewAsset datePublishedString] withAttributes:nil];
-		} else {
+        PlexPreviewAsset *previewAsset = [self previewAsset];
+
+        if ([self.type isEqualToString:PlexMediaObjectTypeEpisode]) {
+            NSString *setText;
+            setText = [NSString stringWithFormat:@"%@. %@",[previewAsset episodeNumber],[self name]];
+            if (!self.parentObject || !self.parentObject.isSeason) {
+                NSString *str = [NSString stringWithFormat:@"%@ (%@)", previewAsset.seriesName, previewAsset.datePublishedString];
+                [menuItem setDetailedText:str withAttributes:nil];
+            } else {
+                [menuItem setRightJustifiedText:[previewAsset datePublishedString] withAttributes:nil];
+            }
+            [menuItem setText:setText withAttributes:[[BRThemeInfo sharedTheme] metadataTitleAttributes]];
+        } else {
             NSString *detailedText = previewAsset.year ? previewAsset.year : @" ";
-			[menuItem setDetailedText:detailedText withAttributes:nil];
             if ([previewAsset isHD]) {
                 [menuItem addAccessoryOfType:11];
             }
-		}
-        
+            [menuItem setDetailedText:detailedText withAttributes:nil];
+            [menuItem setText:[self name] withAttributes:nil];
+        }
+
     } else {
         //not a media item
         menuItem = [[BRMenuItem alloc] init];
-		
-		if ([self.type isEqualToString:PlexMediaObjectTypeShow] || [self.type isEqualToString:PlexMediaObjectTypeSeason]) {
-			if ([self.attributes valueForKey:@"agent"] == nil) {
-				if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
-					[menuItem addAccessoryOfType:15];
-				} else if ([self seenState] == PlexMediaObjectSeenStateInProgress) {
-					[menuItem addAccessoryOfType:16];
-				}
-			}
-		}
-		
-		[menuItem setText:[self name] withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
-		
-		[menuItem addAccessoryOfType:1];
-	}
-	return [menuItem autorelease];
+
+        if ([self.type isEqualToString:PlexMediaObjectTypeShow] || [self.type isEqualToString:PlexMediaObjectTypeSeason]) {
+            if ([self.attributes valueForKey:@"agent"] == nil) {
+                if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
+                    [menuItem addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 16:15];
+                } else if ([self seenState] == PlexMediaObjectSeenStateInProgress) {
+                    [menuItem addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 17:16];
+                }
+            }
+        }
+
+        [menuItem setText:[self name] withAttributes:[[BRThemeInfo sharedTheme] menuItemTextAttributes]];
+
+        [menuItem addAccessoryOfType:1];
+    }
+    return [menuItem autorelease];
 }
 
 - (id)previewControl {
     id preview = nil;
-    
+
     preview = [[SMFMediaPreview alloc] init];
 //    preview = [[BRMetadataPreviewControl alloc] init];
     [preview setShowsMetadataImmediately:![[HWUserDefaults preferences] boolForKey:PreferencesViewListPosterZoomingEnabled]];
     [preview setAsset:self.previewAsset];
-    
-    return preview;
+
+    return [preview autorelease];
 }
 
 @end
