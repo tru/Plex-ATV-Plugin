@@ -45,7 +45,7 @@
 	if (self != nil) {
 		pmo = [o retain];
 		url = [u retain];
-		ppa = [[PlexBaseMetadataAsset alloc] initWithURL:url mediaProvider:mediaProvider mediaObject:pmo];
+		ppa = [[PlexPreviewAsset alloc] initWithURL:url mediaProvider:mediaProvider mediaObject:pmo];
 		
 		//DLog(@"PMO attrs: %@", pmo.attributes);
 		//PlexRequest *req = pmo.request;

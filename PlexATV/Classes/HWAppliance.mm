@@ -72,8 +72,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 
     }
         
-        [self reloadCategories];
-	} 
+    [self reloadCategories]; 
     return self;
 }
 
