@@ -226,11 +226,16 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         DLog(@"Adding categories for machine [%@]", machine);
 #endif
 		
+        
+
+        
 		//================== add all it's categories to our appliances list ==================
 		//not using machine.request.rootLevel.directories because it might not work,
 		//instead get the two arrays seperately and merge
 		NSMutableArray *allDirectories = [NSMutableArray arrayWithArray:machine.librarySections.directories];
 		//[allDirectories addObjectsFromArray:machine.rootLevel.directories];
+        
+        
 		
 		//for (PlexMediaObject *pmo in allDirectories) {
         int totalItems = [allDirectories count] + 3; //refresh + search + channels
@@ -255,12 +260,6 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
                 PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
                 categoryName = [pmo.name copy];
                 categoryPath = [pmo.key copy];
-                
-                //TODO: should check for most recently selected category name
-                if ([categoryName isEqualToString:@"TV"]) {
-                    [self.topShelfController setContentToContainer:[pmo contents]];
-                    [self.topShelfController refresh];
-                }
             }
             
 #if LOCAL_DEBUG_ENABLED
@@ -310,9 +309,15 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			[categoryName release];
 		}
 		
-		[machineID release];
+        //create topshelf with recently added and onDeck
+        [self.topShelfController setContentToContainer:machine.request.rootLevel];
+        [self.topShelfController refresh];
+        
+        [machineID release];
 		[machineName release];
 	}
+    
+    
 }
 
 #pragma mark -

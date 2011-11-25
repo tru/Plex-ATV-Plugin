@@ -71,11 +71,11 @@
 - (void)setContentToContainer:(PlexMediaContainer *)aMediaContainer {
     self.containerName = aMediaContainer.name;
     
-    NSString *onDeckQuery = [NSString stringWithFormat:@"%@/onDeck", aMediaContainer.key];
+    NSString *onDeckQuery = [NSString stringWithFormat:@"%@/library/onDeck", aMediaContainer.key];
     PlexMediaContainer *onDeckContainer = [aMediaContainer.request query:onDeckQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
     self.onDeckMediaContainer = onDeckContainer;
     
-    NSString *recentlyAddedQuery = [NSString stringWithFormat:@"%@/recentlyAdded", aMediaContainer.key];
+    NSString *recentlyAddedQuery = [NSString stringWithFormat:@"%@/library/recentlyAdded", aMediaContainer.key];
     PlexMediaContainer *recentlyAddedContainer = [aMediaContainer.request query:recentlyAddedQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
     self.recentlyAddedMediaContainer = recentlyAddedContainer;
 }
@@ -86,10 +86,11 @@
     DLog(@"recently added: [%@] count [%d]", self.recentlyAddedMediaContainer, [self.recentlyAddedMediaContainer.directories count]);
 #endif
     if ([self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0) {
+        //[topShelfView setState:1]; //shelf
+
 #if LOCAL_DEBUG_ENABLED
         DLog(@"Activate main menu shelf");
 #endif
-        [topShelfView setState:1]; //shelf
 		[shelfView reloadData];
 	} else {
 #if LOCAL_DEBUG_ENABLED
@@ -123,6 +124,7 @@
 }
 
 -(id)mediaShelf:(BRMediaShelfView *)view titleForSectionAtIndex:(long)section {
+    DLog();
     //PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
     NSString *title = [NSString stringWithFormat:@"%@ : %@", self.containerName, section == 0 ? @"On Deck" : @"Recently Added"];
     
@@ -141,16 +143,27 @@
 }
 
 -(long)mediaShelf:(BRMediaShelfView *)view numberOfColumnsInSection:(long)section {
+    DLog();
     PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+    
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"cont: %@", aMediaContainer);
+#endif
+    
     return [aMediaContainer.directories count];
 }
 
 
 -(id)mediaShelf:(BRMediaShelfView *)view itemAtIndexPath:(NSIndexPath *)indexPath {
+    DLog();
     int section = [indexPath indexAtPosition:0];
     int row = [indexPath indexAtPosition:1];
     
     PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
+
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"cont: %@", aMediaContainer);
+#endif
     
     PlexMediaObject *pmo = [aMediaContainer.directories objectAtIndex:row];
     PlexPreviewAsset *asset = pmo.previewAsset;

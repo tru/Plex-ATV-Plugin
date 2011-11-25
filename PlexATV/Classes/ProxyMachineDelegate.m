@@ -5,7 +5,7 @@
 //  Created by Frank Bauer on 14.01.11.
 //
 
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 
 #import "ProxyMachineDelegate.h"
 
