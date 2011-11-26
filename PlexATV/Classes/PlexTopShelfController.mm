@@ -71,11 +71,11 @@
 - (void)setContentToContainer:(PlexMediaContainer *)aMediaContainer {
     self.containerName = aMediaContainer.name;
     
-    NSString *onDeckQuery = [NSString stringWithFormat:@"%@/library/onDeck", aMediaContainer.key];
+    NSString *onDeckQuery = [NSString stringWithFormat:@"%@/onDeck", aMediaContainer.key];
     PlexMediaContainer *onDeckContainer = [aMediaContainer.request query:onDeckQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
     self.onDeckMediaContainer = onDeckContainer;
     
-    NSString *recentlyAddedQuery = [NSString stringWithFormat:@"%@/library/recentlyAdded", aMediaContainer.key];
+    NSString *recentlyAddedQuery = [NSString stringWithFormat:@"%/library/recentlyAdded", aMediaContainer.key];
     PlexMediaContainer *recentlyAddedContainer = [aMediaContainer.request query:recentlyAddedQuery callingObject:nil ignorePresets:YES timeout:20 cachePolicy:NSURLRequestUseProtocolCachePolicy];
     self.recentlyAddedMediaContainer = recentlyAddedContainer;
 }
@@ -86,7 +86,8 @@
     DLog(@"recently added: [%@] count [%d]", self.recentlyAddedMediaContainer, [self.recentlyAddedMediaContainer.directories count]);
 #endif
     if ([self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0) {
-        //[topShelfView setState:1]; //shelf
+        [topShelfView setState:2]; //shelf
+
 
 #if LOCAL_DEBUG_ENABLED
         DLog(@"Activate main menu shelf");
@@ -126,7 +127,10 @@
 -(id)mediaShelf:(BRMediaShelfView *)view titleForSectionAtIndex:(long)section {
     DLog();
     //PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
-    NSString *title = [NSString stringWithFormat:@"%@ : %@", self.containerName, section == 0 ? @"On Deck" : @"Recently Added"];
+    
+    //TODO: once we've got sections going on, uncomment below for more accurate description of section in topshelf
+    //NSString *title = [NSString stringWithFormat:@"%@ : %@", self.containerName, section == 0 ? @"On Deck" : @"Recently Added"];
+    NSString *title = [NSString stringWithFormat:@"%@", section == 0 ? @"On Deck" : @"Recently Added"];
     
     BRTextControl *titleControl = [[BRTextControl alloc] init];
     
@@ -147,7 +151,7 @@
     PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
     
 #if LOCAL_DEBUG_ENABLED
-    DLog(@"cont: %@", aMediaContainer);
+    //DLog(@"cont: %@", aMediaContainer);
 #endif
     
     return [aMediaContainer.directories count];
@@ -174,7 +178,7 @@
     poster.cropAspectRatio = 0.66470599174499512;
     
     poster.imageProxy = [asset imageProxy];
-    poster.defaultImage = [asset defaultImage];
+    poster.defaultImage = [asset coverArt];
     poster.reflectionAmount = 0.10000000149011612;
     poster.reflectionBaseline = 0.072999998927116394;
     

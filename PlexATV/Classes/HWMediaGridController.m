@@ -299,11 +299,13 @@ void checkNil(NSObject *ctrl){
     controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
 
     id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
+
+#if LOCAL_DEBUG_ENABLED
+    DLog(@"providerForShelf: %@, shelfmediaobjects: %@", provider, self.shelfMediaObjects);
+#endif
     [controlFactory release];
     [store release];
-#if LOCAL_DEBUG_ENABLED
-    DLog(@"providerForShelf: %@", provider);
-#endif
+    
     return provider;
 }
 

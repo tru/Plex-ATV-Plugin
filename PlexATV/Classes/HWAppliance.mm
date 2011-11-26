@@ -65,6 +65,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:YES];
         }
 
+        //TODO: make topshelf refresh itself depending on which section you select. start catching section list focus changes here
+        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logFocusChanged:)name:@"kBRControlFocusChangedNotification" object:nil];
+        
         //stop the MM from sending WOL packets to PMS when AppleTV is going to sleep...
         //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotifications:) name:nil object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseMachineMonitoring:)name:@"BRStopBackgroundProcessing" object:nil];
@@ -80,6 +83,10 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 
 - (void)logNotifications:(NSNotification*)notification {
     DLog(@"NOT: %@", [notification name]);
+}
+
+- (void)logFocusChanged:(NSNotification*)notification {
+    DLog(@"focues changed for: %@", notification);
 }
 
 - (void)pauseMachineMonitoring:(NSNotification*)notification {
@@ -183,7 +190,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 }
 
 - (id)identifierForContentAlias:(id)contentAlias { return @"Plex"; }
-- (id)selectCategoryWithIdentifier:(id)ident { return nil; }
+- (id)selectCategoryWithIdentifier:(id)ident { DLog(@"category ident: %@", ident); return nil; }
 - (BOOL)handleObjectSelection:(id)fp8 userInfo:(id)fp12 { return YES; }
 - (id)applianceSpecificControllerForIdentifier:(id)arg1 args:(id)arg2 { return nil; }
 - (id)localizedSearchTitle { return @"Plex"; }
@@ -260,6 +267,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
                 PlexMediaObject *pmo = [allDirectories objectAtIndex:i];
                 categoryName = [pmo.name copy];
                 categoryPath = [pmo.key copy];
+                //create topshelf with contents of this plex media container
+                //[self.topShelfController setContentToContainer:[pmo contents]];
+                //[self.topShelfController refresh];
             }
             
 #if LOCAL_DEBUG_ENABLED
@@ -308,16 +318,12 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
 			}
 			[categoryName release];
 		}
-		
-        //create topshelf with recently added and onDeck
-        [self.topShelfController setContentToContainer:machine.request.rootLevel];
-        [self.topShelfController refresh];
-        
+		        
         [machineID release];
 		[machineName release];
 	}
     
-    
+
 }
 
 #pragma mark -
@@ -340,12 +346,21 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         DLog(@"MachineManager: Reload machines as machine [%@] was added", m);
 #endif
 		[self rebuildCategories];
+        [self.topShelfController setContentToContainer:m.rootLevel];
+        [self.topShelfController refresh];        
+
 	}
 }
 
 - (void)machineWasChanged:(Machine *)m {
     if (m.isOnline && m.canConnect) {
         //machine is available
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"MachineManager: Reload machine sections as machine [%@] was changed", m);
+#endif
+        [self rebuildCategories];
+        [self.topShelfController setContentToContainer:m.rootLevel];
+        [self.topShelfController refresh]; 
     } else {
         //machine is not available
     }
@@ -364,6 +379,9 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         DLog(@"MachineManager: Reload machines as machine [%@] list was updated [%@] or came online/offline [%@]", m, machinesLibrarySectionsWasUpdated ? @"YES" : @"NO", machineHasEitherGoneOnlineOrOffline ? @"YES" : @"NO");
 #endif
 		[self rebuildCategories];
+        [self.topShelfController setContentToContainer:m.rootLevel];
+        [self.topShelfController refresh];        
+
 	} 
 	
 	if (machinesRecentlyAddedWasUpdated) {

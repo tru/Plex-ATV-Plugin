@@ -23,6 +23,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //
+
+#define LOCAL_DEBUG_ENABLED 0
+
+
 #import "PlexPreviewAsset.h"
 #import <plex-oss/PlexMediaObject.h>
 #import <plex-oss/PlexMediaContainer.h>
@@ -173,7 +177,9 @@
 
 }
 - (id)coverArt {
+#if LOCAL_DEBUG_ENABLED
     DLog();
+#endif
     BRImage *coverImg = [BRImage imageWithURL:self.coverArtRealURL];
     if (coverImg) {
         return coverImg;
@@ -406,7 +412,9 @@
 }
 
 - (id)playbackMetadata {
-    DLog(@"Metadata");
+#if LOCAL_DEBUG_ENABLED
+    DLog();
+#endif
     return [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithLong:self.duration], @"duration",
             self.mediaURL, @"mediaURL",
@@ -431,7 +439,9 @@
 
 - (id)previewURL {
     //[super previewURL];
-    DLog(@"preview URL");
+#if LOCAL_DEBUG_ENABLED
+    DLog();
+#endif
     return nil; //[[NSURL fileURLWithPath:[pmo.thumb imagePath]] absoluteString];
 }
 
@@ -582,7 +592,11 @@
 #pragma mark Additional Metadata Methods
 - (NSURL*)coverArtRealURL {
     PlexImage *image = nil;
-    DLog(@"coverArtRealURL");
+
+#if LOCAL_DEBUG_ENABLED
+    DLog();
+#endif
+    
     if (pmo.thumb.hasImage) {
         image = pmo.thumb;
     } else if (pmo.art.hasImage) {
@@ -611,7 +625,10 @@
     if (image) {
         imageURL = [pmo.request pathForScaledImage:[image.imageURL absoluteString] ofSize:CGSizeMake(512, 512)];
     }
+#if LOCAL_DEBUG_ENABLED
     DLog("imageURL %@", imageURL); //Do we really need this unless debugging?
+#endif    
+    
     return imageURL;
 }
 
