@@ -84,7 +84,7 @@ void checkNil(NSObject *ctrl){
 - (void)wasPushed {
     [[MachineManager sharedMachineManager] setMachineStateMonitorPriority:NO];
     [super wasPushed];
-    //[self _removeAllControls];
+
     [self drawSelf];
 }
 
@@ -166,7 +166,7 @@ void checkNil(NSObject *ctrl){
      */
     DLog(@"shelf");
     _shelfControl = [[PlexMediaShelfView alloc] init];
-    [_shelfControl setProvider:[self providerForShelf]];
+    [_shelfControl setProvider:[self getProviderForShelf]];
     [_shelfControl setColumnCount:7];
     [_shelfControl setCentered:NO];
     [_shelfControl setCoverflowMargin:0.05000000074505806f];
@@ -264,6 +264,9 @@ void checkNil(NSObject *ctrl){
     for (int i = 0; i < [self.shelfMediaObjects count]; i++)
     {
         PlexMediaObject *pmo = [self.shelfMediaObjects objectAtIndex:i];
+#if LOCAL_DEBUG_ENABLED
+        DLog(@"Adding %@ to recently added shelf", [pmo name]);
+#endif
         [store addObject:pmo.previewAsset];
     }
 #if LOCAL_DEBUG_ENABLED
@@ -284,31 +287,6 @@ void checkNil(NSObject *ctrl){
     return provider;
 
 }
-
-- (BRPhotoDataStoreProvider*)providerForShelf {
-    NSSet *_set = [NSSet setWithObject:[BRMediaType photo]];
-    NSPredicate *_pred = [NSPredicate predicateWithFormat:@"mediaType == %@",[BRMediaType photo]];
-    BRDataStore *store = [[BRDataStore alloc] initWithEntityName:@"Hello" predicate:_pred mediaTypes:_set];
-
-    for (PlexMediaObject*pmo in self.shelfMediaObjects) {
-        [store addObject:pmo.previewAsset];
-    }
-
-    PlexControlFactory *controlFactory = [[PlexControlFactory alloc] initForMainMenu:NO];
-    //SMFControlFactory *controlFactory = [[SMFControlFactory alloc] initForMainMenu:NO];
-    controlFactory.defaultImage = [[BRThemeInfo sharedTheme] storeRentalPlaceholderImage];
-
-    id provider = [BRPhotoDataStoreProvider providerWithDataStore:store controlFactory:controlFactory];
-
-#if LOCAL_DEBUG_ENABLED
-    DLog(@"providerForShelf: %@, shelfmediaobjects: %@", provider, self.shelfMediaObjects);
-#endif
-    [controlFactory release];
-    [store release];
-    
-    return provider;
-}
-
 - (BRPhotoDataStoreProvider*)getProviderForGrid {
 #if LOCAL_DEBUG_ENABLED
     DLog(@"getProviderForGrid_start");

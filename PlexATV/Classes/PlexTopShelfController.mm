@@ -6,7 +6,7 @@
 //  Modified by ccjensen
 //
 
-#define LOCAL_DEBUG_ENABLED 1
+#define LOCAL_DEBUG_ENABLED 0
 
 #import "PlexTopShelfController.h"
 #import "HWAppliance.h"
@@ -125,7 +125,9 @@
 }
 
 -(id)mediaShelf:(BRMediaShelfView *)view titleForSectionAtIndex:(long)section {
+#if LOCAL_DEBUG_ENABLED
     DLog();
+#endif
     //PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
     
     //TODO: once we've got sections going on, uncomment below for more accurate description of section in topshelf
@@ -147,7 +149,10 @@
 }
 
 -(long)mediaShelf:(BRMediaShelfView *)view numberOfColumnsInSection:(long)section {
+#if LOCAL_DEBUG_ENABLED
     DLog();
+#endif
+    
     PlexMediaContainer *aMediaContainer = section == 0 ? self.onDeckMediaContainer : self.recentlyAddedMediaContainer;
     
 #if LOCAL_DEBUG_ENABLED
@@ -159,7 +164,10 @@
 
 
 -(id)mediaShelf:(BRMediaShelfView *)view itemAtIndexPath:(NSIndexPath *)indexPath {
+#if LOCAL_DEBUG_ENABLED
     DLog();
+#endif
+    
     int section = [indexPath indexAtPosition:0];
     int row = [indexPath indexAtPosition:1];
     
@@ -230,18 +238,24 @@
 
 //methods below are never called
 - (void)mediaShelf:(id)shelf didFocusItemAtIndexPath:(id)indexPath {
+#if LOCAL_DEBUG_ENABLED
 	DLog(@"didFocusItemAtIndexPath never called");
+#endif
     //int section = [indexPath indexAtPosition:0];
     //int row = [indexPath indexAtPosition:1];
 }
 
 - (BOOL)handleObjectSelection:(id)selection userInfo:(id)info {
+#if LOCAL_DEBUG_ENABLED
 	DLog(@"handleObjectSelection never called");
+#endif
     return NO;
 }
 
 - (void)selectCategoryWithIdentifier:(id)identifier {
-	DLog(@"selectCategoryWithIdentifier never called");
+#if LOCAL_DEBUG_ENABLED	
+    DLog(@"selectCategoryWithIdentifier never called");
+#endif
 }
 
 @end

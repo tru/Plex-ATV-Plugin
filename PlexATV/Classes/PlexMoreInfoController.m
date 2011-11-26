@@ -187,7 +187,12 @@
     [aScrollControl release];
     
     self.scrollControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 720.0f);
-    [self.scrollControl setDefaultAnimationMode:0 fastScrollingAnimationMode:1];
+    
+    if ([SMF_COMPAT usingFourPointTwoPlus]) {
+        [self.scrollControl setAnimationMode:0];
+    } 
+    else
+        [self.scrollControl setDefaultAnimationMode:0 fastScrollingAnimationMode:1];
     
 //    BRCursorControl *aCursorControl = [[BRCursorControl alloc] init];
 //    self.cursorControl = aCursorControl;

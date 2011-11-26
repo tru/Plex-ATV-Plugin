@@ -13,7 +13,9 @@
 
 - (id)init {
 
-    if ([SMF_COMPAT usingFourPointFourPlus]) {
+    Class cls = NSClassFromString(@"ATVVersionInfo");
+    if (cls != nil && [[cls currentOSVersion] isEqualToString:@"5.0"])
+    {
         self = [super init];
     } else {
         self = [[NSClassFromString (@"BRMediaShelfControl")alloc] init];
@@ -33,21 +35,26 @@
 }
 
 - (void)setProvider:(id)provider {
-    if ([SMF_COMPAT usingFourPointFourPlus]) {
+
+    Class cls = NSClassFromString(@"ATVVersionInfo");
+    if (cls != nil && [[cls currentOSVersion] isEqualToString:@"5.0"])
+    {
         DLog(@"Using 4.4 provider settings!");
         BRProviderDataSourceAdapter *_adapter = [[NSClassFromString (@"BRProviderDataSourceAdapter")alloc] init];
         [_adapter setProviders:[NSArray arrayWithObjects:provider, nil]];
         [self setDelegate:_adapter];
         [self setDataSource:_adapter];
+        self.adapter = _adapter;
         [_adapter release];
-        self.adapter = adapter;
     } else {
         [(id) self setProvider:provider];
     }
 }
 
 - (id)focusedIndexCompat {
-    if ([SMF_COMPAT usingFourPointFourPlus]) {
+    Class cls = NSClassFromString(@"ATVVersionInfo");
+    if (cls != nil && [[cls currentOSVersion] isEqualToString:@"5.0"])
+    {
         return [self focusedIndexPath];
     } else {
         return [(id) self focusedIndex];
@@ -55,7 +62,9 @@
 }
 
 - (void)setFocusedIndexCompat:(id)focusedIndexCompat {
-    if ([SMF_COMPAT usingFourPointFourPlus]) {
+    Class cls = NSClassFromString(@"ATVVersionInfo");
+    if (cls != nil && [[cls currentOSVersion] isEqualToString:@"5.0"])
+    {
         self.focusedIndexPath = focusedIndexCompat;
     } else {
         [(id) self setFocusedIndex:focusedIndexCompat];

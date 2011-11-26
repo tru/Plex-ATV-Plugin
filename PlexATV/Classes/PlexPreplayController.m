@@ -304,7 +304,10 @@ typedef enum {
     [[PlexNavigationController sharedPlexNavigationController] initiatePlaybackOfMediaObject:shelfSelectedMediaObject];
 }
 
--(void)controller:(SMFMoviePreviewController *)c downButtonEventInShelf:(BRMediaShelfControl *)shelfControl {
+- (void)controller:(SMFMoviePreviewController*)c downButtonEventInShelf:(PlexMediaShelfView*)shelfControl {
+#if LOCAL_DEBUG_ENABLED
+    DLog();
+#endif
     moreInfoSelected = YES;
     PlexMediaContainer *moreInfoContainer = [self.selectedMediaObject loadDetails];
     PlexMoreInfoController *moreInfoController = [[PlexMoreInfoController alloc] initWithMoreInfoContainer:moreInfoContainer];
@@ -463,7 +466,6 @@ typedef enum {
         coverArt = [self.selectedMediaObject.previewAsset coverArt];
     }
     else {
-        //TODO: Why does this say seasoncCoverArt not found??
         coverArt = [self.selectedMediaObject.previewAsset seasonCoverArt];
     }
 #if LOCAL_DEBUG_ENABLED
