@@ -1,9 +1,10 @@
 # Plex Apple TV2G Client
 ## CREDIT TO
-_Original project author, and libPLEX-OSS library creator:_ quiqueck  
-_Main project developers:_ b0bben and ccjensen  
-_Apple TV guru and project consultant:_ tomcool420  
-_Contributors:_ jcoene
+_Original project author, and libPLEX-OSS library creator:_ quiqueck (github.com/quiqueck)
+_Main project developers:_ b0bben (github.com/b0bben) and tobiashieta (github.com/tru)
+_Past developers:_ ccjensen (github.com/ccjensen)
+_Apple TV guru and project consultant:_ tomcool420 (github.com/tomcool420)
+_Contributors:_ jcoene (github.com/jcoene), brentcatoe (github.com/brent112)
 
 ## PREPARING
 1. You need to install the "beigelist" on your Apple TV (if you installed the Plex-Plugin using apt, it is already there )
