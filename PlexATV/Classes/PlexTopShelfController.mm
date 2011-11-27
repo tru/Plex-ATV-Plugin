@@ -86,7 +86,10 @@
     DLog(@"recently added: [%@] count [%d]", self.recentlyAddedMediaContainer, [self.recentlyAddedMediaContainer.directories count]);
 #endif
     if ([self.onDeckMediaContainer.directories count] > 0 || [self.recentlyAddedMediaContainer.directories count] > 0) {
-        [topShelfView setState:2]; //shelf
+        if ([PLEX_COMPAT usingFourPointThree])
+            [topShelfView setState:2]; //shelf in 4.3.x refreshes when state is set to 2
+        else 
+            [topShelfView setState:1]; //shelf
 
 
 #if LOCAL_DEBUG_ENABLED

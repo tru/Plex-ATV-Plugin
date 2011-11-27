@@ -121,7 +121,7 @@ PLEX_SYNTHESIZE_SINGLETON_FOR_CLASS(PlexNavigationController);
 }
 
 - (void)navigateToSearchForMachine:(Machine*)aMachine {
-    DLog(@"Navigating to: [Search], for machine: [%@]", aMachine.userName);
+    DLog(@"Navigating to: [Search], for machine: [%@]", aMachine.serverName);
     self.targetController = nil;
     self.targetMediaObject = nil;
     self.promptText = @"Loading \"Search\"...";

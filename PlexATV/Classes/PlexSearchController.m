@@ -82,6 +82,7 @@
 
 - (void)controlWasActivated {
     [super controlWasActivated];
+    [self drawSelf];
     [self refresh];
 }
 
@@ -102,6 +103,7 @@
 }
 
 - (void)refresh {
+    DLog();
     int listCount = [self.items count];
     if (listCount > 0) {
         [self.list setAcceptsFocus:YES];
@@ -122,28 +124,30 @@
 
 #pragma mark -
 #pragma mark Controller Drawing and Events
-- (void)layoutSubcontrols {
-    [super layoutSubcontrols];
+- (void)drawSelf {
+    //[super layoutSubcontrols];
 
     //CGRect masterFrame = [BRWindow interfaceFrame];
-
+    DLog();
     //============================ TEXT ENTRY ============================
     if (!self.textEntry) {
         BRTextEntryControl *aTextEntry;
-        if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.3"]) {
+/*        if ([PLEX_COMPAT usingFourPointThree]) {
+            DLog(@"4.3+ textentry");
             aTextEntry = [[BRTextEntryControl alloc] initWithTextEntryStyle:9];
             aTextEntry.frame = CGRectMake(140,
                                           53,
                                           400,
                                           534);
             aTextEntry.canWrapHorizontally = NO;
-        } else {
+        } else {   */
+            DLog(@"NON 4.3 textentry");
             aTextEntry = [[BRTextEntryControl alloc] initWithTextEntryStyle:2];
             aTextEntry.frame = CGRectMake(108,
                                           70,
                                           460,
                                           499);
-        }
+      //    }
         self.textEntry = aTextEntry;
 
         [self addControl:aTextEntry];
@@ -158,7 +162,7 @@
         BRTextControl *aTextControl = [[BRTextControl alloc] init];
         CGFloat width = 148.0f; //room for 7 digit result
         CGFloat height = 24.0f;
-        if ([[[UIDevice currentDevice] systemVersion] isEqualToString:@"4.3"]) {
+        if ([PLEX_COMPAT usingFourPointThree]) {
             aTextControl.frame = CGRectMake(392,
                                             612,
                                             width,
@@ -196,6 +200,9 @@
     CGRect frame = previewContainer.frame;
     frame.origin.y -= 18.0;
     self.previewContainer.frame = frame;
+    
+    DLog(@"layout subcontrols");
+    [self layoutSubcontrols];
 }
 
 

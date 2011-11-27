@@ -96,9 +96,9 @@
         if ([self.type isEqualToString:PlexMediaObjectTypeShow] || [self.type isEqualToString:PlexMediaObjectTypeSeason]) {
             if ([self.attributes valueForKey:@"agent"] == nil) {
                 if ([self seenState] == PlexMediaObjectSeenStateUnseen) {
-                    [menuItem addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 16:15];
+                    [menuItem addAccessoryOfType:[PLEX_COMPAT usingFourPointThree] ? 16:15];
                 } else if ([self seenState] == PlexMediaObjectSeenStateInProgress) {
-                    [menuItem addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 17:16];
+                    [menuItem addAccessoryOfType:[PLEX_COMPAT usingFourPointThree] ? 17:16];
                 }
             }
         }

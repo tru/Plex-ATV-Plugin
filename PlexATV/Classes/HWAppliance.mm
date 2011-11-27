@@ -75,6 +75,16 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeMachineMonitoring:)name:@"BRResumeBackgroundProcessing" object:nil];
 
 
+        
+        //TEST. TODO: remove this
+        DLog(@"usingFourPointTwoPlus: %@", [SMF_COMPAT usingFourPointTwoPlus] ? @"YES" : @"NO");
+        DLog(@"usingFourPointThreePlus: %@", [SMF_COMPAT usingFourPointThreePlus] ? @"YES" : @"NO");
+        DLog(@"usingFourPointFourPlus: %@", [SMF_COMPAT usingFourPointFourPlus] ? @"YES" : @"NO");
+        
+        DLog(@"PLEX usingFourPointTwoPlus: %@", [PLEX_COMPAT usingFourPointTwo] ? @"YES" : @"NO");
+        DLog(@"PLEX usingFourPointThreePlus: %@", [PLEX_COMPAT usingFourPointThree] ? @"YES" : @"NO");
+        DLog(@"PLEX usingFourPointFourPlus: %@", [PLEX_COMPAT usingFourPointFour] ? @"YES" : @"NO");
+
     }
         
     [self reloadCategories]; 
@@ -132,6 +142,7 @@ NSString * const CompoundIdentifierDelimiter = @"|||";
             [self rebuildCategories];
             
         } else if ([categoryName isEqualToString:@"Search"]) {
+            DLog(@"machine_to_search: %@", machineWhoCategoryBelongsTo);
             [navigationController navigateToSearchForMachine:machineWhoCategoryBelongsTo];
             
         } else if ([categoryName isEqualToString:@"Channels"]) {

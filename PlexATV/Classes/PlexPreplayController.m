@@ -255,7 +255,7 @@ typedef enum {
         //user has selected a media item
         [[SMFThemeInfo sharedTheme] playSelectSound];
         int focusedIndexCompat;
-        if ([SMF_COMPAT usingFourPointFourPlus]) {
+        if ([PLEX_COMPAT usingFourPointFour]) {
             focusedIndexCompat =  [[self.shelfControl focusedIndexPath] indexAtPosition:1];
             DLog(@"using 4.4 index for shelf. %d", focusedIndexCompat);
         } else {

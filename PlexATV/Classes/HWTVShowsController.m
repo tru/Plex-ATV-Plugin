@@ -213,7 +213,7 @@
 - (void)bookcaseController:(Plex_SMFBookcaseController*)bookcaseController selectionDidOccurInShelf:(id)shelfControl atIndex:(NSInteger)index {
     NSUInteger focusedIndex;
 
-    if ([SMF_COMPAT usingFourPointFourPlus]) {
+    if ([PLEX_COMPAT usingFourPointFour]) {
         focusedIndex = [[shelfControl focusedIndexPath] indexAtPosition:1];
     } else {
         focusedIndex = [shelfControl focusedIndex];

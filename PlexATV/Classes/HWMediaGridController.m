@@ -331,7 +331,7 @@ void checkNil(NSObject *ctrl){
 
         if ([_shelfControl isFocused]) {
             //DLog(@"focusedIndex: %@", [_shelfControl focusedIndexCompat]);
-            if ([SMF_COMPAT usingFourPointFourPlus]) {
+            if ([PLEX_COMPAT usingFourPointFour]) {
                 index = [[_shelfControl focusedIndexCompat] indexAtPosition:1];
             } else {
                 index = [_shelfControl focusedIndex];

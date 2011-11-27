@@ -12,6 +12,7 @@
 #import <plex-oss/PlexRequest.h>
 #import "Constants.h"
 #import "HWServerDetailsController.h"
+#import "PlexCompatibility.h"
 
 @implementation HWServersController
 
@@ -150,9 +151,9 @@
 
         [result addAccessoryOfType:1]; //folder
         if (m.canConnect) {
-            [result addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 19:18]; //online
+            [result addAccessoryOfType:[PLEX_COMPAT usingFourPointThree] ? 19:18]; //online
         } else {
-            [result addAccessoryOfType:[SMF_COMPAT usingFourPointThreePlus] ? 20:19]; //online
+            [result addAccessoryOfType:[PLEX_COMPAT usingFourPointThree] ? 20:19]; //online
         }
 
     }

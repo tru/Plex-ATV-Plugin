@@ -61,8 +61,8 @@
         action.value == 1 &&
         [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
         [self.delegate respondsToSelector:@selector(controller:downButtonEventInShelf:)] &&
-        [c isKindOfClass:[BRMediaShelfView class]] ) {
-        
+        ([c isKindOfClass:NSClassFromString(@"BRMediaShelfView")] || [c isKindOfClass:NSClassFromString(@"BRMediaShelfControl")])) {
+            
         [self.delegate controller:self downButtonEventInShelf:(PlexMediaShelfView*)c];
         return YES;
     }

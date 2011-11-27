@@ -23,6 +23,7 @@
 
 - (void)hideSearchInterface:(BOOL)hide;
 - (void)refresh;
+- (void)drawSelf;
 
 //list methods
 - (void)setSelection:(int)sel;

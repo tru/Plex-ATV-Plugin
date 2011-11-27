@@ -188,7 +188,7 @@
     
     self.scrollControl.frame = CGRectMake(0.0f, 0.0f, 855.0f, 720.0f);
     
-    if ([SMF_COMPAT usingFourPointTwoPlus]) {
+    if ([PLEX_COMPAT usingFourPointTwo]) {
         [self.scrollControl setAnimationMode:0];
     } 
     else
