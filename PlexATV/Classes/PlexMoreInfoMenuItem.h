@@ -11,6 +11,6 @@
 @interface PlexMoreInfoMenuItem : BRMenuItem {}
 @property (retain) PlexDirectory *directory;
 
-+ (PlexMoreInfoMenuItem *)menuItemForDirectory:(PlexDirectory *)aDirectory;
-- (id)initWithDirectory:(PlexDirectory *)aDirectory;
++ (PlexMoreInfoMenuItem*)menuItemForDirectory:(PlexDirectory*)aDirectory;
+- (id)initWithDirectory:(PlexDirectory*)aDirectory;
 @end

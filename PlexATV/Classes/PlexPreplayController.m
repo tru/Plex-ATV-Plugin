@@ -129,10 +129,10 @@ typedef enum {
     self.delegate = nil;
     self.selectedMediaObject = nil;
     self.relatedMediaContainer = nil;
-    
+
     [listDropShadowControl setCDelegate:nil];
     [listDropShadowControl setCDatasource:nil];
-    
+
     [super wasPopped];
 }
 
@@ -146,7 +146,7 @@ typedef enum {
     [super wasBuried];
 }
 
-- (void)controlWasActivated {    
+- (void)controlWasActivated {
     if (moreInfoSelected) {
         CATransition *transition = [CATransition animation];
         transition.type = @"push";
@@ -154,7 +154,7 @@ typedef enum {
         transition.duration = 0.4f;
         transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
         [[[BRApplicationStackManager singleton] stack] setActions:[NSDictionary dictionaryWithObject:transition forKey:@"sublayers"]];
-        
+
         moreInfoSelected = NO;
     }
     [super controlWasActivated];
@@ -354,8 +354,8 @@ typedef enum {
 
 }
 
--(NSArray *)headers {
-    
+- (NSArray*)headers {
+
     if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
         return [NSArray arrayWithObjects:@"Details",@"Show",@"Directors",@"Writers",nil];
     } else {
@@ -363,33 +363,33 @@ typedef enum {
     }
 }
 
--(NSArray *)columns {
+- (NSArray*)columns {
     PlexPreviewAsset *metadataAsset = self.selectedMediaObject.previewAsset;
-    
+
     //the table will hold all the columns
     NSMutableArray *table = [NSMutableArray array];
 
     // ======= details column ======
-	NSMutableArray *details = [NSMutableArray array];
-	
-	BRGenre *genre = [metadataAsset primaryGenre];
-	[details addObject:[genre displayString]];
-	
-	NSString *releasedDate = nil;
-	if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
+    NSMutableArray *details = [NSMutableArray array];
+
+    BRGenre *genre = [metadataAsset primaryGenre];
+    [details addObject:[genre displayString]];
+
+    NSString *releasedDate = nil;
+    if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
         releasedDate = [metadataAsset dateCreatedString];
     } else {
         releasedDate = [metadataAsset year];
     }
     NSString *released = [NSString stringWithFormat:@"Released %@", releasedDate];
     [details addObject:released];
-	
-	NSString *duration = [NSString stringWithFormat:@"%d minutes", [metadataAsset duration]/60];
-	[details addObject:duration];
-    
-	[table addObject:details];
-	
-	if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
+
+    NSString *duration = [NSString stringWithFormat:@"%d minutes", [metadataAsset duration] / 60];
+    [details addObject:duration];
+
+    [table addObject:details];
+
+    if ([PlexMediaObjectTypeEpisode isEqualToString:self.selectedMediaObject.type]) {
         NSMutableArray *show = [NSMutableArray array];
         // ======= show column ======
         if ([metadataAsset seriesName]) {
@@ -411,7 +411,7 @@ typedef enum {
             [table addObject:actors];
         }
     }
-	
+
     // ======= directors column ======
     if ([metadataAsset directors]) {
         NSArray *directors = [metadataAsset directors];
@@ -438,7 +438,7 @@ typedef enum {
         [flags addObject:[self.selectedMediaObject.previewAsset starRatingImage]];
 
     NSDictionary *mediaAttributes = self.selectedMediaObject.mediaResource.attributes;
-    
+
     NSArray *flagAttributes = [NSArray arrayWithObjects:PlexFlagTypeContentVideoResolution, PlexFlagTypeContentVideoCodec, PlexFlagTypeContentAudioCodec, PlexFlagTypeContentAudioChannels, nil];
     for (PlexFlagTypes attribute in flagAttributes) {
         if ([mediaAttributes valueForKey:attribute]) {

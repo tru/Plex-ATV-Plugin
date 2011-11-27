@@ -10,7 +10,7 @@
 #import "BackRowExtras.h"
 @class PlexTopShelfController, PlexMediaContainer;
 
-@interface PlexAppliance: BRBaseAppliance <MachineManagerDelegate> { }
+@interface PlexAppliance : BRBaseAppliance <MachineManagerDelegate> { }
 @property (nonatomic, retain) PlexTopShelfController *topShelfController;
 @property (nonatomic, retain) NSMutableArray *currentApplianceCategories;
 @property (nonatomic, retain) BRApplianceCategory *otherServersApplianceCategory;

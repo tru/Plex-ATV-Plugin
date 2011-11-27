@@ -9,7 +9,7 @@
 #import "PlexPreviewAsset.h"
 
 @interface PlexTVEpisodeMetadataAsset : PlexPreviewAsset {}
-@property (nonatomic, retain) PlexMediaObject* tvshowObject;
+@property (nonatomic, retain) PlexMediaObject *tvshowObject;
 
 - (void)setupTvshowObject;
 

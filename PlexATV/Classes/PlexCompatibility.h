@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-//  BASED ON: 
+//  BASED ON:
 //  SMFCompatibility.h
 //  SMFramework
 //
@@ -22,10 +22,10 @@
     BOOL _usingFourPointThree;
     BOOL _usingFourPointFour;
 }
-+(PlexCompatibility *)compat;
--(BOOL)usingFourPointTwo;
--(BOOL)usingFourPointThree;
--(BOOL)usingFourPointFour;
++ (PlexCompatibility*)compat;
+- (BOOL)usingFourPointTwo;
+- (BOOL)usingFourPointThree;
+- (BOOL)usingFourPointFour;
 @end
 
 #define PLEX_COMPAT [PlexCompatibility compat]

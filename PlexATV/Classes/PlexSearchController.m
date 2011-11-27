@@ -141,13 +141,13 @@
                                           534);
             aTextEntry.canWrapHorizontally = NO;
         } else {   */
-            DLog(@"NON 4.3 textentry");
-            aTextEntry = [[BRTextEntryControl alloc] initWithTextEntryStyle:2];
-            aTextEntry.frame = CGRectMake(108,
-                                          70,
-                                          460,
-                                          499);
-      //    }
+        DLog(@"NON 4.3 textentry");
+        aTextEntry = [[BRTextEntryControl alloc] initWithTextEntryStyle:2];
+        aTextEntry.frame = CGRectMake(108,
+                                      70,
+                                      460,
+                                      499);
+        //    }
         self.textEntry = aTextEntry;
 
         [self addControl:aTextEntry];
@@ -200,7 +200,7 @@
     CGRect frame = previewContainer.frame;
     frame.origin.y -= 18.0;
     self.previewContainer.frame = frame;
-    
+
     DLog(@"layout subcontrols");
     [self layoutSubcontrols];
 }

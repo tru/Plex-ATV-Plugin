@@ -37,7 +37,7 @@
     float height;
 
     if (self.hasMedia || [@"Video" isEqualToString:self.containerType]) {
-        if (self.isEpisode && (self.parentObject && self.parentObject.isSeason)) {
+        if ( self.isEpisode && (self.parentObject && self.parentObject.isSeason) ) {
             height = 50.0f;
         } else {
             height = 70.0f;

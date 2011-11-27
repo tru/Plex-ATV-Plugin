@@ -20,40 +20,36 @@
 
 
 SYNTHESIZE_SINGLETON_FOR_CLASS(PlexCompatibility, compat)
--(id)init
-{
-    self=[super init];
-    if (self!=nil) {
+- (id)init {
+    self = [super init];
+    if (self != nil) {
         Class cls = NSClassFromString(@"ATVVersionInfo");
-        
-        _usingFourPointFour=NO;
-        _usingFourPointThree=NO;
-        _usingFourPointTwo=NO;
+
+        _usingFourPointFour = NO;
+        _usingFourPointThree = NO;
+        _usingFourPointTwo = NO;
         if (cls != nil && [[cls currentOSVersion] isEqualToString:@"4.2"]) {
-            _usingFourPointTwo=YES;
+            _usingFourPointTwo = YES;
         }
         if (cls != nil && [[cls currentOSVersion] isEqualToString:@"4.3"]) {
-            _usingFourPointTwo=YES;
-            _usingFourPointThree=YES;
+            _usingFourPointTwo = YES;
+            _usingFourPointThree = YES;
         }
         if (cls != nil && [[cls currentOSVersion] isEqualToString:@"5.0"]) {
-            _usingFourPointTwo=YES;
-            _usingFourPointThree=YES;
-            _usingFourPointFour=YES;
+            _usingFourPointTwo = YES;
+            _usingFourPointThree = YES;
+            _usingFourPointFour = YES;
         }
     }
     return self;
 }
--(BOOL)usingFourPointTwo
-{  
+- (BOOL)usingFourPointTwo {
     return _usingFourPointTwo;
 }
--(BOOL)usingFourPointThree
-{
+- (BOOL)usingFourPointThree {
     return _usingFourPointThree;
 }
--(BOOL)usingFourPointFour
-{
+- (BOOL)usingFourPointFour {
     return _usingFourPointFour;
 }
 @end

@@ -28,7 +28,7 @@
     if ([[self stack] peekController] != self)
         return [super brEventAction:action];
     int remoteAction = [action remoteAction];
-    
+
     if([c isKindOfClass:[SMFListDropShadowControl class]]) {
         return [super brEventAction:action];
     }
@@ -57,12 +57,12 @@
         return YES;
     }
     if ( (remoteAction == kBREventRemoteActionDown || remoteAction == kBREventRemoteActionSwipeDown) &&
-        self.delegate != nil &&
-        action.value == 1 &&
-        [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
-        [self.delegate respondsToSelector:@selector(controller:downButtonEventInShelf:)] &&
-        ([c isKindOfClass:NSClassFromString(@"BRMediaShelfView")] || [c isKindOfClass:NSClassFromString(@"BRMediaShelfControl")])) {
-            
+         self.delegate != nil &&
+         action.value == 1 &&
+         [self.delegate conformsToProtocol:@protocol(Plex_SMFMoviePreviewControllerDelegate)] &&
+         [self.delegate respondsToSelector:@selector(controller:downButtonEventInShelf:)] &&
+         ([c isKindOfClass:NSClassFromString(@"BRMediaShelfView")] || [c isKindOfClass:NSClassFromString(@"BRMediaShelfControl")]) ) {
+
         [self.delegate controller:self downButtonEventInShelf:(PlexMediaShelfView*)c];
         return YES;
     }

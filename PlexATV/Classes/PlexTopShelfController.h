@@ -10,7 +10,7 @@
 @class PlexMediaContainer;
 
 @interface PlexTopShelfController : NSObject {
-	BRTopShelfView *topShelfView;
+    BRTopShelfView *topShelfView;
     BRMediaShelfView *shelfView;
     int shelfItemCount;
 }
@@ -22,5 +22,5 @@
 - (id)topShelfView;
 - (void)refresh;
 
-- (void)setContentToContainer:(PlexMediaContainer *)aMediaContainer;
+- (void)setContentToContainer:(PlexMediaContainer*)aMediaContainer;
 @end

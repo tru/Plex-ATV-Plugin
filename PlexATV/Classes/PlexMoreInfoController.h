@@ -32,16 +32,16 @@
 @property (retain) PlexMediaContainer *currentGridContentMediaContainer;
 @property (retain) NSArray *currentGridContent;
 
-- (id)initWithMoreInfoContainer:(PlexMediaContainer *)mediaContainer;
-- (void)setupListForMediaObject:(PlexMediaObject *)aMediaObject;
-- (void)addCreditsSectionToArray:(NSMutableArray *)creditsSectionArray ForKey:(NSString *)key withLabel:(NSString *)label;
+- (id)initWithMoreInfoContainer:(PlexMediaContainer*)mediaContainer;
+- (void)setupListForMediaObject:(PlexMediaObject*)aMediaObject;
+- (void)addCreditsSectionToArray:(NSMutableArray*)creditsSectionArray ForKey:(NSString*)key withLabel:(NSString*)label;
 - (void)setupPreviewControl;
 
 //Grid Datesource & Delegate Methods
 - (id)gridProvider;
 
 //Grid Content Methods
-- (void)startRetrievalOfContentsForDirectory:(PlexDirectory *)directory;
+- (void)startRetrievalOfContentsForDirectory:(PlexDirectory*)directory;
 
 //list methods
 - (void)playPauseActionForRow:(long)row;

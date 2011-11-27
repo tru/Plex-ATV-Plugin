@@ -11,16 +11,16 @@
 @implementation PlexMoreInfoMenuItem
 @synthesize directory;
 
-+ (PlexMoreInfoMenuItem *)menuItemForDirectory:(PlexDirectory *)aDirectory {
++ (PlexMoreInfoMenuItem*)menuItemForDirectory:(PlexDirectory*)aDirectory {
     PlexMoreInfoMenuItem *menuItem = [[PlexMoreInfoMenuItem alloc] initWithDirectory:aDirectory];
-    return  [menuItem autorelease];
+    return [menuItem autorelease];
 }
 
-- (id)initWithDirectory:(PlexDirectory *)aDirectory {
+- (id)initWithDirectory:(PlexDirectory*)aDirectory {
     self = [super init];
     if (self) {
         self.directory = aDirectory;
-        
+
         NSString *title = [self.directory.attributes objectForKey:@"tag"];
         [self setText:title withAttributes:nil];
     }

@@ -596,7 +596,7 @@
 #if LOCAL_DEBUG_ENABLED
     DLog();
 #endif
-    
+
     if (pmo.thumb.hasImage) {
         image = pmo.thumb;
     } else if (pmo.art.hasImage) {
@@ -627,8 +627,8 @@
     }
 #if LOCAL_DEBUG_ENABLED
     DLog("imageURL %@", imageURL); //Do we really need this unless debugging?
-#endif    
-    
+#endif
+
     return imageURL;
 }
 

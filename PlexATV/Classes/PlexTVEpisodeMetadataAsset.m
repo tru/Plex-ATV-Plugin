@@ -18,16 +18,16 @@
 #pragma mark -
 #pragma mark Object/Class Lifecycle
 - (id)initWithURL:(NSURL*)u mediaProvider:(id)mediaProvider mediaObject:(PlexMediaObject*)obj {
-	self = [super initWithURL:u mediaProvider:mediaProvider mediaObject:obj];
-	if (self) {
+    self = [super initWithURL:u mediaProvider:mediaProvider mediaObject:obj];
+    if (self) {
         [self setupTvshowObject];
-	}
-	return self;
+    }
+    return self;
 }
 
 - (void)dealloc {
     self.tvshowObject = nil;
-	[super dealloc];
+    [super dealloc];
 }
 
 - (void)setupTvshowObject {
@@ -51,18 +51,18 @@
 
 #pragma mark -
 #pragma mark BRMediaAsset
-- (id)genres {    
+- (id)genres {
     NSString *result = [self.tvshowObject listSubObjects:@"Genre" usingKey:@"tag"];
-	return [result componentsSeparatedByString:@", "];
+    return [result componentsSeparatedByString:@", "];
 }
 
 - (id)primaryGenre {
-	NSArray *allGenres = [self genres];
-	BRGenre *result = nil;
-	if ([allGenres count] > 0) {
-		result = [[[BRGenre alloc] initWithString:[allGenres objectAtIndex:0]] autorelease];
-	}
-	return result;
+    NSArray *allGenres = [self genres];
+    BRGenre *result = nil;
+    if ([allGenres count] > 0) {
+        result = [[[BRGenre alloc] initWithString:[allGenres objectAtIndex:0]] autorelease];
+    }
+    return result;
 }
 
 
